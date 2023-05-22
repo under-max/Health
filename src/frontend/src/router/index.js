@@ -1,5 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router'
-
+import Search from "@/views/Search.vue";
+import Exercise from "@/views/Exercise.vue";
+import MemberShip from "@/views/MemberShip.vue";
+import Community from "@/views/Community.vue"
+import Main from "@/views/Main.vue";
+import Login from "@/views/Login.vue";
+import Information from "@/views/Information.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -7,40 +13,40 @@ const router = createRouter({
     {
       path: '/',
       name: 'main',
-      component: ()=> import('../views/Main.vue')
-    },    
+      component: Main
+    },
     {
-      path: '/excercise',
-      name: 'excercise',
+      path: '/exercise',
+      name: 'exercise',
       // route level code-splitting
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import('../views/Excercise.vue')
+      component: Exercise
     },
     {
       path: '/search',
       name: 'search',
-      component: ()=> import('../views/Search.vue')
+      component : Search
     },
     {
-      path: '/ticket',
-      name: 'ticket',
-      component: () => import('../views/Ticket.vue')
+      path: '/membership',
+      name: 'membership',
+      component: MemberShip
     },
     {
       path: '/community',
       name: 'community',
-      component: () => import('../views/Community.vue')
+      component: Community
     },
     {
       path: '/login',
       name: 'login',
-      component: ()=> import('../views/Login.vue')
+      component : Login
     },
     {
-      path: '/mypage',
-      name: 'mypage',
-      component: ()=> import('../views/MyPage.vue')
+      path: '/info',
+      name: 'info',
+      component: Information
     }
   ]
 })

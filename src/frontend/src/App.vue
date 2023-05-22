@@ -60,13 +60,11 @@ const Login = ref(false);
       </div>
     </nav>   
   </header>
-  <RouterView />
-  <p>MyPage숨겨놨음 로그인하면 Login 페이지 사라지고 MyPage등장 궁굼하면 아래 눌르셈</p>
-  <button @click="Login = !Login">Login MyPage 확인</button>
 
+  <RouterView />
 </template>
 
-<style>
+<style scoped>
 body{
   margin: 0px;
 }
