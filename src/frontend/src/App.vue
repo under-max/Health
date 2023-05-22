@@ -21,7 +21,7 @@ const Login = ref(false);
 
           <li>
             <button>
-              <RouterLink to="/excercise">운동관리</RouterLink>
+              <RouterLink to="/exercise">운동관리</RouterLink>
             </button>
           </li>
 
@@ -33,7 +33,7 @@ const Login = ref(false);
 
           <li>
             <button>
-              <RouterLink to="/ticket">이용권 안내</RouterLink>
+              <RouterLink to="/membership">이용권 안내</RouterLink>
             </button>
           </li>
 
@@ -51,7 +51,7 @@ const Login = ref(false);
             </template>
             <template v-else>
               <button>
-                <RouterLink to="/mypage">MyPage</RouterLink>
+                <RouterLink to="/info">MyPage</RouterLink>
               </button>
             </template>
           </li>
