@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Search from "@/views/Search.vue";
 import Exercise from "@/views/Exercise.vue";
-import MemberShip from "@/views/MemberShip.vue";
+import Membership from "@/views/Membership.vue";
 import Community from "@/views/Community.vue"
 import Main from "@/views/Main.vue";
 import Login from "@/views/Login.vue";
@@ -31,7 +31,7 @@ const router = createRouter({
     {
       path: '/membership',
       name: 'membership',
-      component: MemberShip
+      component: Membership
     },
     {
       path: '/community',
