@@ -60,11 +60,10 @@ const Login = ref(false);
       </div>
     </nav>   
   </header>
-
   <RouterView />
 </template>
 
-<style scoped>
+<style>
 body{
   margin: 0px;
 }
