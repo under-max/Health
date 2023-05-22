@@ -34,6 +34,50 @@
 
 </script>
 
-<style>
+<style scoped>
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
 
+.login-form {
+    width: 300px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.form-group {
+    margin-bottom: 10px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    font-size: 1rem;
+}
+
+.btn {
+    width: 100%;
+    padding: 8px;
+    border: none;
+    border-radius: 3px;
+    font-size: 1rem;
+    background-color: #1a73e8;
+    color: #fff;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background-color: #0d47a1;
+}
 </style>
