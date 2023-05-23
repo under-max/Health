@@ -10,11 +10,11 @@
         <section class="main_image">
             <img :src="Main_Image2" alt="메인이미지">
         </section>        
+        <p>main 2번째 페이지랑 footer 부분은 반응형 정도는 나중에 기능 개발 하면
+        <br> 중점되는 부분 2번쨰 페이지 혹은 공지사항 그냥 2번쨰에 넣고
+        footer는 그냥 주저리 부분이라 시간날떄 채우도록 하겠음
+        </p>
     </main>
-    <p>main 2번째 페이지랑 footer 부분은 반응형 정도는 나중에 기능 개발 하면
-    <br> 중점되는 부분 2번쨰 페이지 혹은 공지사항 그냥 2번쨰에 넣고
-    footer는 그냥 주저리 부분이라 시간날떄 채우도록 하겠음
-    </p>
 </template>
 
 <script setup lang="js">
