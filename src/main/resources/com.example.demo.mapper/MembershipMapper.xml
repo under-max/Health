@@ -8,7 +8,21 @@
             (#{memberId}, #{startDate}, #{endDate}, #{remainingPT})
     </insert>
 
+    <select id="findById" resultType="Membership">
+        select * from MEMBERSHIP
+        where memberId = #{memberId}
+    </select>
+
     <select id="findAll" resultType="Membership">
         select * from MEMBERSHIP
     </select>
+
+    <update id="update">
+        update MEMBERSHIP
+        set
+            endDate = #{endDate},
+            remainingPT = #{remainingPT}
+        where memberId = #{memberId}
+    </update>
 </mapper>
+
