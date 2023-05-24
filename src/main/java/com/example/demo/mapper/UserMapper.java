@@ -3,6 +3,9 @@ package com.example.demo.mapper;
 import com.example.demo.entity.User;
 import com.example.demo.request.Login;
 import com.example.demo.request.UserEdit;
+import com.example.demo.response.UserDetailResponse;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -66,4 +69,25 @@ public interface UserMapper {
             LIMIT 30 OFFSET ${(page > 0) ? (page-1) * 30 : 0}
             """)
     List<User> findAll(int page);
+
+
+    @Select("""
+            SELECT id, name
+            FROM MEMBER
+            """)
+    List<User> findAllTest();
+
+    @Select("""
+            SELECT m.id, m.name, m.email, m.phoneNumber, m.gender, m.age,
+            	   m.isInCenter, t.id as TrainerID, t.name as TrainerName, c.name as CenterName, ms.startDate, ms.endDate, ms.remainingPT
+            FROM MEMBER m
+            LEFT JOIN
+            	TRAINER t ON m.trainerId = t.id
+            LEFT JOIN
+            	CENTER c ON m.centerId = c.id
+            LEFT JOIN
+            	MEMBERSHIP ms ON ms.membershipId = m.id
+            WHERE m.id = #{id}
+            """)
+    UserDetailResponse findByIdTest(Long id);
 }

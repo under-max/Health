@@ -6,6 +6,7 @@ import Community from "@/views/Community.vue"
 import Main from "@/views/Main.vue";
 import Login from "@/views/Login.vue";
 import Information from "@/views/Information.vue";
+import UserDetail from "@/views/UserDetail.vue";
 import SignUpView from "@/views/SignUpView.vue";
 
 const router = createRouter({
@@ -48,6 +49,12 @@ const router = createRouter({
       path: '/info',
       name: 'info',
       component: Information
+    },
+    {
+      path: '/userDetail/:userId',
+      name: 'userDetail',
+      component: UserDetail,
+      props : true
     }
     ,
     {
