@@ -23,7 +23,6 @@ public class CenterResponse {
         this.address = centerEntity.getAddress();
         this.info = centerEntity.getInfo();
         this.phoneNumber = centerEntity.getPhoneNumber();
-        this.file = centerEntity.getFile();
     }
 
     @Builder

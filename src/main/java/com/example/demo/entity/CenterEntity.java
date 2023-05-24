@@ -14,14 +14,11 @@ public class CenterEntity {
 
     private String phoneNumber;
 
-    private String file;
-
     @Builder
     public CenterEntity(String name, String address, String info, String phoneNumber, String file){
         this.name = name;
         this.address = address;
         this.info = info;
         this.phoneNumber = phoneNumber;
-        this.file = file;
     }
 }
