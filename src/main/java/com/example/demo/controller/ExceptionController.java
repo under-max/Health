@@ -33,11 +33,13 @@ public class ExceptionController {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseBody
-    public ErrorResponse MethodArgumentNotValidExceptionHandler(MethodArgumentNotValidException e) {
+    public ResponseEntity<ErrorResponse> MethodArgumentNotValidExceptionHandler(MethodArgumentNotValidException e) {
+        int statusCode = e.getStatusCode().value();
         ErrorResponse response = ErrorResponse.builder()
                 .code("400")
                 .message(e.getFieldErrors().get(0).getDefaultMessage())
                 .build();
-        return response;
+        return  ResponseEntity.status(statusCode)
+                .body(response);
     }
 }
