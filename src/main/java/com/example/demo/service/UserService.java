@@ -83,9 +83,6 @@ public class UserService {
 
     public void delete(UserDelete userDelete) {
         User user = userMapper.findById(userDelete.getAuthedUserId()).orElseThrow();
-        if (!passwordEncoder.matches(userDelete.getPassword(), user.getPassword())) {
-            throw new DuplicateEmail("이전 비밀번호를 확인하세요.");
-        }
         userMapper.delete(user.getId());
     }
 

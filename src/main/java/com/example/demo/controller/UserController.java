@@ -47,11 +47,10 @@ public class UserController {
                 .build());
     }
 
-    @DeleteMapping("/user/{password}")
-    public void delete(@PathVariable String password, AuthUser authUser) {
+    @DeleteMapping("/user/{id}")
+    public void delete(@PathVariable int id, AuthUser authUser) {
         userService.delete(UserDelete.builder()
                 .authedUserId(authUser.getUserId())
-                .password(password)
                 .build());
     }
 

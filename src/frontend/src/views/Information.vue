@@ -1,34 +1,39 @@
 <template>
-    <div>
-        <el-form :model="form" :rules="rules" ref="loginFormRef" label-width="120px">
-            <el-form-item label="이메일" prop="email" required>{{ form.email }}
-            </el-form-item>
-            <el-form-item label="이전 비밀번호" prop="oldPassword" required>
-                <el-input v-model="form.oldPassword" type="password" @keyup="checkPasswordAvailability"
-                          placeholder="이전 비밀번호"></el-input>
-            </el-form-item>
-            <el-form-item>
-                <el-button type="warning" @click="editPassword">비밀번호수정</el-button>
-            </el-form-item>
-            <div v-if="editButton">
-                <el-form-item label="수정 비밀번호" prop="password" required>
-                    <el-input v-model="form.password" type="password" placeholder="새로운 비밀번호"></el-input>
+    <div class="container">
+        <div class="form">
+            <el-form :model="form" :rules="rules" ref="loginFormRef" label-width="120px">
+                <el-form-item label="이메일" prop="email" required>{{ form.email }}</el-form-item>
+                <el-form-item label="이전 비밀번호" prop="oldPassword" required>
+                    <el-input
+                        v-model="form.oldPassword"
+                        type="password"
+                        @keyup="checkPasswordAvailability"
+                        placeholder="이전 비밀번호"
+                    ></el-input>
                 </el-form-item>
-                <el-form-item label="비밀번호 확인" prop="confirmPassword" required>
-                    <el-input v-model="form.confirmPassword" type="password" placeholder="비밀번호 다시입력"></el-input>
+                <el-form-item>
+                    <el-button type="warning" @click="editPassword">비밀번호 수정</el-button>
                 </el-form-item>
-            </div>
-            <el-form-item label="닉네임" prop="nickname" required>
-                <el-input v-model="form.nickname" placeholder="변경할 닉네임"></el-input>
-            </el-form-item>
-            <el-form-item>
-                <el-button @click="checkNameAvailability" type="primary">중복 검증</el-button>
-            </el-form-item>
-            <el-form-item>
-                <el-button type="warning" @click="editForm">수정</el-button>
-                <el-button type="danger" @click="deleteForm">탈퇴</el-button>
-            </el-form-item>
-        </el-form>
+                <div v-if="editButton">
+                    <el-form-item label="수정 비밀번호" prop="password" required>
+                        <el-input v-model="form.password" type="password" placeholder="새로운 비밀번호"></el-input>
+                    </el-form-item>
+                    <el-form-item label="비밀번호 확인" prop="confirmPassword" required>
+                        <el-input v-model="form.confirmPassword" type="password" placeholder="비밀번호 다시 입력"></el-input>
+                    </el-form-item>
+                </div>
+                <el-form-item label="닉네임" prop="nickname" required>
+                    <el-input v-model="form.nickname" placeholder="변경할 닉네임"></el-input>
+                </el-form-item>
+                <el-form-item>
+                    <el-button @click="checkNameAvailability" type="primary">중복 검증</el-button>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="warning" @click="editForm">수정</el-button>
+                    <el-button type="danger" @click="deleteForm">탈퇴</el-button>
+                </el-form-item>
+            </el-form>
+        </div>
     </div>
 </template>
 
@@ -199,7 +204,7 @@ const deleteForm = () => {
     loginFormRef.value.validate((valid) => {
         if (valid) {
             axios
-                .delete(`/api/user/${form.value.oldPassword}`, {
+                .delete(`/api/user/${form.value.userId}`, {
                     headers: {
                         Authorization: token,
                     },
@@ -209,8 +214,7 @@ const deleteForm = () => {
                     store.commit("setToken", ""); // 로그아웃 시 토큰 초기화
                     Cookies.remove('accessToken'); // 쿠키에서 access token 값 삭제
                     Cookies.remove('refreshToken'); // 쿠키에서 refresh token 값 삭제
-                    router.replace("/")
-                    window.location.reload();
+                    router.replace("/").then(()=>{window.location.reload();})
                 })
                 .catch((error) => {
                     console.log(error.response.data)
@@ -234,6 +238,7 @@ onMounted(() => {
         }).then((response) => {
         form.value.email = response.data.email;
         form.value.nickname = response.data.name;
+        form.value.userId = response.data.userId;
     }).catch((error) => {
         if (error.response) {
             const errorMessage = error.response.data.message;
@@ -242,31 +247,32 @@ onMounted(() => {
     })
 })
 </script>
-<style>
+<style scoped>
 .container {
     display: flex;
-    flex-direction: column;
-    align-items: center;
     justify-content: center;
+    align-items: center;
     height: 100vh;
 }
 
 .form {
     width: 400px;
+    padding: 20px;
+    background-color: #f5f5f5;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.button {
-    margin-top: 20px;
-    text-align: center;
+.el-form-item__label {
+    color: #333;
+    font-weight: bold;
 }
 
-.error-message {
-    color: red;
+.el-input {
+    width: 100%;
 }
 
-.error-message {
-    color: blue;
+.el-button {
+    margin-right: 10px;
 }
-
-
 </style>

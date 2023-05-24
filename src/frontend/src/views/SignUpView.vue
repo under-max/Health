@@ -1,20 +1,20 @@
 <template>
-    <div>
-        <el-form :model="form" :rules="rules" ref="loginForm" label-width="120px">
+    <div class="container">
+        <el-form :model="form" :rules="rules" ref="loginForm" label-width="120px" class="custom-form">
             <el-form-item label="이메일" prop="email" required>
-                <el-input v-model="form.email" placeholder="이메일을 입력해주세요"></el-input>
+                <el-input v-model="form.email" placeholder="이메일 입력"></el-input>
             </el-form-item>
             <el-form-item>
                 <el-button @click="checkEmailAvailability" type="primary">중복 검증</el-button>
             </el-form-item>
             <el-form-item label="비밀번호" prop="password" required>
-                <el-input v-model="form.password" type="password" placeholder="비밀번호를 입력해주세요"></el-input>
+                <el-input v-model="form.password" type="password" placeholder="비밀번호 입력"></el-input>
             </el-form-item>
             <el-form-item label="비밀번호 확인" prop="confirmPassword" required>
-                <el-input v-model="form.confirmPassword" type="password" placeholder="비밀번호를 다시 입력해주세요"></el-input>
+                <el-input v-model="form.confirmPassword" type="password" placeholder="비밀번호 다시입력"></el-input>
             </el-form-item>
             <el-form-item label="이름" prop="name" required>
-                <el-input v-model="form.name" placeholder="닉네임을 입력해주세요"></el-input>
+                <el-input v-model="form.name" placeholder="닉네임 입력"></el-input>
             </el-form-item>
             <el-form-item>
                 <el-button @click="checkNameAvailability" type="primary">중복 검증</el-button>
@@ -148,7 +148,7 @@ const submitForm = () => {
                 })
                 .catch((error) => {
                     if (error.response) {
-                        const errorMessage = error.response.data.message;
+                        const errorMessage = error.response.data.errors[0].defaultMessage;
                         showCustomAlert(`${errorMessage}`)
                     }
                 });
@@ -160,26 +160,31 @@ onMounted(() => {
     loginFormRef.value = loginForm;
 })
 </script>
-<style>
+<style scoped>
 .container {
     display: flex;
-    flex-direction: column;
-    align-items: center;
     justify-content: center;
+    align-items: center;
     height: 100vh;
 }
 
-.form {
-    width: 400px;
+.custom-form {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.button {
+.el-form-item__label {
+    color: #333;
+    font-weight: bold;
+}
+
+.el-input {
+    width: 100%;
+}
+
+.el-button {
     margin-top: 20px;
-    text-align: center;
 }
-
-.error-message {
-    color: red;
-}
-
 </style>
