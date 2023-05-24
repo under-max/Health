@@ -36,14 +36,17 @@
           </li>
 
           <li>
-            <template v-if="!Login">
+            <template v-if="!isLoggedIn">
               <button>
-                <RouterLink to="/login">Login</RouterLink>
+                <RouterLink to="/login">로그인</RouterLink>
               </button>
             </template>
             <template v-else>
+              <button @click="logout()">
+                  <RouterLink to="/">로그아웃</RouterLink>
+              </button>
               <button>
-                <RouterLink to="/info">MyPage</RouterLink>
+                  <RouterLink to="/info">개인정보수정</RouterLink>
               </button>
             </template>
           </li>
@@ -56,6 +59,20 @@
 
 <script setup>
 import logo from '@/assets/Logo.png';
+import {RouterLink} from "vue-router";
+import {computed} from "vue";
+import store from "@/stores/store";
+import Cookies from "vue-cookies";
+import router from "@/router";
+
+const token = computed(() => store.getters.getToken);
+const isLoggedIn = computed(() => !!token.value);
+const logout = function () {
+    store.commit("setToken", ""); // 로그아웃 시 토큰 초기화
+    Cookies.remove('accessToken'); // 쿠키에서 access token 값 삭제
+    Cookies.remove('refreshToken'); // 쿠키에서 refresh token 값 삭제
+    router.replace("/")
+}
 </script>
 
 <style scoped>

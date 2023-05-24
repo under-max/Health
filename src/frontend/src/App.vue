@@ -19,5 +19,16 @@ body{
   background-repeat: no-repeat;
   height: 100vh;
 }
-
+.custom-alert {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 20px;
+    background-color: #3C689F;
+    color: #fff;
+    text-align: center;
+    font-size: 18px;
+    z-index: 9999;
+}
 </style>
