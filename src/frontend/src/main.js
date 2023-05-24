@@ -51,7 +51,8 @@ axios.interceptors.response.use(
                             Cookies.set('refreshToken', refreshToken, 60*60*24*30);
                         }
                         // router.replace({ name: "/" });
-                        return Promise.resolve(response);
+                        // return Promise.resolve(response);
+                        window.location.reload()
                     })
             } else {
             store.commit("setToken", "");

@@ -41,7 +41,7 @@ public class AuthController {
                 .setSubject(String.valueOf(loginUser.getUserId()))
                 .signWith(Keys.hmacShaKeyFor(Base64.getDecoder().decode(key)))
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + (30 * 60 * 1000L))) // 30분
+                .setExpiration(new Date(System.currentTimeMillis() + ( 30 * 60 * 1000L))) // 30분
                 .compact();
 
         String refreshJws = Jwts.builder()
@@ -64,7 +64,7 @@ public class AuthController {
                 .setSubject(String.valueOf(authUser.getUserId()))
                 .signWith(Keys.hmacShaKeyFor(Base64.getDecoder().decode(key)))
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + (1800L * 1000L))) // 30분
+                .setExpiration(new Date(System.currentTimeMillis() + (30 * 60 * 1000L))) // 30분
                 .compact();
 
         String refreshJws = Jwts.builder()
