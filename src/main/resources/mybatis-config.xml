@@ -7,5 +7,6 @@
     <mappers>
         <mapper resource="com.example.demo.mapper/UserMapper.xml"/>
         <mapper resource="com.example.demo.mapper/MembershipMapper.xml"/>
+        <mapper resource="com.example.demo.mapper/CenterMapper.xml"/>
     </mappers>
 </configuration>
