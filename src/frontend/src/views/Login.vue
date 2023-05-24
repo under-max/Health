@@ -15,7 +15,7 @@
             <input type="checkbox" id="keep" v-model="keepLogin" model-value=true/>
             </span>
             <button class="btn" @click.prevent="login()">로그인</button>
-            <div>
+            <div >
                 <RouterLink style="color:white" to="/signup">
                     <button class="btn mt-2">
                         회원가입
@@ -30,7 +30,50 @@
 </template>
 
 
-<script>
+<script setup>
+import {mapMutations} from "vuex";
+import axios from "axios";
+import {onMounted, ref} from "vue";
+import {RouterLink, useRouter} from "vue-router";
+import store from "@/stores/store";
+import Cookies from 'vue-cookies';
+import {showCustomAlert} from "@/main";
+
+const email = ref("");
+const password = ref("");
+const {setToken} = mapMutations(["setToken"]);
+const router = useRouter();
+
+const keepLogin = ref(false);
+
+const login = () => {
+    const expirationTime = new Date(); // 현재 시간을 기준으로 설정
+    expirationTime.setTime(expirationTime.getTime() + (1 * 60 * 60 * 1000))
+    axios.post("/api/auth/login", {
+        email: email.value,
+        password: password.value,
+    }).then((response) => {
+        const accessToken = response.data.accessToken;
+        console.log(accessToken)
+        if (accessToken) {
+            Cookies.set('accessToken', accessToken, 60 * 60);
+            store.commit('setToken', accessToken);
+            // 1시간 동안 유효한 쿠키 설정 // 서버의 token 유효기간보다 30분 길게 설정
+        }
+        const refreshToken = response.data.refreshToken;
+        console.log(refreshToken)
+        if (keepLogin.value == true) { //
+            Cookies.set('refreshToken', refreshToken, 60 * 60 * 24 * 31);
+            // 31일 동안 유효한 쿠키 설정 // 서버의 token 유효기간보다 1일 길게 설정
+        }
+        router.replace("/");
+    }).catch((error) => {
+        if (error.response) {
+            showCustomAlert(error.response.data.message)
+        }
+    });
+}
+
 
 </script>
 

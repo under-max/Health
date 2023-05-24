@@ -4,7 +4,7 @@ import com.example.demo.entity.User;
 import com.example.demo.exception.DuplicateEmail;
 import com.example.demo.exception.UserNotFound;
 import com.example.demo.mapper.UserMapper;
-import com.example.demo.request.DeleteUser;
+import com.example.demo.request.UserDelete;
 import com.example.demo.request.UserCreate;
 import com.example.demo.request.UserEdit;
 import com.example.demo.response.UserResponse;
@@ -25,11 +25,12 @@ public class UserService {
     private final UserMapper userMapper;
 
     private final PasswordEncoder passwordEncoder;
+
     public User add(UserCreate userCreate) {
         if (!userMapper.findByEmail(userCreate.getEmail()).isEmpty()) {
             throw new DuplicateEmail();
         }
-        if (!userMapper.findByName(userCreate.getName()).isEmpty()){
+        if (!userMapper.findByName(userCreate.getName()).isEmpty()) {
             throw new DuplicateEmail("중복된 닉네임입니다.");
         }
         User user = User.builder()
@@ -56,19 +57,33 @@ public class UserService {
     }
 
     public void edit(UserEdit userEdit) {
-        if(!userMapper.findByName(userEdit.getName()).isEmpty()
-                && !userMapper.findByName(userEdit.getName()).orElseThrow().getId().equals(userEdit.getUserId())){
+        if (!passwordEncoder.matches(userEdit.getPassword(), userMapper.findById(userEdit.getUserId()).orElseThrow().getPassword())) {
+            throw new DuplicateEmail("이전 비밀번호를 확인하세요");
+        }
+        if (!userMapper.findByName(userEdit.getName()).isEmpty()
+                && !userMapper.findByName(userEdit.getName()).orElseThrow().getId().equals(userEdit.getUserId())) {
             throw new DuplicateEmail("중복된 닉네임입니다.");
-        };
+        }
 
-        userMapper.update(userEdit);
-
+        if (userEdit.getNewPassword() != null && !userEdit.getNewPassword().equals("")) {
+            userMapper.update(UserEdit.builder()
+                    .userId(userEdit.getUserId())
+                    .name(userEdit.getName())
+                    .password(passwordEncoder.encode(userEdit.getNewPassword()))
+                    .build());
+        } else {
+            userMapper.update(UserEdit.builder()
+                    .userId(userEdit.getUserId())
+                    .name(userEdit.getName())
+                    .password(passwordEncoder.encode(userEdit.getPassword()))
+                    .build());
+        }
     }
 
-    public void delete(DeleteUser deleteUser) {
-        User user = userMapper.findById(deleteUser.getAuthedUserId()).orElseThrow();
-        if(!passwordEncoder.matches(deleteUser.getPassword(), user.getPassword())){
-            throw new DuplicateEmail("이전비밀번호를 확인하세요.");
+    public void delete(UserDelete userDelete) {
+        User user = userMapper.findById(userDelete.getAuthedUserId()).orElseThrow();
+        if (!passwordEncoder.matches(userDelete.getPassword(), user.getPassword())) {
+            throw new DuplicateEmail("이전 비밀번호를 확인하세요.");
         }
         userMapper.delete(user.getId());
     }

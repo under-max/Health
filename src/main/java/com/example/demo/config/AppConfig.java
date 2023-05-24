@@ -15,6 +15,10 @@ import java.util.Base64;
 @Data
 @Configuration
 public class AppConfig {
+
+    @Value("${jtw.key}")
+    public String key;
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

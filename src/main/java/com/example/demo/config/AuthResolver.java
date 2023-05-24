@@ -22,9 +22,8 @@ import java.util.Base64;
 @Slf4j
 @Component
 public class AuthResolver implements HandlerMethodArgumentResolver {
+    private final AppConfig appConfig;
 
-    @Value("${jtw.key}")
-    public String key;
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
@@ -33,7 +32,7 @@ public class AuthResolver implements HandlerMethodArgumentResolver {
 
     @Override
     public AuthUser resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
-        log.info("AuthResolver 실행");
+        log.info(">>>>AuthResolver 실행");
         String accessJws = webRequest.getHeader("Authorization");
         String refreshJws = webRequest.getHeader("RefreshToken");
         String jws = "";
@@ -42,7 +41,7 @@ public class AuthResolver implements HandlerMethodArgumentResolver {
            jws = refreshJws;
            try{
                Jws<Claims> claims = Jwts.parserBuilder()
-                        .setSigningKey(Keys.hmacShaKeyFor(Base64.getDecoder().decode(key)))
+                        .setSigningKey(Keys.hmacShaKeyFor(Base64.getDecoder().decode(appConfig.key)))
 //                        .setAllowedClockSkewSeconds(60) // 1분까지는 시간차이를 허용
                         .build()
                         .parseClaimsJws(jws);
@@ -62,7 +61,7 @@ public class AuthResolver implements HandlerMethodArgumentResolver {
         // 일반 accessToken 검증 및 처리
         try {
         Jws<Claims> claims = Jwts.parserBuilder()
-                .setSigningKey(Keys.hmacShaKeyFor(Base64.getDecoder().decode(key)))
+                .setSigningKey(Keys.hmacShaKeyFor(Base64.getDecoder().decode(appConfig.key)))
 //                .setAllowedClockSkewSeconds(60) // 1분까지는 시간차이를 허용
                 .build()
                 .parseClaimsJws(jws);

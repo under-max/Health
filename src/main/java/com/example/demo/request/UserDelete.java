@@ -2,16 +2,18 @@ package com.example.demo.request;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class DeleteUser {
+@NoArgsConstructor
+public class UserDelete {
     private Long authedUserId;
     private String password;
 
     @Builder
-    public DeleteUser(String password, Long authedUserId) {
+    public UserDelete(String password, Long authedUserId) {
         this.password = password;
         this.authedUserId = authedUserId;
     }
