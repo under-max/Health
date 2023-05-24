@@ -7,6 +7,7 @@ import com.example.demo.mapper.UserMapper;
 import com.example.demo.request.UserDelete;
 import com.example.demo.request.UserCreate;
 import com.example.demo.request.UserEdit;
+import com.example.demo.response.UserDetailResponse;
 import com.example.demo.response.UserResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -86,6 +87,14 @@ public class UserService {
             throw new DuplicateEmail("이전 비밀번호를 확인하세요.");
         }
         userMapper.delete(user.getId());
+    }
+
+    public List<User> listAllTest() {
+        return userMapper.findAllTest();
+    }
+
+    public UserDetailResponse getTest(Long id) {
+        return userMapper.findByIdTest(id);
     }
 }
 

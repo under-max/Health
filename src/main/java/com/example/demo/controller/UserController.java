@@ -5,6 +5,7 @@ import com.example.demo.entity.User;
 import com.example.demo.request.UserDelete;
 import com.example.demo.request.UserCreate;
 import com.example.demo.request.UserEdit;
+import com.example.demo.response.UserDetailResponse;
 import com.example.demo.response.UserResponse;
 import com.example.demo.service.UserService;
 import jakarta.validation.Valid;
@@ -53,4 +54,34 @@ public class UserController {
                 .password(password)
                 .build());
     }
+
+    @GetMapping("/test/lists")
+    public List<User> list() {
+        List<User> listAll = userService.listAllTest();
+        return listAll;
+    }
+
+    @GetMapping("/test/user/{id}")
+    public UserDetailResponse UserDetail(@PathVariable Long id) {
+        UserDetailResponse detailTest = userService.getTest(id);
+        log.info("호출");
+        return detailTest;
+    }
+
+//    @GetMapping("/test/lists")
+//    public User list() {
+//        User user = new User();
+//        user.setId(1L);
+//        user.setName("강백호");
+//        return user;
+//    }
+
+    //    @GetMapping("/test/lists")
+//    public Map<Long, Object> list() {
+//        Map<Long, Object> map = Map.of(1L, Map.of("id", 1L, "name", "강백호"));
+//        return map;
+//    }
+
+
+
 }
