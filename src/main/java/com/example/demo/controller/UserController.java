@@ -61,7 +61,7 @@ public class UserController {
     }
 
     @GetMapping("/test/user/{id}")
-    public UserDetailResponse UserDetail(@PathVariable Long id) {
+    public UserDetailResponse UserDetail(@PathVariable Long id, AuthUser authUser) {
         UserDetailResponse detailTest = userService.getTest(id);
         log.info("호출");
         return detailTest;
