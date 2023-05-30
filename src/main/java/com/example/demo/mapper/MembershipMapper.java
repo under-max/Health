@@ -1,6 +1,8 @@
 package com.example.demo.mapper;
 
+import com.example.demo.entity.Center;
 import com.example.demo.entity.Membership;
+import com.example.demo.entity.Trainer;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -9,12 +11,15 @@ import java.util.Optional;
 @Mapper
 public interface MembershipMapper {
 
-    void createMembership(Membership membership);
+    Integer createMembership(Membership membership);
 
-    List<Membership> findAll();
+    Optional<Membership> findByMembershipId(Integer membershipId);
 
-    Optional<Membership> findById(Integer memberId);
+    Membership findByMemberId(Integer memberId);
 
-    Integer update(Membership membership);
+    Integer updateMembership(Membership membership);
 
+    List<Center> findCenters();
+
+    List<Trainer> findTrainers(Integer centerId);
 }

@@ -8,21 +8,32 @@
             (#{memberId}, #{startDate}, #{endDate}, #{remainingPT})
     </insert>
 
-    <select id="findById" resultType="Membership">
+    <select id="findByMembershipId" resultType="Membership">
+        select * from MEMBERSHIP
+        where membershipId = #{membershipId}
+    </select>
+
+    <select id="findByMemberId" resultType="Membership">
         select * from MEMBERSHIP
         where memberId = #{memberId}
     </select>
 
-    <select id="findAll" resultType="Membership">
-        select * from MEMBERSHIP
-    </select>
-
-    <update id="update">
+    <update id="updateMembership">
         update MEMBERSHIP
         set
             endDate = #{endDate},
             remainingPT = #{remainingPT}
         where memberId = #{memberId}
     </update>
+
+    <select id="findCenters" resultType="Center">
+        select id, name from CENTER
+    </select>
+
+    <select id="findTrainers" resultType="Trainer">
+        select id, name from TRAINER
+        where centerId = #{centerId}
+    </select>
+
 </mapper>
 

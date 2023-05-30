@@ -1,6 +1,9 @@
 package com.example.demo.controller;
 
+import com.example.demo.request.membership.PayReadyRequest;
+import com.example.demo.response.membership.PaySuccessResponse;
 import com.example.demo.service.KaKaoPayService;
+import jakarta.validation.Valid;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,22 +17,17 @@ public class KaKaoPayController {
 
     private final KaKaoPayService kaKaoPayService;
 
-    @PostMapping("/test/membership/pay")
-    public ResponseEntity<KaKaoPayService.PayReadyResponse> pay(@RequestBody PayRequest payRequest) {
-        log.info("KaKaoPayController 호출 request={}", payRequest);
-        return kaKaoPayService.kakaoPayReady(payRequest.memberId);
+    @PostMapping("/kakaopay")
+    public String payReady(@RequestBody @Valid PayReadyRequest request) {
+
+        log.info("payReady() request={}", request);
+        String redirectPcUrl = kaKaoPayService.kakaoPayReady(request).getBody().getNext_redirect_pc_url();
+        return redirectPcUrl;
     }
 
-    @GetMapping("/test/kakaoPaySuccess")
-    public void paySuccess(@RequestParam("pg_token") String token) {
-        log.info("pg_token={}", token);
-        kaKaoPayService.kakaoPayApprove(token);
-    }
-
-    @Data
-    static class PayRequest {
-        private Integer memberId;
-        private Integer totalPrice;
+    @GetMapping("/kakaopay/{pg_token}")
+    public PaySuccessResponse payApprove(@PathVariable("pg_token") String token) {
+        return kaKaoPayService.kakaoPayApprove(token);
     }
 
 }
