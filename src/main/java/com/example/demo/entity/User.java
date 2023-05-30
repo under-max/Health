@@ -18,27 +18,25 @@ public class User {
     private String address;
     private String email;
     private String password;
-    private String phoneNumber;
-    private String gender;
-    private Long age;
+    private String birthDate;
     private Long centerId;
     private Long trainerId;
-    private boolean isInCenter;
+    private Integer isInCenter;
+    private String nickName;
     private LocalDateTime dateTime;
-    @Builder
 
-    public User(Long id, String name, String address, String email, String password, String phoneNumber, String gender, Long age, Long centerId, Long trainerId, boolean isInCenter, LocalDateTime dateTime) {
+    @Builder
+    public User(Long id, String name, String address, String email, String password, String birthDate, Long centerId, Long trainerId, Integer isInCenter, String nickName, LocalDateTime dateTime) {
         this.id = id;
         this.name = name;
         this.address = address;
         this.email = email;
         this.password = password;
-        this.phoneNumber = phoneNumber;
-        this.gender = gender;
-        this.age = age;
+        this.birthDate = birthDate;
         this.centerId = centerId;
         this.trainerId = trainerId;
         this.isInCenter = isInCenter;
+        this.nickName = nickName;
         this.dateTime = dateTime;
     }
 }

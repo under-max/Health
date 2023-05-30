@@ -8,6 +8,7 @@ import Login from "@/views/Login.vue";
 import Information from "@/views/Information.vue";
 import UserDetail from "@/views/UserDetail.vue";
 import SignUpView from "@/views/SignUpView.vue";
+import TrainerDetail from "@/views/TrainerDetail.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -17,15 +18,7 @@ const router = createRouter({
       name: 'main',
       component: Main
     },
-    {
-      path: '/exercise',
-      name: 'exercise',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: Exercise
-    },
-    {
+        {
       path: '/search',
       name: 'search',
       component : Search
@@ -51,12 +44,22 @@ const router = createRouter({
       component: Information
     },
     {
+      path: '/exercise',
+      name: 'exercise',
+      component: Exercise
+    },
+    {
       path: '/userDetail/:userId',
       name: 'userDetail',
       component: UserDetail,
       props : true
-    }
-    ,
+    },
+    {
+      path: '/trainerDetail/:trainerId',
+      name: 'trainerDetail',
+      component: TrainerDetail,
+      props : true
+    },
     {
       path: '/signup',
       name: 'signup',
