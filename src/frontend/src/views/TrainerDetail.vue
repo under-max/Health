@@ -23,18 +23,61 @@
 <!--              </ul>-->
 <!--            </div>-->
             <div class="event" v-if="day.date > 0">
+
             </div>
           </td>
         </tr>
         </tbody>
       </table>
     </div>
+
+        <div v-for="user in list">
+          <p>{{user.id}} {{user.name}} {{user.remainingPT}}</p>
+        </div>
+
+
+    <select v-model="userSelect">
+      <option value="" disabled selected>고객리스트</option>
+      <option v-for="user in list" :value="user.value">{{user.name}}</option>
+    </select>
+
+    {{list.remainingPT}}
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import {ref, computed, onMounted, defineProps} from 'vue';
+import axios from "axios";
 
+const userSelect = ref("");
+const props = defineProps({
+  trainerId : {
+    type : [Number, String],
+    required : true
+  },
+});
+
+// 해당 트레이너의 고객리스트 저장
+const list = ref({
+  id : '',
+  name : '',
+  remainingPT : ''
+});
+
+
+onMounted(() => {
+  console.log()
+  axios.get(`/api/test/trainerDetail/${props.trainerId}`, {})
+    .then((response) => {
+      list.value = response.data;
+      console.log(response.data);
+    })
+      .catch((error) => {
+        if (error.response) {
+          alert(error.response.data.message);
+        }
+    })
+})
 
 // 달력 데이터 초기화
 const currentDate = new Date();
@@ -44,14 +87,14 @@ const daysOfWeek = ['일', '월', '화', '수', '목', '금', '토'];
 
 // 일정 데이터 초기화
 const events = ref([
-  {
-    date: new Date(year.value, month.value, 5),
-    event: '회의',
-  },
-  {
-    date: new Date(year.value, month.value, 15),
-    event: '생일',
-  },
+  // {
+  //   date: new Date(year.value, month.value, 5),
+  //   event: '회의',
+  // },
+  // {
+  //   date: new Date(year.value, month.value, 15),
+  //   event: '생일',
+  // },
 ]);
 
 // 현재 월 계산
@@ -166,6 +209,7 @@ th {
 
 .today {
   background-color: #e8f0fe;
+  font-weight: bold;
 }
 
 .selected {
@@ -181,5 +225,6 @@ input[type='text'] {
   width: 100%;
   padding: 5px;
 }
+
 
 </style>
