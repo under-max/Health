@@ -1,10 +1,8 @@
 <script setup>
-
-// 센터 리스트
 import {onMounted, ref, watchEffect} from "vue";
 import axios from "axios";
 
-const memberId = ref(8);
+const memberId = ref(12);
 // const paymentMonths = ref(0);
 // const centerName = ref("");
 const totalPrice = ref(0);
@@ -19,8 +17,8 @@ const selectedCenter = ref({
 });
 
 const selectedTrainer = ref({
-  id: '',
-  name: ''
+  trainerId: '',
+  trainerName: ''
 });
 
 const selectedMonth = ref("");
@@ -32,7 +30,7 @@ const payReadyUrl = ref("");
 const showModal = ref(false);
 
 // 센터 리스트
-const centerSelectList = ref([]);
+const centerList = ref([]);
 
 // 센터에 소속된 트레이너 리스트
 const trainerList = ref([]);
@@ -105,7 +103,7 @@ const fetchTrainers = () => {
   axios
       .get(`/api/membership/centers/${selectedCenter.value.centerId}`, {})
       .then((response) => {
-        trainerList.value = response.data.trainers;
+        trainerList.value = response.data;
       })
       .catch((error) => {
         console.log(error)
@@ -117,8 +115,7 @@ onMounted(() => {
   axios
       .get("/api/membership/centers", {})
       .then((response) => {
-        console.log(response.data);
-        centerSelectList.value = response.data;
+        centerList.value = response.data;
       })
       .catch((error) => {
         console.log(error)
@@ -136,7 +133,7 @@ onMounted(() => {
       <div>
         <select v-model="selectedCenter" @change="fetchTrainers">
           <option disabled value="">다음 중 하나를 선택하세요</option>
-          <option v-for="center in centerSelectList" :value="center">
+          <option v-for="center in centerList" :value="center">
             {{ center.centerName }}
           </option>
         </select>
@@ -146,7 +143,7 @@ onMounted(() => {
         <select v-model="selectedTrainer">
           <option disabled value="">다음 중 하나를 선택하세요</option>
           <option v-for="trainer in trainerList" :value="trainer">
-            {{ trainer.name }}
+            {{ trainer.trainerName }}
           </option>
         </select>
       </div>
@@ -167,7 +164,9 @@ onMounted(() => {
       {{
         totalPrice = monthSelectList?.find(item => item.value === selectedMonth).price + ptSelectList?.find(item => item.value === selectedPT).price
       }}원
+
     </div>
+
     <div>
       <form @submit.prevent="submitPayment">
         <button class="btn btn-primary" type="submit" :disabled="isButtonDisabled">카카오페이로 결제하기</button>
@@ -182,7 +181,7 @@ onMounted(() => {
             <div class="modal-body p-4 text-center">
               <h5 class="mb-0">구매 결정</h5>
               <p class="mb-0">지점 : {{ selectedCenter.centerName }}</p>
-              <p class="mb-0">담당 트레이너: {{ selectedTrainer.name }}</p>
+              <p class="mb-0">담당 트레이너: {{ selectedTrainer.trainerName }}</p>
               <p class="mb-0">이용권 : {{ selectedMonth }}개월</p>
               <p class="mb-0">PT횟수 : {{ selectedPT }}회</p>
               <p class="mb-0">구매 가격 : {{ totalPrice }}원 </p>

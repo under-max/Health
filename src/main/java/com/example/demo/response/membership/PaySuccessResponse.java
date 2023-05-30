@@ -8,22 +8,24 @@ import java.time.LocalDateTime;
 @Data
 public class PaySuccessResponse {
     private Integer memberId;
-    private String itemName;
+    private String centerName;
     private Integer paymentMonths;
     private Integer remainingPT;
     private Integer totalPrice;
-    private LocalDateTime approvedAt;
+    private String approvedDate;
+    private String approvedTime;
 
     public PaySuccessResponse() {
     }
 
     @Builder
-    public PaySuccessResponse(Integer memberId, String itemName, Integer paymentMonths, Integer remainingPT, Integer totalPrice, LocalDateTime approvedAt) {
+    public PaySuccessResponse(Integer memberId, String centerName, Integer paymentMonths, Integer remainingPT, Integer totalPrice, String approvedDate, String approvedTime) {
         this.memberId = memberId;
-        this.itemName = itemName;
+        this.centerName = centerName;
         this.paymentMonths = paymentMonths;
         this.remainingPT = remainingPT;
         this.totalPrice = totalPrice;
-        this.approvedAt = approvedAt;
+        this.approvedDate = approvedDate;
+        this.approvedTime = approvedTime;
     }
 }

@@ -1,6 +1,5 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import {createRouter, createWebHistory} from 'vue-router'
 import Center from "@/views/Center.vue";
-import Register from "../components/center/container/Register.vue"
 
 import Exercise from "@/views/Exercise.vue";
 import Membership from "@/views/Membership.vue";
@@ -11,6 +10,7 @@ import Information from "@/views/Information.vue";
 import UserDetail from "@/views/UserDetail.vue";
 import SignUpView from "@/views/SignUpView.vue";
 import TrainerDetail from "@/views/TrainerDetail.vue";
+import SuccessPage from "@/views/payment/SuccessPage.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -66,6 +66,11 @@ const router = createRouter({
       path: '/signup',
       name: 'signup',
       component: SignUpView
+    },
+    {
+      path: '/payment/success',
+      name: 'successPage',
+      component: SuccessPage
     }
   ]
 })

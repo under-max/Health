@@ -1,5 +1,7 @@
 package com.example.demo.service;
 
+import com.example.demo.request.membership.PayReadyRequest;
+import com.example.demo.response.membership.PaySuccessResponse;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,11 +29,10 @@ public class KaKaoPayService {
     @Value("${admin.key}")
     private String adminKey;
     private static final String HOST = "https://kapi.kakao.com";
+    public static final String CID = "TC0ONETIME";
     private static final Map<String, String> store = new HashMap<>();
 
-    public ResponseEntity<PayReadyResponse> kakaoPayReady(Integer memberId) {
-
-        store.put("memberId", String.valueOf(memberId));
+    public ResponseEntity<PayReadyResponse> kakaoPayReady(PayReadyRequest request) {
 
         URI uri = UriComponentsBuilder
                 .fromUriString(HOST)
@@ -48,29 +49,39 @@ public class KaKaoPayService {
         headers.add("Accept", MediaType.APPLICATION_JSON_VALUE);
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
+        // item_name
+        if (request.getPt() == null) {
+            request.setPt(0);
+        }
+        String itemName = request.getCenterName() + ": 이용권(" + request.getMonth() + "개월, " + "PT " + request.getPt() + "회)";
+
         // 서버로 요청할 Body
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("cid", "TC0ONETIME");
+        params.add("cid", CID);
         params.add("partner_order_id", "1001");
-        params.add("partner_user_id", String.valueOf(memberId));
-        params.add("item_name", "이용권");
+        params.add("partner_user_id", String.valueOf(request.getMemberId()));
+        params.add("item_name", itemName);
         params.add("quantity", "1");
-        params.add("total_amount", "100");
+        params.add("total_amount", String.valueOf(request.getTotalPrice()));
         params.add("tax_free_amount", "10");
-        params.add("approval_url", "http://localhost:8090/test/kakaoPaySuccess"); // 결제 성공 url
-        params.add("cancel_url", "http://localhost:8090/test/kakaoPayCancel"); // 결제 취소 url
-        params.add("fail_url", "http://localhost:8090/test/kakaoPaySuccessFail"); // 결제 실패 url
+        params.add("approval_url", "http://localhost:5173/payment/success"); // 결제 성공 url
+        params.add("cancel_url", "http://localhost:5173/payment/cancel"); // 결제 취소 url
+        params.add("fail_url", "http://localhost:5173/payment/fail"); // 결제 실패 url
 
-        RequestEntity<MultiValueMap<String, String>> request = RequestEntity
+        RequestEntity<MultiValueMap<String, String>> requestEntity = RequestEntity
                 .post(uri)
                 .headers(headers)
                 .body(params);
 
-        log.info("kakaoPayReady map request={}", request);
+        log.info("kakaoPayReady() requestEntity={}", requestEntity);
 
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<PayReadyResponse> response = restTemplate.exchange(request, PayReadyResponse.class);
+        ResponseEntity<PayReadyResponse> response = restTemplate.exchange(requestEntity, PayReadyResponse.class);
+
+        // approve에서 사용할 정보
+        store.put("memberId", String.valueOf(request.getMemberId()));
         store.put("tid", response.getBody().getTid());
+
         log.info("Headers={}", response.getHeaders());
         log.info("StatusCode={}", response.getStatusCode());
         log.info("body={}", response.getBody());
@@ -78,7 +89,7 @@ public class KaKaoPayService {
         return response;
     }
 
-    public ResponseEntity<PayApproveResponse> kakaoPayApprove(String pgToken) {
+    public PaySuccessResponse kakaoPayApprove(String token) {
 
         URI uri = UriComponentsBuilder
                 .fromUriString(HOST)
@@ -95,38 +106,56 @@ public class KaKaoPayService {
         headers.add("Accept", MediaType.APPLICATION_JSON_VALUE);
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
-        //?
-//        ResponseEntity<PayReadyResponse> ready = kakaoPayReady(1);
-
         // 서버로 요청할 Body
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("cid", "TC0ONETIME");
+        params.add("cid", CID);
         params.add("tid", store.get("tid"));
         params.add("partner_order_id", "1001");
         params.add("partner_user_id", store.get("memberId"));
-        params.add("pg_token", pgToken);
+        params.add("pg_token", token);
 
-        RequestEntity<MultiValueMap<String, String>> request = RequestEntity
+        RequestEntity<MultiValueMap<String, String>> requestEntity = RequestEntity
                 .post(uri)
                 .headers(headers)
                 .body(params);
 
-        log.info("kakaoPayApprove map request={}", request);
+        log.info("kakaoPayApprove() requestEntity={}", requestEntity);
 
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<PayApproveResponse> response = restTemplate.exchange(request, PayApproveResponse.class);
+        ResponseEntity<PayApproveResponse> response = restTemplate.exchange(requestEntity, PayApproveResponse.class);
+
         log.info("Headers={}", response.getHeaders());
         log.info("StatusCode={}", response.getStatusCode());
         log.info("body={}", response.getBody());
 
-        return response;
+        //String itemName = request.getCenterName() + ": 이용권(" + request.getMonth() + "개월, " + "PT " + request.getPt() + "회";
+        //강백호짐: 이용권(5개월, PT 10회)
+        String responseItemName = response.getBody().getItem_name();
+
+        String centerName = responseItemName.substring(0, responseItemName.indexOf(":")).trim();
+        String month = responseItemName.substring(responseItemName.indexOf("(") + 1, responseItemName.indexOf("개월")).trim();
+        String pt = responseItemName.substring(responseItemName.indexOf("PT") + 3, responseItemName.indexOf("회")).trim();
+
+        PaySuccessResponse successResponse = PaySuccessResponse.builder()
+                .memberId(Integer.valueOf(response.getBody().getPartner_user_id()))
+                .centerName(centerName)
+                .paymentMonths(Integer.valueOf(month))
+                .remainingPT(Integer.valueOf(pt))
+                .totalPrice(Integer.valueOf(response.getBody().getAmount().getTotal()))
+                .approvedDate(response.getBody().getApproved_at().toLocalDate().toString())
+                .approvedTime(response.getBody().getApproved_at().toLocalTime().toString())
+                .build();
+
+        log.info("successResponse={}", successResponse);
+
+        return successResponse;
     }
 
     @Data
     public static class PayReadyResponse {
         private String tid;
         private String next_redirect_pc_url;
-        private LocalDateTime create_at;
+        private LocalDateTime created_at;
     }
 
     @Data

@@ -6,11 +6,12 @@ import router from "@/router";
 // 결제 성공 시 넘겨받는 데이터
 const successData = ref({
   memberId: '',
-  itemName: '',
+  centerName: '',
   paymentMonths: '',
   remainingPT: '',
   totalPrice: '',
-  approvedAt: ''
+  approvedDate: '',
+  approvedTime: ''
 });
 
 const goToMyInfo = () => {
@@ -57,12 +58,14 @@ onMounted(() => {
   <div class="container">
     <div class="card">
       <div class="card-body">
-        <h5 class="card-title">{{ successData.itemName }}</h5>
+        <h5 class="card-title">123</h5>
         <p class="card-text">
-          <strong>상세내역:</strong> 헬스장 이용권 ({{ successData.paymentMonths }}개월), PT {{ successData.remainingPT }}회
-        </p>
-        <p class="card-text">
-          <strong>가격:</strong> {{ successData.totalPrice }}원
+          <strong>===상세내역===</strong> <br>
+          지점 : {{ successData.centerName }} <br>
+          기한 : {{ successData.paymentMonths }}개월 <br>
+          pt : {{ successData.remainingPT }}회 <br>
+          가격 : {{ successData.totalPrice }}원 <br>
+          결제일 : {{ successData.approvedDate}},{{ successData.approvedTime }} <br>
         </p>
       </div>
     </div>
@@ -98,6 +101,7 @@ onMounted(() => {
 
 .card-text {
   margin-bottom: 5px;
+  text-align: center;
 }
 
 .buttons {
