@@ -1,8 +1,9 @@
 package com.example.demo.service;
 
-import com.example.demo.entity.CenterEntity;
+import com.example.demo.entity.Center;
 import com.example.demo.mapper.CenterMapper;
 import com.example.demo.request.CenterRequest;
+import com.example.demo.response.CenterResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -13,7 +14,10 @@ import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -35,16 +39,16 @@ public class CenterService {
 
     public Integer infoInsert(CenterRequest centerRequest, MultipartFile[] centerImg) throws Exception{
 
-        CenterEntity centerEntity = CenterEntity
+        Center center = Center
                 .builder()
                 .name(centerRequest.getName())
                 .address(centerRequest.getAddress())
                 .info(centerRequest.getInfo())
                 .phoneNumber(centerRequest.getPhoneNumber())
                 .build();
-        System.out.println(centerEntity);
-        centerMapper.infoInsert(centerEntity);
-        Integer Id = centerEntity.getId();
+        System.out.println(center);
+        centerMapper.infoInsert(center);
+        Integer Id = center.getId();
         System.out.println(Id);
         //aws 서버 올리기
         for(MultipartFile file : centerImg){
@@ -69,6 +73,20 @@ public class CenterService {
     }
 
 
+    public List<CenterResponse> getByCenterName(String centerName) {
+
+        List<Center> center = centerMapper.findByCenterName(centerName); //center정보
+
+        List<CenterResponse> centerResponse = new ArrayList<>();
+
+        for(Center list : center){
+            CenterResponse centerResponseList = new CenterResponse(list);
+            centerResponse.add(centerResponseList);
+            System.out.println(list);
+        }
+
+        return centerResponse;
+    }
 
 
 
