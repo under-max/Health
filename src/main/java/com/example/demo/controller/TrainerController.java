@@ -2,7 +2,9 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.AuthUser;
 import com.example.demo.entity.Trainer;
+import com.example.demo.entity.User;
 import com.example.demo.response.TrainerDetailResponse;
+import com.example.demo.response.UserListResponse;
 import com.example.demo.service.TrainerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,5 +29,11 @@ public class TrainerController {
     public TrainerDetailResponse trainerDetail(@PathVariable Integer id) {
         TrainerDetailResponse trainerDetailRes = trainerService.getTrainerTest();
         return trainerDetailRes;
+    }
+
+    @GetMapping("/test/trainerDetail/{id}")
+    public List<UserListResponse> responsibleUserList(@PathVariable Integer id) {
+        List<UserListResponse> responsibleUser = trainerService.responsibleUserList(id);
+        return responsibleUser;
     }
 }
