@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Date;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,15 +19,15 @@ public class User {
     private String address;
     private String email;
     private String password;
-    private String birthDate;
+    private Date birthDate;
     private Long centerId;
     private Long trainerId;
-    private Integer isInCenter;
+    private boolean isInCenter;
     private String nickName;
     private LocalDateTime dateTime;
-
     @Builder
-    public User(Long id, String name, String address, String email, String password, String birthDate, Long centerId, Long trainerId, Integer isInCenter, String nickName, LocalDateTime dateTime) {
+
+    public User(Long id, String name, String address, String email, String password, Date birthDate, Long centerId, Long trainerId, boolean isInCenter, String nickName, LocalDateTime dateTime) {
         this.id = id;
         this.name = name;
         this.address = address;
