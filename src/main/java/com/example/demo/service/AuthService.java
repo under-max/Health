@@ -41,17 +41,17 @@ public class AuthService {
                             .authResult(false)
                             .build();
                 }
-            case "name":
-                if (authUserResponse.getName().equals("")) {
+            case "nickName":
+                if (authUserResponse.getNickName().equals("")) {
                     throw new Unauthorized("닉네임을 입력하세요.");
                 }
 
-                if (!userMapper.findByName(authUserResponse.getName()).isEmpty()
-                        && !userMapper.findByName(authUserResponse.getName()).orElseThrow().getEmail().equals(authUserResponse.getEmail())) {
+                if (!userMapper.findByNickName(authUserResponse.getNickName()).isEmpty()
+                        && !userMapper.findByNickName(authUserResponse.getNickName()).orElseThrow().getEmail().equals(authUserResponse.getEmail())) {
                     throw new DuplicateEmail("중복된 닉네임입니다.");
                 }
                 return AuthUserResponse.builder()
-                        .name(authUserResponse.getName())
+                        .nickName(authUserResponse.getNickName())
                         .authResult(true)
                         .build();
 
@@ -72,13 +72,27 @@ public class AuthService {
                         .build();
             case "auth":
                 User authedUser = userMapper.findById(authUserResponse.getAuthedUserId()).orElseThrow();
+                log.info("{}",authedUser.getBirthDate());
+                if(authedUser.getBirthDate() != null){
+                    return AuthUserResponse.builder()
+                            .userId(authedUser.getId())
+                            .email(authedUser.getEmail())
+                            .nickName(authedUser.getNickName())
+                            .name(authedUser.getName())
+                            .address(authedUser.getAddress())
+                            .birthDate(authedUser.getBirthDate().toString())
+                            .authResult(true)
+                            .build();
+                } else {
                 return AuthUserResponse.builder()
                         .userId(authedUser.getId())
                         .email(authedUser.getEmail())
+                        .nickName(authedUser.getNickName())
                         .name(authedUser.getName())
+                        .address(authedUser.getAddress())
                         .authResult(true)
                         .build();
-
+                }
             default:
                 throw new InvalidRequest();
         }

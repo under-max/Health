@@ -108,7 +108,7 @@ public class AuthController {
                 .userId(authUserResponse.getUserId())
                 .password(authUserResponse.getPassword())
                 .service(service)
-                .name(authUserResponse.getName())
+                .nickName(authUserResponse.getNickName())
                 .authedUserId(authUser.getUserId())
                 .build());
 
@@ -120,7 +120,7 @@ public class AuthController {
         log.info("auth/signup/ {}", service);
         AuthUserResponse authedUser = authService.authUser(AuthUserResponse.builder()
                 .email(authUser.getEmail())
-                .name(authUser.getName())
+                .nickName(authUser.getNickName())
                 .service(service)
                 .build());
         return authedUser;

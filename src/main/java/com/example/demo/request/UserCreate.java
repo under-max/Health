@@ -6,21 +6,31 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.sql.Date;
+
 @Data
 @ToString
 @NoArgsConstructor
 public class UserCreate {
-    @NotBlank(message = "닉네임을 입력하세요.")
-    public String name;
+    private Long id;
     @NotBlank(message = "e-mail을 입력하세요.")
-    public String email;
+    private String email;
     @NotBlank(message = "비밀번호를 입력하세요.")
-    public String password;
+    private String password;
+    @NotBlank(message = "닉네임을 입력하세요.")
+    private String nickName;
+    private String name;
+    private String address;
+    private Date birthDate;
 
     @Builder
-    public UserCreate(String name, String email, String password) {
-        this.name = name;
+    public UserCreate(Long id, String nickName, String email, String password, String name, String address, Date birthDate) {
+        this.id = id;
         this.email = email;
         this.password = password;
+        this.nickName = nickName;
+        this.name = name;
+        this.address = address;
+        this.birthDate = birthDate;
     }
 }

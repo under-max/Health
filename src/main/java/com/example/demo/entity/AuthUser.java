@@ -18,7 +18,6 @@ public class AuthUser {
     public AuthUser(Long userId){
         this.accessToken = UUID.randomUUID().toString();
         this.userId = userId;
-        ;
     }
 }
 

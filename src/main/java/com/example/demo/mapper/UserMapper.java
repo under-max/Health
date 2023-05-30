@@ -22,9 +22,9 @@ public interface UserMapper {
     Optional<User> findByEmail(String email);
     @Select("""
             SELECT * FROM MEMBER
-            WHERE name = #{name}
+            WHERE nickName = #{nickName}
             """)
-    Optional<User> findByName(String name);
+    Optional<User> findByNickName(String nickName);
     @Select("""
             SELECT * FROM MEMBER
             WHERE id = #{id}
@@ -38,20 +38,19 @@ public interface UserMapper {
     Optional<User> findByEmailAndPassword(Login login);
 
     @Insert("""
-            INSERT INTO MEMBER(name, email, password)
-            VALUES(#{name}, #{email}, #{password})
+            INSERT INTO MEMBER(email, password, nickName, name, address, birthDate )
+            VALUES(#{email}, #{password}, #{nickName}, #{name}, #{address}, #{birthDate})
             """)
     @Options(useGeneratedKeys = true, keyColumn = "id", keyProperty = "id")
     void save(User user);
     @Update("""
-            <script>
-            
             UPDATE MEMBER SET
+                password = #{password},
+                nickName = #{nickName},
                 name = #{name},
-                password = #{password}
+                address = #{address},
+                birthDate = #{birthDate}
             WHERE ID = #{userId}
-            
-            </script>
             """)
     void update(UserEdit userEdit);
     @Delete("""
@@ -98,4 +97,16 @@ public interface UserMapper {
             WHERE m.id = #{id}
             """)
     UserDetailResponse findByIdTest(Long id);
+
+    @Insert("""
+            UPDATE MEMBER SET
+                password = #{password},
+                nickName = #{nickName},
+                name = #{name},
+                address = #{address},
+                birthDate = #{birthDate}
+            WHERE ID = #{id}
+            """)
+    @Options(useGeneratedKeys = true, keyColumn = "id", keyProperty = "id")
+    void saveSocial(User user);
 }
