@@ -8,6 +8,7 @@ import com.example.demo.request.UserDelete;
 import com.example.demo.request.UserCreate;
 import com.example.demo.request.UserEdit;
 import com.example.demo.response.UserDetailResponse;
+import com.example.demo.response.UserListResponse;
 import com.example.demo.response.UserResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -86,11 +87,11 @@ public class UserService {
         userMapper.delete(user.getId());
     }
 
-    public List<User> listAllTest() {
+    public List<UserListResponse> listAllTest() {
         return userMapper.findAllTest();
     }
 
-    public UserDetailResponse getTest(Long id) {
+    public UserDetailResponse getUserTest(Long id) {
         return userMapper.findByIdTest(id);
     }
 }

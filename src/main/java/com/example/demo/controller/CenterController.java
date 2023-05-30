@@ -1,16 +1,15 @@
 package com.example.demo.controller;
 
 import com.example.demo.request.CenterRequest;
+import com.example.demo.response.CenterResponse;
 import com.example.demo.service.CenterService;
-import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -38,11 +37,20 @@ public class CenterController {
                 .phoneNumber(phoneNumber)
                 .info(info)
                 .build();
-
+        System.out.println(centerRequest);
        centerService.infoInsert(centerRequest, centerImg);
 
         return "이미지 완료";
     }
 
+    //단건 get
+    @GetMapping("/center/searchname")
+    public List<CenterResponse> CenterSearch(@RequestParam("centerName") String centerName){
+
+        System.out.println(centerName);
+        List<CenterResponse> responses = centerService.getByCenterName(centerName);
+
+        return responses;
+    }
 
 }

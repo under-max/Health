@@ -1,16 +1,23 @@
 package com.example.demo.entity;
 
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+//@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Trainer {
-    private Long id;
+
+    private Integer id;
     private String name;
     private String address;
     private String email;
     private String password;
     private String phoneNumber;
-    private Long centerId;
+    private Integer centerId;
     private String info;
-    private String isInCenter;
+    private Integer isInCenter;
+
+
 }

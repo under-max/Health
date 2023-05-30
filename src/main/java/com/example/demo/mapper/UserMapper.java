@@ -4,6 +4,7 @@ import com.example.demo.entity.User;
 import com.example.demo.request.Login;
 import com.example.demo.request.UserEdit;
 import com.example.demo.response.UserDetailResponse;
+import com.example.demo.response.UserListResponse;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.*;
@@ -72,13 +73,20 @@ public interface UserMapper {
 
 
     @Select("""
-            SELECT id, name
-            FROM MEMBER
+            SELECT m.id, m.name, m.birthDate,
+                   t.name as trainerName, ms.startDate,
+                    ms.endDate, ms.remainingPT,
+                   m.isInCenter
+            FROM MEMBER m
+            LEFT JOIN
+            	TRAINER t ON m.trainerId = t.id
+            LEFT JOIN
+            	MEMBERSHIP ms ON m.id = ms.membershipId;
             """)
-    List<User> findAllTest();
+    List<UserListResponse> findAllTest();
 
     @Select("""
-            SELECT m.id, m.name, m.email, m.phoneNumber, m.gender, m.age,
+            SELECT m.id, m.name, m.email, 
             	   m.isInCenter, t.id as TrainerID, t.name as TrainerName, c.name as CenterName, ms.startDate, ms.endDate, ms.remainingPT
             FROM MEMBER m
             LEFT JOIN

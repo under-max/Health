@@ -9,4 +9,17 @@
     </insert>
 
 
+
+
+    <resultMap  id="findByCenterName"  type="Center">
+        <id property="id" column="id" />
+        <result property="name" column="name" />
+        <result property="address" column="address" />
+        <result property="info" column="info" />
+        <result property="phoneNumber" column="phoneNumber" />
+        <collection property="fileName" ofType="string">
+               <result column="fileName"></result>
+        </collection>
+    </resultMap>
+
 </mapper>
