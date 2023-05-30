@@ -1,11 +1,14 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.AuthUser;
+import com.example.demo.entity.Membership;
 import com.example.demo.entity.User;
 import com.example.demo.request.UserDelete;
 import com.example.demo.request.UserCreate;
 import com.example.demo.request.UserEdit;
+import com.example.demo.response.TrainerDetailResponse;
 import com.example.demo.response.UserDetailResponse;
+import com.example.demo.response.UserListResponse;
 import com.example.demo.response.UserResponse;
 import com.example.demo.service.UserService;
 import jakarta.validation.Valid;
@@ -48,38 +51,28 @@ public class UserController {
     }
 
     @DeleteMapping("/user/{id}")
-    public void delete(@PathVariable int id, AuthUser authUser) {
+    public void delete(@PathVariable Long id, AuthUser authUser) {
         userService.delete(UserDelete.builder()
                 .authedUserId(authUser.getUserId())
                 .build());
     }
 
-    @GetMapping("/test/lists")
-    public List<User> list() {
-        List<User> listAll = userService.listAllTest();
+
+    @GetMapping("/test/user/lists")
+    public List<UserListResponse> list() {
+        List<UserListResponse> listAll = userService.listAllTest();
+
         return listAll;
     }
 
     @GetMapping("/test/user/{id}")
-    public UserDetailResponse UserDetail(@PathVariable Long id, AuthUser authUser) {
-        UserDetailResponse detailTest = userService.getTest(id);
-        log.info("호출");
-        return detailTest;
+    public UserDetailResponse userDetail(@PathVariable Long id, AuthUser authUser) {
+        UserDetailResponse userDetailRes = userService.getUserTest(id);
+        return userDetailRes;
     }
 
-//    @GetMapping("/test/lists")
-//    public User list() {
-//        User user = new User();
-//        user.setId(1L);
-//        user.setName("강백호");
-//        return user;
-//    }
 
-    //    @GetMapping("/test/lists")
-//    public Map<Long, Object> list() {
-//        Map<Long, Object> map = Map.of(1L, Map.of("id", 1L, "name", "강백호"));
-//        return map;
-//    }
+
 
 
 
