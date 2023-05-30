@@ -1,18 +1,14 @@
 <template>
     <div class="container">
         <el-form :model="form" :rules="rules" ref="loginFormRef" label-width="120px" class="custom-form">
-            <h3 style="color: black">개인 정보 수정</h3>
+            <h3 style="color: black">추가 정보 입력</h3>
             <el-form-item label="이메일">
                 {{ form.email }}
             </el-form-item>
-            <el-form-item label="기존비밀번호" prop="oldPassword" @keyup="checkPasswordAvailability" required>
-                <el-input v-model="form.oldPassword" type="password" placeholder="비밀번호 입력"></el-input>
-            </el-form-item>
-            <el-button class="mt-1" @click="passwordButton">비밀번호 변경</el-button>
-            <el-form-item v-if="passwordEdit" label="비밀번호" prop="password" required>
+            <el-form-item label="비밀번호" prop="password" required>
                 <el-input v-model="form.password" type="password" placeholder="비밀번호 입력"></el-input>
             </el-form-item>
-            <el-form-item v-if="passwordEdit" label="비밀번호 확인" prop="confirmPassword" required>
+            <el-form-item label="비밀번호 확인" prop="confirmPassword" required>
                 <el-input v-model="form.confirmPassword" type="password" placeholder="비밀번호 다시입력"></el-input>
             </el-form-item>
             <el-form-item label="닉네임" prop="nickName" required>
@@ -35,11 +31,8 @@
             <el-form-item label="생년월일" prop="birthDate" required>
                 <el-input v-model="form.birthDate" type="date"/>
             </el-form-item>
-            <el-form-item label="주소">
-                {{form.address}} <br>
-            <el-button class="mt-0" @click="addressButton">주소변경</el-button>
-            </el-form-item>
-            <el-form-item v-if="addressEdit" label="주소입력">
+
+            <el-form-item label="주소입력">
                 <el-input type="button" @click="sample6_execDaumPostcode" value="주소검색"/>
                 <el-form-item prop="add1" required>
                     <el-input type="text" v-model="form.add1" id="sample6_postcode" placeholder="우편번호"/>
@@ -55,8 +48,7 @@
                 </el-form-item>
             </el-form-item>
 
-            <el-button type="primary" @click="submitForm">수정</el-button>
-            <el-button type="danger" @click="deleteForm">탈퇴</el-button>
+            <el-button type="primary" @click="submitForm">회원가입</el-button>
         </el-form>
     </div>
 </template>
@@ -67,16 +59,8 @@ import axios from 'axios';
 import router from "@/router";
 import {showCustomAlert} from "@/main";
 import Cookies from "vue-cookies";
-import store from "@/stores/store";
 
-const addressEdit = ref(false)
-const addressButton = ()=>{
-    addressEdit.value = !addressEdit.value;
-}
-const passwordEdit = ref(false)
-const passwordButton = ()=>{
-    passwordEdit.value = !passwordEdit.value;
-}
+
 const form = ref({
     email: '',
     password: '',
@@ -84,19 +68,13 @@ const form = ref({
     name: '',
     nickName: '',
     birthDate: '',
-    address: '',
     add1: '',
     add2: '',
     add3: '',
     add4: '',
-    oldPassword: ''
 })
 
 const rules = {
-    oldPassword: [
-        {required: true, message: '비밀번호를 입력해주세요', trigger: 'blur'},
-        {min: 6, message: '비밀번호는 최소 6자 이상이어야 합니다', trigger: 'blur'},
-    ],
     password: [
         {required: true, message: '비밀번호를 입력해주세요', trigger: 'blur'},
         {min: 6, message: '비밀번호는 최소 6자 이상이어야 합니다', trigger: 'blur'},
@@ -136,57 +114,14 @@ function validateConfirmPassword(rule, value, callback) {
         callback();
     }
 }
-const checkPasswordAvailability = () => {
-    const token = Cookies.get('accessToken');
-    axios
-        .post('/api/auth/user/password', {
-            password: form.value.oldPassword,
-        },{
-            headers:{
-                Authorization : token
-            }
-        })
-        .then((response) => {
-            const valid = response.data.authResult;
-            console.log(valid)
-            const showCustomAlert = (message) => {
-                const customAlert = document.createElement('div');
-                customAlert.classList.add('custom-alert');
-                customAlert.textContent = message;
 
-                document.body.appendChild(customAlert);
-
-                setTimeout(() => {
-                    customAlert.remove();
-                }, 2500);
-            }
-
-            if (valid) {
-                showCustomAlert('기존 비밀번호와 일치합니다.');
-            } /*else if (name == form.value.nickname) {
-                showCustomAlert('사용 가능한 닉네임입니다.');*/
-            else {
-                showCustomAlert('기존 비밀번호와 일치하지 않습니다.');
-            }
-        })
-        .catch((error) => {
-            if (error.response) {
-                const errorMessage = error.response.data.message;
-                showCustomAlert(`${errorMessage}`)
-            }
-        });
-};
 const checkNameAvailability = () => {
-    console.log(form.value.email)
     axios
         .post('/api/auth/signup/nickName', {
             nickName: form.value.nickName,
-            email: form.value.email
         })
         .then((response) => {
             const valid = response.data.authResult;
-            console.log(valid)
-            const name = response.data.name;
             const showCustomAlert = (message) => {
                 const customAlert = document.createElement('div');
                 customAlert.classList.add('custom-alert');
@@ -201,9 +136,7 @@ const checkNameAvailability = () => {
 
             if (valid) {
                 showCustomAlert('사용 가능한 닉네임입니다.');
-            } /*else if (name == form.value.nickname) {
-                showCustomAlert('사용 가능한 닉네임입니다.');*/
-            else {
+            } else {
                 showCustomAlert('중복된 닉네임입니다.');
             }
         })
@@ -213,24 +146,19 @@ const checkNameAvailability = () => {
                 showCustomAlert(`${errorMessage}`)
             }
         });
-};
+
+
+}
 const loginFormRef = ref();
 const submitForm = () => {
     const token = Cookies.get('accessToken');
     loginFormRef.value.validate((valid) => {
         if (valid) {
-            const combinedValue = ref()
-            if(addressEdit.value == true){
-                combinedValue.value = form.value.add1 + " " + form.value.add2 + form.value.add3 + " " + form.value.add4;
-            } else {
-                combinedValue.value = form.value.address;
-            }
-            console.log(form.value.birthDate.toString())
+            const combinedValue = ref(form.value.add1 + " " + form.value.add2 + form.value.add3 + " " + form.value.add4)
             axios
-                .patch('/api/user', {
+                .post('/api/user/social', {
                     email: form.value.email,
-                    password: form.value.oldPassword,
-                    newPassword: form.value.password,
+                    password: form.value.password,
                     nickName: form.value.nickName,
                     name: form.value.name,
                     address: combinedValue.value,
@@ -241,50 +169,19 @@ const submitForm = () => {
                     }
                 })
                 .then(() => {
-                    showCustomAlert("개인정보수정이 완료되었습니다.")
+                    showCustomAlert("회원가입이 완료되었습니다.")
                     router.replace("/");
                 })
                 .catch((error) => {
-                    // if (error.response) {
-                    //     const errorMessage = error.response.data.errors[0].defaultMessage;
-                    //     showCustomAlert(`${errorMessage}`)
-                    // }
                     if (error.response) {
-                        const errorMessage = error.response.data.message;
+                        const errorMessage = error.response.data.errors[0].defaultMessage;
                         showCustomAlert(`${errorMessage}`)
                     }
+                });
+        }
+    })
+}
 
-                });
-        }
-    })
-}
-const deleteForm = () => {
-    const token = Cookies.get('accessToken');
-    loginFormRef.value.validate((valid) => {
-        if (valid) {
-            axios
-                .delete(`/api/user/${form.value.userId}`, {
-                    headers: {
-                        Authorization: token,
-                    },
-                })
-                .then(() => {
-                    showCustomAlert("삭제가 완료되었습니다.")
-                    store.commit("setToken", ""); // 로그아웃 시 토큰 초기화
-                    Cookies.remove('accessToken'); // 쿠키에서 access token 값 삭제
-                    Cookies.remove('refreshToken'); // 쿠키에서 refresh token 값 삭제
-                    router.replace("/").then(()=>{window.location.reload();})
-                })
-                .catch((error) => {
-                    console.log(error.response.data)
-                    if (error.response) {
-                        const errorMessage = error.response.data.message;
-                        showCustomAlert(`${errorMessage}`)
-                    }
-                });
-        }
-    })
-}
 function sample6_execDaumPostcode() {
     new daum.Postcode({
         oncomplete: function (data) {
@@ -346,11 +243,6 @@ onMounted(() => {
             }
         }).then((response) => {
         form.value.email = response.data.email;
-        form.value.nickName = response.data.nickName;
-        form.value.name = response.data.name
-        form.value.birthDate = response.data.birthDate
-        form.value.address = response.data.address
-        form.value.userId = response.data.userId;
     }).catch((error) => {
         if (error.response) {
             const errorMessage = error.response.data.message;

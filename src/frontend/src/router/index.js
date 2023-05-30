@@ -9,9 +9,12 @@ import Login from "@/views/Login.vue";
 import Information from "@/views/Information.vue";
 import UserDetail from "@/views/UserDetail.vue";
 import SignUpView from "@/views/SignUpView.vue";
+import KakaoLogin from "@/views/KakaoLogin.vue";
+import AddInfo from "@/views/AddInfo.vue";
 import TrainerDetail from "@/views/TrainerDetail.vue";
 import SuccessPage from "@/views/payment/SuccessPage.vue";
 import CancelPage from "@/views/payment/CancelPage.vue";
+
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -67,6 +70,16 @@ const router = createRouter({
             path: '/signup',
             name: 'signup',
             component: SignUpView
+        },
+        {
+          path: '/kakaologin',
+          name: 'kakaologin',
+          component: KakaoLogin
+        },
+        {
+          path: '/addinfo',
+          name: 'addinfo',
+          component: AddInfo
         },
         {
             path: '/payment/success',

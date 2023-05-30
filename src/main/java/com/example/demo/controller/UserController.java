@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -28,6 +29,13 @@ public class UserController {
     public User addUser(@RequestBody @Valid UserCreate userCreate) {
         log.info("controller>>>{}", userCreate);
         return userService.add(userCreate);
+    }
+
+    @PostMapping("/user/social")
+    public User addSocailUser(@RequestBody @Valid UserCreate userCreate, AuthUser authUser) {
+        userCreate.setId(authUser.getUserId());
+        log.info("social User Create>>>{}", userCreate);
+        return userService.addSocial(userCreate);
     }
 
     @GetMapping("/user")
@@ -44,9 +52,13 @@ public class UserController {
     public void edit(@RequestBody @Valid UserEdit userEdit, AuthUser authUser) {
         userService.edit(UserEdit.builder()
                 .userId(authUser.getUserId())
+                .email(userEdit.getEmail())
                 .password(userEdit.getPassword())
                 .newPassword(userEdit.getNewPassword())
+                .nickName(userEdit.getNickName())
                 .name(userEdit.getName())
+                .address(userEdit.getAddress())
+                .birthDate(userEdit.getBirthDate())
                 .build());
     }
 

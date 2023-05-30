@@ -1,8 +1,10 @@
 package com.example.demo.service;
 
 import com.example.demo.entity.Trainer;
+import com.example.demo.entity.User;
 import com.example.demo.mapper.TrainerMapper;
 import com.example.demo.response.TrainerDetailResponse;
+import com.example.demo.response.UserListResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,5 +25,11 @@ public class TrainerService {
 
     public TrainerDetailResponse getTrainerTest() {
         return null;
+    }
+
+    public List<UserListResponse> responsibleUserList(Integer id) {
+        List<UserListResponse> test = trainerMapper.selectResponsibleUserList(id);
+        System.out.println(test);
+        return test;
     }
 }

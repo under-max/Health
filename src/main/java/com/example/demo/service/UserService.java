@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.entity.AuthUser;
 import com.example.demo.entity.User;
 import com.example.demo.exception.DuplicateEmail;
 import com.example.demo.exception.UserNotFound;
@@ -7,6 +8,7 @@ import com.example.demo.mapper.UserMapper;
 import com.example.demo.request.UserDelete;
 import com.example.demo.request.UserCreate;
 import com.example.demo.request.UserEdit;
+import com.example.demo.response.AuthUserResponse;
 import com.example.demo.response.UserDetailResponse;
 import com.example.demo.response.UserListResponse;
 import com.example.demo.response.UserResponse;
@@ -32,17 +34,40 @@ public class UserService {
         if (!userMapper.findByEmail(userCreate.getEmail()).isEmpty()) {
             throw new DuplicateEmail();
         }
-        if (!userMapper.findByName(userCreate.getName()).isEmpty()) {
+        if (!userMapper.findByNickName(userCreate.getNickName()).isEmpty()) {
             throw new DuplicateEmail("중복된 닉네임입니다.");
         }
         User user = User.builder()
-                .name(userCreate.getName())
                 .email(userCreate.getEmail())
                 .password(passwordEncoder.encode(userCreate.getPassword()))
+                .nickName(userCreate.getNickName())
+                .name(userCreate.getName())
+                .address(userCreate.getAddress())
+                .birthDate(userCreate.getBirthDate())
                 .build();
         userMapper.save(user);
         return userMapper.findById(user.getId()).orElseThrow(UserNotFound::new);
     }
+
+    public User addSocial(UserCreate userCreate) {
+        if (!userMapper.findByNickName(userCreate.getNickName()).isEmpty()
+                && !userMapper.findByNickName(userCreate.getNickName()).orElseThrow().getEmail().equals(userCreate.getEmail())) {
+            throw new DuplicateEmail("중복된 닉네임입니다.");
+        }
+        User user = User.builder()
+                .id(userCreate.getId())
+                .password(passwordEncoder.encode(userCreate.getPassword()))
+                .nickName(userCreate.getNickName())
+                .name(userCreate.getName())
+                .address(userCreate.getAddress())
+                .birthDate(userCreate.getBirthDate())
+                .build();
+        log.info("{}", user);
+
+        userMapper.saveSocial(user);
+        return userMapper.findById(user.getId()).orElseThrow(UserNotFound::new);
+    }
+
 
     public List<User> getUsers(int page) {
         return userMapper.findAll(page);
@@ -60,24 +85,30 @@ public class UserService {
 
     public void edit(UserEdit userEdit) {
         if (!passwordEncoder.matches(userEdit.getPassword(), userMapper.findById(userEdit.getUserId()).orElseThrow().getPassword())) {
-            throw new DuplicateEmail("이전 비밀번호를 확인하세요");
+            throw new DuplicateEmail("기존 비밀번호를 확인하세요");
         }
-        if (!userMapper.findByName(userEdit.getName()).isEmpty()
-                && !userMapper.findByName(userEdit.getName()).orElseThrow().getId().equals(userEdit.getUserId())) {
+        if (!userMapper.findByNickName(userEdit.getNickName()).isEmpty()
+                && !userMapper.findByNickName(userEdit.getNickName()).orElseThrow().getId().equals(userEdit.getUserId())) {
             throw new DuplicateEmail("중복된 닉네임입니다.");
         }
 
         if (userEdit.getNewPassword() != null && !userEdit.getNewPassword().equals("")) {
             userMapper.update(UserEdit.builder()
                     .userId(userEdit.getUserId())
-                    .name(userEdit.getName())
                     .password(passwordEncoder.encode(userEdit.getNewPassword()))
+                    .nickName(userEdit.getNickName())
+                    .name(userEdit.getName())
+                    .address(userEdit.getAddress())
+                    .birthDate(userEdit.getBirthDate())
                     .build());
         } else {
             userMapper.update(UserEdit.builder()
                     .userId(userEdit.getUserId())
-                    .name(userEdit.getName())
                     .password(passwordEncoder.encode(userEdit.getPassword()))
+                    .nickName(userEdit.getNickName())
+                    .name(userEdit.getName())
+                    .address(userEdit.getAddress())
+                    .birthDate(userEdit.getBirthDate())
                     .build());
         }
     }
@@ -93,6 +124,20 @@ public class UserService {
 
     public UserDetailResponse getUserTest(Long id) {
         return userMapper.findByIdTest(id);
+    }
+
+    public AuthUserResponse kakaoEmailCheck(KakaoLoginService.KakaoAccount kakaoAccount) {
+        if (userMapper.findByEmail(kakaoAccount.getEmail()).isEmpty()) {
+            //없으면 가입 시키고 true 반환
+            userMapper.save(User.builder()
+                    .email(kakaoAccount.getEmail())
+                    .build());
+            User user = userMapper.findByEmail(kakaoAccount.getEmail()).orElseThrow();
+            return AuthUserResponse.builder().userId(user.getId()).build();
+        }
+        //있으면 true 반환
+        User user = userMapper.findByEmail(kakaoAccount.getEmail()).orElseThrow();
+        return AuthUserResponse.builder().userId(user.getId()).build();
     }
 }
 

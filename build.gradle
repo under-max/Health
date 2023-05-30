@@ -33,6 +33,7 @@ dependencies {
 
 	implementation 'jakarta.mail:jakarta.mail-api'
 
+	implementation 'com.google.code.gson:gson:2.8.9'
 
 
 	compileOnly 'org.projectlombok:lombok'
