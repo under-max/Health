@@ -2,6 +2,7 @@
 import {onMounted, ref} from "vue";
 import axios from 'axios';
 import router from "@/router";
+import store from "@/stores/moveId";
 
 // 결제 성공 시 넘겨받는 데이터
 const successData = ref({
@@ -13,6 +14,10 @@ const successData = ref({
   approvedDate: '',
   approvedTime: ''
 });
+
+// Insert.vue 에서 넘어온 데이터 사용
+const selectedValues = ref(store.state.selectedValues);
+console.log(selectedValues);
 
 const goToMyInfo = () => {
   router.replace("/");
@@ -58,14 +63,14 @@ onMounted(() => {
   <div class="container">
     <div class="card">
       <div class="card-body">
-        <h5 class="card-title">123</h5>
+        <h5 class="card-title"><strong>===상세내역===</strong></h5>
         <p class="card-text">
-          <strong>===상세내역===</strong> <br>
           지점 : {{ successData.centerName }} <br>
           기한 : {{ successData.paymentMonths }}개월 <br>
           pt : {{ successData.remainingPT }}회 <br>
           가격 : {{ successData.totalPrice }}원 <br>
-          결제일 : {{ successData.approvedDate}},{{ successData.approvedTime }} <br>
+          결제일 : {{ successData.approvedDate}} <br>
+          결제시간 : {{ successData.approvedTime }} <br>
         </p>
       </div>
     </div>
@@ -84,7 +89,6 @@ onMounted(() => {
   justify-content: center;
   align-items: center;
   height: 80vh;
-  background-color: #ffffff;
   padding: 20px;
 }
 

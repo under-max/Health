@@ -1,11 +1,25 @@
 <script setup>
 import {onMounted, ref, watchEffect} from "vue";
 import axios from "axios";
+import {useStore} from "vuex";
 
-const memberId = ref(12);
+const memberId = ref(15);
 // const paymentMonths = ref(0);
 // const centerName = ref("");
 const totalPrice = ref(0);
+
+// SuccessPage.vue에 선택한 centerId, trainerId 넘기기 시도중
+const store = useStore();
+const saveSelectedValues = () => {
+  console.log(selectedCenter.value.centerId)
+  console.log(selectedTrainer.value.trainerId)
+  const selectedValues = {
+    selectedCenterId: selectedCenter.value.centerId,
+    selectedTrainerId: selectedTrainer.value.trainerId
+  };
+
+  store.commit('setSelectedValues', selectedValues);
+};
 
 // 에러 관련
 const errorMessage = ref("");
@@ -46,7 +60,7 @@ const monthSelectList = ref([
 
 // pt 리스트
 const ptSelectList = ref([
-  {name: "선택해주세요.", value: "", price: 0},
+  {name: "선택안함", value: "", price: 0},
   {name: "5회", value: 5, price: 200000},
   {name: "10회", value: 10, price: 400000},
   {name: "15회", value: 15, price: 600000},
@@ -55,6 +69,9 @@ const ptSelectList = ref([
 
 // 결제버튼 눌렀을 시 modal 창
 const submitPayment = () => {
+  saveSelectedValues();
+  console.log(saveSelectedValues.selectedCenterId)
+  console.log(saveSelectedValues.selectedTrainerId)
   showModal.value = true;
 }
 
@@ -87,6 +104,7 @@ const cancelPayment = () => {
 
 const checkCondition = () => {
   // 조건을 확인하고 버튼의 활성화 상태를 업데이트
+  console.log(selectedCenter.value.centerId && selectedMonth.value && selectedPT.value)
   if (selectedCenter.value.centerId && selectedMonth.value && selectedPT.value) {
     isButtonDisabled.value = false; // 버튼 활성화
   } else {
@@ -141,7 +159,7 @@ onMounted(() => {
 
       <div>
         <select v-model="selectedTrainer">
-          <option disabled value="">다음 중 하나를 선택하세요</option>
+          <option value="">선택안함</option>
           <option v-for="trainer in trainerList" :value="trainer">
             {{ trainer.trainerName }}
           </option>
@@ -274,15 +292,14 @@ button.btn-primary:hover {
   z-index: 9999;
 }
 
-.model-content {
+.modal-content {
   width: 400px;
 }
 
 .modal {
-  background-color: #fff;
   border-radius: 12px;
   padding: 2rem;
-  height: 400px;
+  height: 500px;
   width: 600px;
 }
 
