@@ -1,5 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Search from "@/views/Search.vue";
+import Center from "@/views/Center.vue";
+import Register from "../components/center/container/Register.vue"
+
 import Exercise from "@/views/Exercise.vue";
 import Membership from "@/views/Membership.vue";
 import Community from "@/views/Community.vue"
@@ -19,9 +21,9 @@ const router = createRouter({
       component: Main
     },
         {
-      path: '/search',
-      name: 'search',
-      component : Search
+      path: '/center',
+      name: 'center',
+      component : Center,      
     },
     {
       path: '/membership',

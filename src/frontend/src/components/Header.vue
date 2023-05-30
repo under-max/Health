@@ -19,7 +19,7 @@
 
           <li>
             <button>
-              <RouterLink to="/search">지점검색</RouterLink>
+              <RouterLink to="/center">지점검색</RouterLink>
             </button>
           </li>
 
