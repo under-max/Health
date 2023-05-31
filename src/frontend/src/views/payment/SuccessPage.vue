@@ -1,8 +1,7 @@
 <script setup>
-import {onMounted, ref} from "vue";
+import {computed, inject, onMounted, ref, watchEffect} from "vue";
 import axios from 'axios';
 import router from "@/router";
-import store from "@/stores/moveId";
 
 // 결제 성공 시 넘겨받는 데이터
 const successData = ref({
@@ -15,10 +14,11 @@ const successData = ref({
   approvedTime: ''
 });
 
+const check = ()=>{
+  console.log(sessionStorage.getItem("centerId"))
+  console.log(sessionStorage.getItem("trainerId"))
+}
 // Insert.vue 에서 넘어온 데이터 사용
-const selectedValues = ref(store.state.selectedValues);
-console.log(selectedValues);
-
 const goToMyInfo = () => {
   router.replace("/");
 }
@@ -26,7 +26,6 @@ const goToMyInfo = () => {
 const goToHome = () => {
   router.replace("/");
 }
-
 // kakaoPay 성공
 const urlParams = new URLSearchParams(window.location.search);
 const pg_token = urlParams.get('pg_token');
@@ -46,6 +45,8 @@ onMounted(() => {
             })
             .then((response) => {
               console.log(response.data);
+              console.log(sessionStorage.getItem("centerId"))
+              console.log(sessionStorage.getItem("trainerId"))
             })
             .catch((error) => {
               console.log(error)
@@ -74,7 +75,7 @@ onMounted(() => {
         </p>
       </div>
     </div>
-
+    <button @click="check">123123</button>
     <div class="buttons">
       <button class="btn btn-primary" @click="goToMyInfo">내 정보</button>
       <button class="btn btn-secondary" @click="goToHome">홈으로</button>

@@ -1,35 +1,21 @@
 <script setup>
-import {onMounted, ref, watchEffect} from "vue";
+import {inject, onMounted, provide, ref, watchEffect} from "vue";
 import axios from "axios";
-import {useStore} from "vuex";
 
-const memberId = ref(15);
-// const paymentMonths = ref(0);
-// const centerName = ref("");
+const memberId = ref(17);
 const totalPrice = ref(0);
-
-// SuccessPage.vue에 선택한 centerId, trainerId 넘기기 시도중
-const store = useStore();
-const saveSelectedValues = () => {
-  console.log(selectedCenter.value.centerId)
-  console.log(selectedTrainer.value.trainerId)
-  const selectedValues = {
-    selectedCenterId: selectedCenter.value.centerId,
-    selectedTrainerId: selectedTrainer.value.trainerId
-  };
-
-  store.commit('setSelectedValues', selectedValues);
-};
 
 // 에러 관련
 const errorMessage = ref("");
 const isButtonDisabled = ref(true);
 
+// 선택한 센터
 const selectedCenter = ref({
   centerId: '',
   centerName: ''
 });
 
+// 선택한 트레이너
 const selectedTrainer = ref({
   trainerId: '',
   trainerName: ''
@@ -67,11 +53,23 @@ const ptSelectList = ref([
   {name: "20회", value: 20, price: 800000}
 ]);
 
-// 결제버튼 눌렀을 시 modal 창
+// SuccessPage.vue에 선택한 centerId, trainerId 넘기기 시도중
+const selectedValues = ref({
+  selectedCenterId: selectedCenter.value.centerId,
+  selectedTrainerId: selectedTrainer.value.trainerId
+});
+
+// 결제버튼 눌렀을 시 modal
 const submitPayment = () => {
-  saveSelectedValues();
-  console.log(saveSelectedValues.selectedCenterId)
-  console.log(saveSelectedValues.selectedTrainerId)
+//   selectedValues.value.selectedCenterId = selectedCenter.value.centerId;
+//   selectedValues.value.selectedTrainerId = selectedTrainer.value.trainerId;
+//   console.log(selectedValues.value.selectedCenterId)
+//   console.log(selectedValues.value.selectedTrainerId)
+//   store.commit('setSelectedValues', selectedValues.value)
+  sessionStorage.setItem("centerId", selectedCenter.value.centerId)
+  sessionStorage.setItem("trainerId", selectedTrainer.value.trainerId)
+  console.log(sessionStorage.getItem("centerId"))
+  console.log(sessionStorage.getItem("trainerId"))
   showModal.value = true;
 }
 
@@ -102,21 +100,23 @@ const cancelPayment = () => {
   showModal.value = false;
 }
 
+// 선택 조건 확인하여 결제하기 버튼 활성화
 const checkCondition = () => {
   // 조건을 확인하고 버튼의 활성화 상태를 업데이트
-  console.log(selectedCenter.value.centerId && selectedMonth.value && selectedPT.value)
-  if (selectedCenter.value.centerId && selectedMonth.value && selectedPT.value) {
+  if (selectedCenter.value && selectedTrainer.value &&selectedMonth.value || selectedPT.value) {
     isButtonDisabled.value = false; // 버튼 활성화
+
   } else {
     isButtonDisabled.value = true; // 버튼 비활성화
   }
 };
 
+// 변경감지?
 watchEffect(() => {
   checkCondition();
 });
 
-
+// 센터를 선택하면 해당하는 트레이너 불러오는 axios
 const fetchTrainers = () => {
   axios
       .get(`/api/membership/centers/${selectedCenter.value.centerId}`, {})
@@ -128,7 +128,7 @@ const fetchTrainers = () => {
       });
 };
 
-// select option 에 사용하려고 등록 된 센터 이름 가져오기
+// 등록되어있는 센터 가져오기
 onMounted(() => {
   axios
       .get("/api/membership/centers", {})

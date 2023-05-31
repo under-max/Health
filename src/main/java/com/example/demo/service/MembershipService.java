@@ -25,6 +25,18 @@ public class MembershipService {
 
     private final MembershipMapper membershipMapper;
 
+    public MembershipResponse createAndUpdate(CreateMembershipRequest request) {
+        Integer membershipId;
+        if (getMembershipByMemberId(request.getMemberId()) == null) {
+            membershipId = createMembership(request);
+
+        } else {
+            membershipId = updateMembership(request);
+        }
+
+        return getMembershipByMembershipId(membershipId);
+    }
+
     public Integer createMembership(CreateMembershipRequest request) {
 
         LocalDate start = LocalDate.now();
