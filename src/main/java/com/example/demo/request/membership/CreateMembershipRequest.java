@@ -7,4 +7,7 @@ public class CreateMembershipRequest {
     private Integer memberId;
     private Integer paymentMonths;
     private Integer remainingPT;
+
+    private Integer centerId;
+    private Integer trainerId;
 }

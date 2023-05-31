@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.entity.AuthUser;
 import com.example.demo.request.membership.PayReadyRequest;
 import com.example.demo.response.membership.PaySuccessResponse;
 import com.example.demo.service.KaKaoPayService;
@@ -18,16 +19,16 @@ public class KaKaoPayController {
     private final KaKaoPayService kaKaoPayService;
 
     @PostMapping("/kakaopay")
-    public String payReady(@RequestBody @Valid PayReadyRequest request) {
+    public String payReady(@RequestBody @Valid PayReadyRequest request, AuthUser authUser) {
 
-        log.info("payReady() request={}", request);
-        String redirectPcUrl = kaKaoPayService.kakaoPayReady(request).getBody().getNext_redirect_pc_url();
+        log.info("payReady() memberId={}, request={}", authUser.getUserId(), request);
+        String redirectPcUrl = kaKaoPayService.kakaoPayReady(authUser.getUserId(), request).getBody().getNext_redirect_pc_url();
         return redirectPcUrl;
     }
 
     @GetMapping("/kakaopay/{pg_token}")
-    public PaySuccessResponse payApprove(@PathVariable("pg_token") String token) {
-        return kaKaoPayService.kakaoPayApprove(token);
+    public PaySuccessResponse payApprove(@PathVariable("pg_token") String token, AuthUser authUser) {
+        return kaKaoPayService.kakaoPayApprove(authUser.getUserId(), token);
     }
 
 }

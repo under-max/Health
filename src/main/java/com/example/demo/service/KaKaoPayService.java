@@ -31,7 +31,7 @@ public class KaKaoPayService {
     public static final String CID = "TC0ONETIME";
     private static final Map<String, String> store = new HashMap<>();
 
-    public ResponseEntity<PayReadyResponse> kakaoPayReady(PayReadyRequest request) {
+    public ResponseEntity<PayReadyResponse> kakaoPayReady(Long memberId, PayReadyRequest request) {
 
         URI uri = UriComponentsBuilder
                 .fromUriString(HOST)
@@ -58,7 +58,7 @@ public class KaKaoPayService {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("cid", CID);
         params.add("partner_order_id", "1001");
-        params.add("partner_user_id", String.valueOf(request.getMemberId()));
+        params.add("partner_user_id", String.valueOf(memberId));
         params.add("item_name", itemName);
         params.add("quantity", "1");
         params.add("total_amount", String.valueOf(request.getTotalPrice()));
@@ -78,7 +78,6 @@ public class KaKaoPayService {
         ResponseEntity<PayReadyResponse> response = restTemplate.exchange(requestEntity, PayReadyResponse.class);
 
         // approve에서 사용할 정보
-        store.put("memberId", String.valueOf(request.getMemberId()));
         store.put("tid", response.getBody().getTid());
 
         log.info("Headers={}", response.getHeaders());
@@ -88,7 +87,7 @@ public class KaKaoPayService {
         return response;
     }
 
-    public PaySuccessResponse kakaoPayApprove(String token) {
+    public PaySuccessResponse kakaoPayApprove(Long memberId, String token) {
 
         URI uri = UriComponentsBuilder
                 .fromUriString(HOST)
@@ -110,7 +109,7 @@ public class KaKaoPayService {
         params.add("cid", CID);
         params.add("tid", store.get("tid"));
         params.add("partner_order_id", "1001");
-        params.add("partner_user_id", store.get("memberId"));
+        params.add("partner_user_id", String.valueOf(memberId));
         params.add("pg_token", token);
 
         RequestEntity<MultiValueMap<String, String>> requestEntity = RequestEntity

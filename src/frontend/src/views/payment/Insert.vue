@@ -1,8 +1,10 @@
 <script setup>
-import {inject, onMounted, provide, ref, watchEffect} from "vue";
+import {onMounted, ref, watchEffect} from "vue";
 import axios from "axios";
+import Cookies from "vue-cookies";
 
-const memberId = ref(17);
+// Controller에서 AuthUser 추가하면서 잠시 주석
+// const memberId = ref(19);
 const totalPrice = ref(0);
 
 // 에러 관련
@@ -21,12 +23,14 @@ const selectedTrainer = ref({
   trainerName: ''
 });
 
+// 선택한 개월 수
 const selectedMonth = ref("");
+// 선택한 pt 횟수
 const selectedPT = ref("");
 
 const payReadyUrl = ref("");
 
-// 결제 시 modal
+// 결제버튼 눌렀을 경우 modal 창 보여주기 초기값
 const showModal = ref(false);
 
 // 센터 리스트
@@ -53,37 +57,27 @@ const ptSelectList = ref([
   {name: "20회", value: 20, price: 800000}
 ]);
 
-// SuccessPage.vue에 선택한 centerId, trainerId 넘기기 시도중
-const selectedValues = ref({
-  selectedCenterId: selectedCenter.value.centerId,
-  selectedTrainerId: selectedTrainer.value.trainerId
-});
-
-// 결제버튼 눌렀을 시 modal
+// 결제버튼 눌렀을 시 실행되는 메서드
 const submitPayment = () => {
-//   selectedValues.value.selectedCenterId = selectedCenter.value.centerId;
-//   selectedValues.value.selectedTrainerId = selectedTrainer.value.trainerId;
-//   console.log(selectedValues.value.selectedCenterId)
-//   console.log(selectedValues.value.selectedTrainerId)
-//   store.commit('setSelectedValues', selectedValues.value)
-  sessionStorage.setItem("centerId", selectedCenter.value.centerId)
-  sessionStorage.setItem("trainerId", selectedTrainer.value.trainerId)
-  console.log(sessionStorage.getItem("centerId"))
-  console.log(sessionStorage.getItem("trainerId"))
   showModal.value = true;
 }
 
-// modal 창 ok시
+// modal 창에서 구매버튼
 const confirmPayment = () => {
   const {centerId, centerName} = selectedCenter.value;
+  const token = Cookies.get('accessToken')
   axios
       .post("/api/kakaopay", {
-        memberId: memberId.value,
+        // memberId: memberId.value,
         centerId: centerId,
         centerName: centerName,
         month: selectedMonth.value,
         pt: selectedPT.value,
         totalPrice: totalPrice.value
+      }, {
+        headers: {
+          Authorization: token
+        }
       })
       .then((response) => {
         console.log(response.data);
@@ -93,9 +87,12 @@ const confirmPayment = () => {
         console.log(error);
         this.errorMessage = error.response.data.message;
       });
+  // SuccessPage.vue에서 사용할 데이터 저장
+  sessionStorage.setItem("centerId", selectedCenter.value.centerId);
+  sessionStorage.setItem("trainerId", selectedTrainer.value.trainerId);
 };
 
-// modal 창 취소
+// modal 창에서 취소버튼
 const cancelPayment = () => {
   showModal.value = false;
 }
@@ -103,7 +100,7 @@ const cancelPayment = () => {
 // 선택 조건 확인하여 결제하기 버튼 활성화
 const checkCondition = () => {
   // 조건을 확인하고 버튼의 활성화 상태를 업데이트
-  if (selectedCenter.value && selectedTrainer.value &&selectedMonth.value || selectedPT.value) {
+  if (selectedCenter.value && selectedTrainer.value && selectedMonth.value || selectedPT.value) {
     isButtonDisabled.value = false; // 버튼 활성화
 
   } else {
@@ -177,6 +174,8 @@ onMounted(() => {
           <option v-for="pt in ptSelectList" :value="pt.value">{{ pt.name }}</option>
         </select>
       </div>
+
+      {{ selectedCenter.centerName }} <br>
 
       총 가격 :
       {{

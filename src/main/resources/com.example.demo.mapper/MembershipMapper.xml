@@ -10,12 +10,14 @@
 
     <select id="findByMembershipId" resultType="Membership">
         select * from MEMBERSHIP
-        where membershipId = #{membershipId}
+        where
+            membershipId = #{membershipId}
     </select>
 
     <select id="findByMemberId" resultType="Membership">
         select * from MEMBERSHIP
-        where memberId = #{memberId}
+        where
+            memberId = #{memberId}
     </select>
 
     <update id="updateMembership">
@@ -23,7 +25,17 @@
         set
             endDate = #{endDate},
             remainingPT = #{remainingPT}
-        where memberId = #{memberId}
+        where
+            memberId = #{memberId}
+    </update>
+
+    <update id="updateMember">
+        update MEMBER
+        set
+            centerId = #{centerId},
+            trainerId = #{trainerId}
+        where
+            id = #{memberId}
     </update>
 
     <select id="findCenters" resultType="Center">

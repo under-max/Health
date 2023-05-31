@@ -41,7 +41,6 @@ public class MembershipController {
 
     @GetMapping("/centers/{centerId}")
     public List<SimpleTrainer> getTrainers(@PathVariable Integer centerId) {
-        log.info("getTrainers={}", membershipService.getTrainers(centerId));
         return membershipService.getTrainers(centerId);
     }
 
