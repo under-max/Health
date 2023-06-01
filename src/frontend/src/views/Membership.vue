@@ -34,7 +34,11 @@
               <div>
                 <select v-model="selectedMonth">
                   <option value="">다음 중 하나를 선택하세요</option>
-                  <option v-for="month in monthSelectList" :value="month.value">{{ month.name }}</option>
+                  <option v-for="month in monthSelectList" :value="month.value">
+
+                    <!--                          :value="selectedPT !== NaN ? selectedMonth.value = '선택안함' : month.value"-->
+                    {{ month.name }}
+                  </option>
                 </select>
               </div>
 
@@ -132,9 +136,10 @@
 </template>
 
 <script setup>
-import {computed, onMounted, ref, watchEffect} from "vue";
+import {computed, onMounted, ref, watch, watchEffect} from "vue";
 import axios from "axios";
 import Cookies from "vue-cookies";
+
 
 // 선택한 센터
 const selectedCenter = ref('');
@@ -156,6 +161,10 @@ const selectedMonth = ref("");
 // 선택한 PT 횟수
 const selectedPT = ref("");
 
+// watch(selectedPT,(currval, oldval)=>{
+//   console.log(currval);
+// })
+
 const payReadyUrl = ref("");
 
 // 센터 리스트
@@ -168,6 +177,7 @@ const trainerList = ref([]);
 const monthSelectList = ref([
   {name: "선택안함", value: 0, price: 0},
   {name: "1개월", value: 1, price: 50000},
+  {name: "2개월", value: 2, price: 100000},
   {name: "3개월", value: 3, price: 130000},
   {name: "6개월", value: 6, price: 220000},
   {name: "12개월", value: 12, price: 400000}
@@ -195,11 +205,17 @@ const formattedTotalPrice = computed(() => {
 });
 
 // TODO 선생님께 pt 선택시 3번째 블럭이 선택안함으로 바뀌는게 가능한지 여쭤보기
-// const selectPTChange = () => {
-//   if (selectedPT.value === 10) {
-//     selectedMonth.value = 1;
-//   }
-// }
+const selectPTChange = () => {
+  if (selectedPT.value == 10) {
+    selectedMonth.value = "1";
+  } else if (selectedPT.value == 20) {
+    selectedMonth.value = "2";
+  } else if (selectedPT.value == 30) {
+    selectedMonth.value = "3";
+  } else if (selectedPT.value == 60) {
+    selectedMonth.value = "6";
+  }
+}
 
 // 에러 관련
 const errorMessage = ref("");
@@ -279,7 +295,8 @@ const getTrainers = () => {
 // 등록되어있는 센터 가져오기
 onMounted(() => {
   axios
-      .get("/api/membership/centers", {})
+      .get("/api/membership/centers" +
+          "", {})
       .then((response) => {
         centerList.value = response.data;
       })

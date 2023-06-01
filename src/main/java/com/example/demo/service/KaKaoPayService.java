@@ -54,17 +54,17 @@ public class KaKaoPayService {
             request.setPt(0);
         }
 
-        if (request.getMonth() == 0) {
-            if (request.getPt() == 10) {
-                request.setMonth(1);
-            } else if(request.getPt() == 20) {
-                request.setMonth(2);
-            } else if (request.getPt() == 30) {
-                request.setMonth(3);
-            } else if (request.getPt() == 60) {
-                request.setMonth(6);
-            }
-        }
+//        if (request.getMonth() == 0) {
+//            if (request.getPt() == 10) {
+//                request.setMonth(1);
+//            } else if(request.getPt() == 20) {
+//                request.setMonth(2);
+//            } else if (request.getPt() == 30) {
+//                request.setMonth(3);
+//            } else if (request.getPt() == 60) {
+//                request.setMonth(6);
+//            }
+//        }
 
         String itemName = request.getCenterName() + ": 이용권(" + request.getMonth() + "개월, " + "PT " + request.getPt() + "회)";
         log.info("itemName={}", itemName);
