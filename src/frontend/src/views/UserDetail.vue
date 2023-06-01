@@ -14,9 +14,6 @@ const user = ref({
   id: '',
   name: '',
   email: '',
-  phoneNumber: '',
-  gender: '',
-  age: '',
   isInCenter: '',
   trainerID: '',
   trainerName: '',
@@ -59,15 +56,6 @@ onMounted(() => {
   </label><br>
     이메일: <label for="detailEmail">
     <el-input class="detailEmail" :value="user.email" readonly/>
-  </label><br>
-    핸드폰 번호: <label for="detailPhone">
-    <el-input class="detailPhone" :value="user.phoneNumber" readonly/>
-  </label><br>
-    성별: <label for="detailGender">
-    <el-input class="detailGender" :value="user.gender" readonly/>
-  </label><br>
-    나이: <label for="detailAge">
-    <el-input class="detailAge" :value="user.age" readonly/>
   </label><br>
     센터 출입 확인: <label for="detailIsInCenter">
     <el-input class="detailIsInCenter" :value="user.isInCenter" readonly/>

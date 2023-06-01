@@ -5,9 +5,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Date;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -25,9 +25,10 @@ public class User {
     private boolean isInCenter;
     private String nickName;
     private LocalDateTime dateTime;
-    @Builder
+    private Integer authority;
 
-    public User(Long id, String name, String address, String email, String password, Date birthDate, Long centerId, Long trainerId, boolean isInCenter, String nickName, LocalDateTime dateTime) {
+    @Builder
+    public User(Long id, String name, String address, String email, String password, Date birthDate, Long centerId, Long trainerId, boolean isInCenter, String nickName, LocalDateTime dateTime, Integer authority) {
         this.id = id;
         this.name = name;
         this.address = address;
@@ -39,5 +40,6 @@ public class User {
         this.isInCenter = isInCenter;
         this.nickName = nickName;
         this.dateTime = dateTime;
+        this.authority = authority;
     }
 }

@@ -20,6 +20,5 @@ public class UserDetailResponse {
     private LocalDate endDate;
     private Integer remainingPT;
 
-
     //private Membership membership;
 }

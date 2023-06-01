@@ -42,28 +42,28 @@
     <tr>
       <th>#</th>
       <th>이름</th>
-      <th>주소</th>
-      <th>이메일</th>
-      <th>핸드폰</th>
+      <th>센터 이름</th>
+      <th>센터 주소</th>
       <th>정보</th>
-      <th>출근 상태</th>
+
     </tr>
     </thead>
     <tbody>
     <tr v-for="trainer in trainers" :key="trainer.id">
-      <td>{{trainer.id}}</td>
+      <td>{{ trainer.id }}</td>
       <td>
         <div>
           <router-link :to="{ name: 'trainerDetail', params: { trainerId: trainer.id } }">
-          {{trainer.name}}
+            {{ trainer.name }}
           </router-link>
         </div>
+        <div >
+
+        </div>
       </td>
-      <td>{{trainer.address}}</td>
-      <td>{{trainer.email}}</td>
-      <td>{{trainer.phoneNumber}}</td>
-      <td>{{trainer.info}}</td>
-      <td>{{trainer.isInCenter}}</td>
+      <td>{{ trainer.centerName }}</td>
+      <td>{{ trainer.centerAddress }}</td>
+      <td>{{ trainer.info }}</td>
     </tr>
 
     </tbody>
@@ -75,6 +75,7 @@
 <script setup>
 import {onMounted, ref} from 'vue'
 import axios from "axios";
+import Cookies from "vue-cookies";
 
 const id = ref();
 const name = ref();
@@ -82,34 +83,42 @@ const users = ref([])
 const trainers = ref([]);
 
 onMounted(() => {
-  axios.get("/api/test/trainer/list", {})
+  const token = Cookies.get("accessToken")
+  axios.get("/api/authTrainer", {
+    headers: {
+      Authorization: token
+    }
+  })
       .then((response) => {
         console.log(response.data);
         trainers.value = response.data
       }).catch((error) => {
-        console.log(error);
+    console.log(error);
   });
 });
 
 onMounted(() => {
-  axios.get("/api/test/user/lists", {})
+  const token = Cookies.get("accessToken")
+  axios.get("/api/authUser", {
+    headers: {
+      Authorization: token
+    }
+  })
       .then((response) => {
         console.log(response.data);
         users.value = response.data
       }).catch((error) => {
-        console.log(error)
+    console.log(error)
   });
 });
 
 
 </script>
 
-<style>
+<style scoped>
 .table {
   color: white;
 }
 
-h1 {
-  color: white;
-}
+
 </style>

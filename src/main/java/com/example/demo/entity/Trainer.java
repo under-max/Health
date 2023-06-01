@@ -10,14 +10,10 @@ import lombok.NoArgsConstructor;
 public class Trainer {
 
     private Integer id;
+    private Integer memberId;
+    private String trainerName;
     private String name;
-    private String address;
-    private String email;
-    private String password;
-    private String phoneNumber;
     private Integer centerId;
     private String info;
-    private Integer isInCenter;
-
 
 }

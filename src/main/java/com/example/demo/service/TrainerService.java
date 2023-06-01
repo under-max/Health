@@ -2,7 +2,9 @@ package com.example.demo.service;
 
 import com.example.demo.entity.Trainer;
 import com.example.demo.entity.User;
+import com.example.demo.exception.UserNotFound;
 import com.example.demo.mapper.TrainerMapper;
+import com.example.demo.mapper.UserMapper;
 import com.example.demo.response.TrainerDetailResponse;
 import com.example.demo.response.UserListResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -18,9 +20,21 @@ public class TrainerService {
     @Autowired
     private TrainerMapper trainerMapper;
 
+    @Autowired
+    private UserMapper userMapper;
 
-    public List<Trainer> listAll() {
-        return trainerMapper.selectAllTrainer();
+
+
+    public List<TrainerDetailResponse> getAuthTrainer(Long id) {
+        if (userMapper.findById(id).orElseThrow(UserNotFound::new).getAuthority()==1){
+            // 손님일 경우 트레이너 정보 출력
+            User user = trainerMapper.getTrainerById(id);
+            System.out.println("트레이너 : " + user.getTrainerId());
+            return trainerMapper.findByAuthTrainerUId(user.getTrainerId());
+        } else {
+            return trainerMapper.findByAuthTrainerTId(id);
+
+        }
     }
 
     public TrainerDetailResponse getTrainerTest() {
