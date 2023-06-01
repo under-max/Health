@@ -27,6 +27,8 @@ const urlParams = new URLSearchParams(window.location.search);
 const pg_token = urlParams.get('pg_token');
 
 onMounted(() => {
+  console.log(sessionStorage.getItem("centerId"));
+  console.log(sessionStorage.getItem("trainerId"));
   const token = Cookies.get('accessToken');
 
   axios
@@ -47,6 +49,7 @@ onMounted(() => {
               // Insert.vue 에서 넘어온 데이터 사용
               centerId: sessionStorage.getItem("centerId"),
               trainerId: sessionStorage.getItem("trainerId")
+
             }, {
               headers: {
                 Authorization: token

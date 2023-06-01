@@ -33,7 +33,7 @@
 
               <div>
                 <select v-model="selectedMonth">
-                  <option value="">다음 중 하나를 선택하세요</option>
+                  <option value="0">다음 중 하나를 선택하세요</option>
                   <option v-for="month in monthSelectList" :value="month.value">
 
                     <!--                          :value="selectedPT !== NaN ? selectedMonth.value = '선택안함' : month.value"-->
@@ -44,7 +44,7 @@
 
               <div>
                 <select v-model="selectedPT" @change="selectPTChange">
-                  <option value="">다음 중 하나를 선택하세요</option>
+                  <option value="0">다음 중 하나를 선택하세요</option>
                   <option v-for="pt in ptSelectList" :value="pt.value">{{ pt.name }}</option>
                 </select>
               </div>
@@ -262,13 +262,14 @@ const confirmPayment = () => {
       });
   // SuccessPage.vue에서 사용할 데이터 저장
   sessionStorage.setItem("centerId", selectedCenter.value.centerId);
-  sessionStorage.setItem("trainerId", selectedTrainer.value.trainerId);
+  // 트레이너를 선택하지 않았을 경우 undefined 가 아닌 0이 넘어간다.
+  sessionStorage.setItem("trainerId", (selectedTrainer.value.trainerId ? selectedTrainer.value.trainerId : 0));
 };
 
 // 선택 조건 확인하여 결제하기 버튼 활성화
 const checkCondition = () => {
   // 조건을 확인하고 버튼의 활성화 상태를 업데이트
-  if ((selectedCenter.value && selectedMonth.value) || selectedTrainer.value && selectedMonth.value || selectedPT.value) {
+  if ((selectedCenter.value && selectedMonth.value) || (selectedCenter.value && selectedTrainer.value && selectedPT.value)) {
     isButtonDisabled.value = false; // 버튼 활성화
   } else {
     isButtonDisabled.value = true; // 버튼 비활성화
