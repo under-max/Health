@@ -16,9 +16,6 @@ app.mount('#app')
 
 
 
-
-
-
 const token = Cookies.get('accessToken');
 if (token) {
     store.commit('setToken', token);

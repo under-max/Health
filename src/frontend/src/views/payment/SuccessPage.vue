@@ -2,9 +2,9 @@
 import {onMounted, ref} from "vue";
 import axios from 'axios';
 import router from "@/router";
-import store from "@/stores/moveId";
+import Cookies from "vue-cookies";
 
-// 결제 성공 시 넘겨받는 데이터
+// 결제 성공 시 서버에서 받는 데이터
 const successData = ref({
   memberId: '',
   centerName: '',
@@ -15,25 +15,28 @@ const successData = ref({
   approvedTime: ''
 });
 
-// Insert.vue 에서 넘어온 데이터 사용
-const selectedValues = ref(store.state.selectedValues);
-console.log(selectedValues);
-
 const goToMyInfo = () => {
-  router.replace("/");
+  router.replace(`/userDetail/${successData.value.memberId}`);
 }
 
 const goToHome = () => {
   router.replace("/");
 }
-
 // kakaoPay 성공
 const urlParams = new URLSearchParams(window.location.search);
 const pg_token = urlParams.get('pg_token');
 
 onMounted(() => {
+  console.log(sessionStorage.getItem("centerId"));
+  console.log(sessionStorage.getItem("trainerId"));
+  const token = Cookies.get('accessToken');
+
   axios
-      .get(`/api/kakaopay/${pg_token}`, {})
+      .get(`/api/kakaopay/${pg_token}`, {
+        headers: {
+          Authorization: token
+        }
+      })
       .then((response) => {
         console.log(response.data);
         successData.value = response.data;
@@ -42,7 +45,15 @@ onMounted(() => {
             .post("/api/membership", {
               memberId: successData.value.memberId,
               paymentMonths: successData.value.paymentMonths,
-              remainingPT: successData.value.remainingPT
+              remainingPT: successData.value.remainingPT,
+              // Insert.vue 에서 넘어온 데이터 사용
+              centerId: sessionStorage.getItem("centerId"),
+              trainerId: sessionStorage.getItem("trainerId")
+
+            }, {
+              headers: {
+                Authorization: token
+              }
             })
             .then((response) => {
               console.log(response.data);
@@ -69,12 +80,11 @@ onMounted(() => {
           기한 : {{ successData.paymentMonths }}개월 <br>
           pt : {{ successData.remainingPT }}회 <br>
           가격 : {{ successData.totalPrice }}원 <br>
-          결제일 : {{ successData.approvedDate}} <br>
+          결제일 : {{ successData.approvedDate }} <br>
           결제시간 : {{ successData.approvedTime }} <br>
         </p>
       </div>
     </div>
-
     <div class="buttons">
       <button class="btn btn-primary" @click="goToMyInfo">내 정보</button>
       <button class="btn btn-secondary" @click="goToHome">홈으로</button>

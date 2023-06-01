@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 public class PayReadyRequest {
-    private Integer memberId;
+//    private Integer memberId;
     private Integer centerId;
 
     @NotEmpty(message = "센터를 선택해주세요!")

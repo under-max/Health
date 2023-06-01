@@ -33,4 +33,13 @@ public class UserCreate {
         this.address = address;
         this.birthDate = birthDate;
     }
+
+    @Builder
+    public UserCreate(String email, String password, String name, String address, Date birthDate) {
+        this.password = password;
+        this.nickName = nickName;
+        this.name = name;
+        this.address = address;
+        this.birthDate = birthDate;
+    }
 }

@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.request.membership.PayReadyRequest;
+import com.example.demo.response.membership.PayReadyResponse;
 import com.example.demo.response.membership.PaySuccessResponse;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +32,7 @@ public class KaKaoPayService {
     public static final String CID = "TC0ONETIME";
     private static final Map<String, String> store = new HashMap<>();
 
-    public ResponseEntity<PayReadyResponse> kakaoPayReady(PayReadyRequest request) {
+    public PayReadyResponse kakaoPayReady(Long memberId, PayReadyRequest request) {
 
         URI uri = UriComponentsBuilder
                 .fromUriString(HOST)
@@ -52,13 +53,27 @@ public class KaKaoPayService {
         if (request.getPt() == null) {
             request.setPt(0);
         }
+
+//        if (request.getMonth() == 0) {
+//            if (request.getPt() == 10) {
+//                request.setMonth(1);
+//            } else if(request.getPt() == 20) {
+//                request.setMonth(2);
+//            } else if (request.getPt() == 30) {
+//                request.setMonth(3);
+//            } else if (request.getPt() == 60) {
+//                request.setMonth(6);
+//            }
+//        }
+
         String itemName = request.getCenterName() + ": 이용권(" + request.getMonth() + "개월, " + "PT " + request.getPt() + "회)";
+        log.info("itemName={}", itemName);
 
         // 서버로 요청할 Body
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("cid", CID);
         params.add("partner_order_id", "1001");
-        params.add("partner_user_id", String.valueOf(request.getMemberId()));
+        params.add("partner_user_id", String.valueOf(memberId));
         params.add("item_name", itemName);
         params.add("quantity", "1");
         params.add("total_amount", String.valueOf(request.getTotalPrice()));
@@ -78,17 +93,16 @@ public class KaKaoPayService {
         ResponseEntity<PayReadyResponse> response = restTemplate.exchange(requestEntity, PayReadyResponse.class);
 
         // approve에서 사용할 정보
-        store.put("memberId", String.valueOf(request.getMemberId()));
         store.put("tid", response.getBody().getTid());
 
         log.info("Headers={}", response.getHeaders());
         log.info("StatusCode={}", response.getStatusCode());
         log.info("body={}", response.getBody());
 
-        return response;
+        return response.getBody();
     }
 
-    public PaySuccessResponse kakaoPayApprove(String token) {
+    public PaySuccessResponse kakaoPayApprove(Long memberId, String token) {
 
         URI uri = UriComponentsBuilder
                 .fromUriString(HOST)
@@ -110,7 +124,7 @@ public class KaKaoPayService {
         params.add("cid", CID);
         params.add("tid", store.get("tid"));
         params.add("partner_order_id", "1001");
-        params.add("partner_user_id", store.get("memberId"));
+        params.add("partner_user_id", String.valueOf(memberId));
         params.add("pg_token", token);
 
         RequestEntity<MultiValueMap<String, String>> requestEntity = RequestEntity
@@ -151,13 +165,6 @@ public class KaKaoPayService {
     }
 
     @Data
-    public static class PayReadyResponse {
-        private String tid;
-        private String next_redirect_pc_url;
-        private LocalDateTime created_at;
-    }
-
-    @Data
     public static class PayApproveResponse {
         private String aid;
         private String tid;
@@ -175,7 +182,6 @@ public class KaKaoPayService {
         private LocalDateTime approved_at;
         private String payload;
     }
-
     @Data
     static class Amount {
         private String total;
@@ -185,6 +191,7 @@ public class KaKaoPayService {
         private String discount;
         private String green_deposit;
     }
+
 
     @Data
     static class CardInfo {

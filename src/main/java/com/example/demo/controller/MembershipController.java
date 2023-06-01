@@ -21,19 +21,13 @@ public class MembershipController {
 
     private final MembershipService membershipService;
 
-    @PostMapping()
+    @PostMapping
     public ResponseEntity<MembershipResponse> createMembership(@RequestBody CreateMembershipRequest request) {
 
         log.info("createMembership() request={}", request);
 
-        Integer membershipId;
-        if (membershipService.getMembershipByMemberId(request.getMemberId()) == null) {
-            membershipId = membershipService.createMembership(request);
-        } else {
-            membershipId = membershipService.updateMembership(request);
-        }
-
-        MembershipResponse response = membershipService.getMembershipByMembershipId(membershipId);
+        // 멤버쉽이 없으면 등록, 멤버쉽이 있으면 수정
+        MembershipResponse response = membershipService.createAndUpdate(request);
 
         log.info("createMembership() response={}", response);
 
@@ -47,7 +41,6 @@ public class MembershipController {
 
     @GetMapping("/centers/{centerId}")
     public List<SimpleTrainer> getTrainers(@PathVariable Integer centerId) {
-        log.info("getTrainers={}", membershipService.getTrainers(centerId));
         return membershipService.getTrainers(centerId);
     }
 
