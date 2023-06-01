@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.entity.AuthUser;
+import com.example.demo.entity.Trainer;
 import com.example.demo.entity.User;
 import com.example.demo.exception.DuplicateEmail;
 import com.example.demo.exception.UserNotFound;
@@ -18,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -83,6 +85,19 @@ public class UserService {
                 .build();
     }
 
+    // 로그인된 유저 정보 조회
+    public List<UserListResponse> getAuthedUser(Long id) {
+        if (userMapper.findById(id).orElseThrow(UserNotFound::new).getAuthority()==1){
+            List<UserListResponse> user = new ArrayList<>();
+            System.out.println("아이디" + id);
+            user.add(userMapper.findByAuthUserId(id));
+            return user;
+        } else {
+            Trainer trainer = userMapper.getTrainerId(id);
+            return userMapper.findByAllAuthUserId(trainer.getId());
+        }
+    }
+
     public void edit(UserEdit userEdit) {
         if (!passwordEncoder.matches(userEdit.getPassword(), userMapper.findById(userEdit.getUserId()).orElseThrow().getPassword())) {
             throw new DuplicateEmail("기존 비밀번호를 확인하세요");
@@ -118,9 +133,9 @@ public class UserService {
         userMapper.delete(user.getId());
     }
 
-    public List<UserListResponse> listAllTest() {
-        return userMapper.findAllTest();
-    }
+//    public List<UserListResponse> listAuthUserInfo() {
+//        return userMapper.selectById();
+//    }
 
     public UserDetailResponse getUserTest(Long id) {
         return userMapper.findByIdTest(id);
@@ -139,5 +154,14 @@ public class UserService {
         User user = userMapper.findByEmail(kakaoAccount.getEmail()).orElseThrow();
         return AuthUserResponse.builder().userId(user.getId()).build();
     }
+
+//    public UserListResponse getUserTest2(AuthUser authUser) {
+//        UserListResponse res = new UserListResponse();
+//        if(res.getId().equals(authUser.getId())) {
+//            return userMapper.
+//        } else {
+//
+//        }
+//    }
 }
 

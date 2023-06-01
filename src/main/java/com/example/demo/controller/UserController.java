@@ -70,12 +70,12 @@ public class UserController {
     }
 
 
-    @GetMapping("/test/user/lists")
-    public List<UserListResponse> list() {
-        List<UserListResponse> listAll = userService.listAllTest();
-
-        return listAll;
+    // 로그인된 유저 정보 조회
+    @GetMapping("/authUser")
+    public List<UserListResponse> getUser(AuthUser authUser) {
+        return userService.getAuthedUser(authUser.getUserId());
     }
+
 
     @GetMapping("/test/user/{id}")
     public UserDetailResponse userDetail(@PathVariable Long id, AuthUser authUser) {

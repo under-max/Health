@@ -1,5 +1,7 @@
 package com.example.demo.mapper;
 
+import com.example.demo.entity.AuthUser;
+import com.example.demo.entity.Trainer;
 import com.example.demo.entity.User;
 import com.example.demo.request.Login;
 import com.example.demo.request.UserEdit;
@@ -72,28 +74,28 @@ public interface UserMapper {
 
 
     @Select("""
-            SELECT m.id, m.name, m.birthDate,
-                   t.name as trainerName, ms.startDate,
-                    ms.endDate, ms.remainingPT,
+            SELECT m.id, m.name, m.birthDate, t.name as trainerName,
+                   ms.startDate, ms.endDate, ms.remainingPT, 
                    m.isInCenter
             FROM MEMBER m
             LEFT JOIN
             	TRAINER t ON m.trainerId = t.id
             LEFT JOIN
-            	MEMBERSHIP ms ON m.id = ms.membershipId;
+            	MEMBERSHIP ms ON m.id = ms.memberId
+            WHERE m.authority = 1;
             """)
-    List<UserListResponse> findAllTest();
+    List<UserListResponse> selectById();
 
     @Select("""
             SELECT m.id, m.name, m.email, 
-            	   m.isInCenter, t.id as TrainerID, t.name as TrainerName, c.name as CenterName, ms.startDate, ms.endDate, ms.remainingPT
+            	   m.isInCenter, t.name as TrainerName, c.name as CenterName, ms.startDate, ms.endDate, ms.remainingPT
             FROM MEMBER m
             LEFT JOIN
             	TRAINER t ON m.trainerId = t.id
             LEFT JOIN
             	CENTER c ON m.centerId = c.id
             LEFT JOIN
-            	MEMBERSHIP ms ON ms.membershipId = m.id
+            	MEMBERSHIP ms ON ms.memberId = m.id
             WHERE m.id = #{id}
             """)
     UserDetailResponse findByIdTest(Long id);
@@ -109,4 +111,39 @@ public interface UserMapper {
             """)
     @Options(useGeneratedKeys = true, keyColumn = "id", keyProperty = "id")
     void saveSocial(User user);
+
+
+    @Select("""
+            SELECT m.id, m.name, m.birthDate, t.name as trainerName,
+                   ms.startDate, ms.endDate, ms.remainingPT, 
+                   m.isInCenter
+            FROM MEMBER m
+            LEFT JOIN
+            	TRAINER t ON m.trainerId = t.id
+            LEFT JOIN
+            	MEMBERSHIP ms ON m.id = ms.memberId
+            WHERE m.id = #{id};
+            """)
+    UserListResponse findByAuthUserId(Long id);
+
+    @Select("""
+            SELECT * FROM TRAINER 
+            WHERE memberId = #{id}
+            """)
+    Trainer getTrainerId(Long id);
+
+    @Select("""
+            SELECT m.id, m.name, m.birthDate, t.name as trainerName,
+                   ms.startDate, ms.endDate, ms.remainingPT, 
+                   m.isInCenter
+            FROM MEMBER m
+            LEFT JOIN
+            	TRAINER t ON m.trainerId = t.id
+            LEFT JOIN
+            	MEMBERSHIP ms ON m.id = ms.memberId
+            WHERE t.id = #{trainerId}
+            """)
+    List<UserListResponse> findByAllAuthUserId(Integer trainerId);
+
+
 }

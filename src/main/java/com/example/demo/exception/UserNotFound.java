@@ -2,7 +2,7 @@ package com.example.demo.exception;
 
 public class UserNotFound extends JJinBBangException {
 
-    private static final String MESSAGE = "존재하지 회원 글입니다.";
+    private static final String MESSAGE = "존재하지 회원입니다.";
 
     public UserNotFound() {
         super(MESSAGE);

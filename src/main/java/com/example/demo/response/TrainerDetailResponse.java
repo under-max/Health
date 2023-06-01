@@ -5,13 +5,12 @@ import lombok.Data;
 @Data
 public class TrainerDetailResponse {
 
-    private Integer id; //
+    private Integer id;
+    private Integer memberId;
     private String name;
-    private String address; //
-    private String email;
-    private String phoneNumber;
     private Integer centerId;
-
+    private String centerName;
+    private String centerAddress;
     private String info;
-    private Integer isInCenter;
+    private Integer authority;
 }
