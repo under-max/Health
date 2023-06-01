@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.AuthUser;
 import com.example.demo.request.membership.PayReadyRequest;
+import com.example.demo.response.membership.PayReadyResponse;
 import com.example.demo.response.membership.PaySuccessResponse;
 import com.example.demo.service.KaKaoPayService;
 import jakarta.validation.Valid;
@@ -22,7 +23,9 @@ public class KaKaoPayController {
     public String payReady(@RequestBody @Valid PayReadyRequest request, AuthUser authUser) {
 
         log.info("payReady() memberId={}, request={}", authUser.getUserId(), request);
-        String redirectPcUrl = kaKaoPayService.kakaoPayReady(authUser.getUserId(), request).getBody().getNext_redirect_pc_url();
+
+        PayReadyResponse response = kaKaoPayService.kakaoPayReady(authUser.getUserId(), request);
+        String redirectPcUrl = response.getNext_redirect_pc_url();
         return redirectPcUrl;
     }
 

@@ -1,18 +1,21 @@
 <template>
+
   <h4>이용권안내!</h4>
   <div class="container">
-    <div class="row">
+    <div class="row top-padding">
       <div class="col-md-6">
         <div>
           <div class="container">
-            <h3>구매</h3>
+            <h4 class="d-flex justify-content-between align-items-center mb-3">
+              <span class="text-primary">선택</span>
+            </h4>
             <div>
 
               <div v-if="errorMessage">{{ errorMessage }}</div>
 
               <div>
-                <select v-model="selectedCenter" @change="fetchTrainers">
-                  <option disabled value="">다음 중 하나를 선택하세요</option>
+                <select v-model="selectedCenter" @change="getTrainers">
+                  <option value="">다음 중 하나를 선택하세요</option>
                   <option v-for="center in centerList" :value="center">
                     {{ center.centerName }}
                   </option>
@@ -21,7 +24,7 @@
 
               <div>
                 <select v-model="selectedTrainer">
-                  <option value="">선택안함</option>
+                  <option value="">다음 중 하나를 선택하세요</option>
                   <option v-for="trainer in trainerList" :value="trainer">
                     {{ trainer.trainerName }}
                   </option>
@@ -30,30 +33,19 @@
 
               <div>
                 <select v-model="selectedMonth">
+                  <option value="">다음 중 하나를 선택하세요</option>
                   <option v-for="month in monthSelectList" :value="month.value">{{ month.name }}</option>
                 </select>
               </div>
 
               <div>
-                <select v-model="selectedPT">
+                <select v-model="selectedPT" @change="selectPTChange">
+                  <option value="">다음 중 하나를 선택하세요</option>
                   <option v-for="pt in ptSelectList" :value="pt.value">{{ pt.name }}</option>
                 </select>
               </div>
-
-              {{ selectedCenter.centerName }} <br>
-
-              총 가격 :
-              {{
-                totalPrice = monthSelectList?.find(item => item.value === selectedMonth).price + ptSelectList?.find(item => item.value === selectedPT).price
-              }}원
-
             </div>
 
-            <div>
-              <form @submit.prevent="submitPayment">
-                <button class="btn btn-primary" type="submit" :disabled="isButtonDisabled">카카오페이로 결제하기</button>
-              </form>
-            </div>
 
             <div v-if="showModal" class="modal-overlay">
               <div class="modal modal-sheet position-static d-block bg-body-secondary p-4 py-md-5"
@@ -61,20 +53,20 @@
                 <div class="modal-dialog" role="document">
                   <div class="modal-content rounded-3 shadow">
                     <div class="modal-body p-4 text-center">
-                      <h5 class="mb-0">구매 결정</h5>
+                      <p class="mb-0">구매 결정</p>
                       <p class="mb-0">지점 : {{ selectedCenter.centerName }}</p>
                       <p class="mb-0">담당 트레이너: {{ selectedTrainer.trainerName }}</p>
-                      <p class="mb-0">이용권 : {{ selectedMonth }}개월</p>
-                      <p class="mb-0">PT횟수 : {{ selectedPT }}회</p>
-                      <p class="mb-0">구매 가격 : {{ totalPrice }}원 </p>
+                      <p class="mb-0">이용 기간 : {{ selectedMonth }}개월</p>
+                      <p class="mb-0">PT 횟수 : {{ selectedPT }}회</p>
+                      <p class="mb-0">구매 가격 : {{ formattedTotalPrice }}원 </p>
                     </div>
                     <div class="modal-footer flex-nowrap p-0">
                       <button type="button"
                               class="btn btn-lg btn-link fs-6 text-decoration-none col-6 py-3 m-0 rounded-0 border-end"
-                              @click="confirmPayment"><strong>사요.</strong></button>
+                              @click="confirmPayment"><strong>사요</strong></button>
                       <button type="button"
                               class="btn btn-lg btn-link fs-6 text-decoration-none col-6 py-3 m-0 rounded-0"
-                              data-bs-dismiss="modal" @click="cancelPayment">안사요.
+                              data-bs-dismiss="modal" @click="cancelPayment">안사요
                       </button>
                     </div>
                   </div>
@@ -83,7 +75,7 @@
             </div>
 
             <div v-if="payReadyUrl">
-              <h3>결제 링크:</h3>
+              <p>결제 링크:</p>
               <a :href="payReadyUrl" target="_blank"> {{ payReadyUrl }}</a>
             </div>
           </div>
@@ -92,52 +84,43 @@
 
 
       <div class="col-md-6">
-        <div class="row g-10">
-          <div class="col-md-8 col-lg-6 order-md-last">
-            <h4 class="d-flex justify-content-between align-items-center mb-3">
-              <span class="text-primary">Your cart</span>
-              <span class="badge bg-primary rounded-pill">5</span>
-            </h4>
-            <ul class="list-group mb-3">
-              <li class="list-group-item d-flex justify-content-between lh-sm">
-                <div>
-                  <h6 class="my-0">Product name</h6>
-                  <small class="text-body-secondary">Brief description</small>
-                </div>
-                <span class="text-body-secondary">$12</span>
-              </li>
-              <li class="list-group-item d-flex justify-content-between lh-sm">
-                <div>
-                  <h6 class="my-0">Second product</h6>
-                  <small class="text-body-secondary">Brief description</small>
-                </div>
-                <span class="text-body-secondary">$8</span>
-              </li>
-              <li class="list-group-item d-flex justify-content-between lh-sm">
-                <div>
-                  <h6 class="my-0">Third item</h6>
-                  <small class="text-body-secondary">Brief description</small>
-                </div>
-                <span class="text-body-secondary">$5</span>
-              </li>
-              <li class="list-group-item d-flex justify-content-between bg-body-tertiary">
-                <div class="text-success">
-                  <h6 class="my-0">Promo code</h6>
-                  <small>EXAMPLECODE</small>
-                </div>
-                <span class="text-success">−$5</span>
-              </li>
-              <li class="list-group-item d-flex justify-content-between">
-                <span>Total (USD)</span>
-                <strong>$20</strong>
-              </li>
-            </ul>
-
-            <form class="card p-2">
-              <div class="input-group">
-                <input type="text" class="form-control" placeholder="Promo code">
-                <button type="submit" class="btn btn-secondary">Redeem</button>
+        <div class="row col-lg-8">
+          <!--          <div class="col-md-8 col-lg-6 order-md-last">-->
+          <h4 class="d-flex justify-content-between align-items-center mb-3">
+            <span class="text-primary">선택 사항</span>
+          </h4>
+          <ul class="list-group mb-3">
+            <li class="list-group-item d-flex justify-content-between lh-sm">
+              <div>
+                <small class="text-body-secondary">센터 / 트레이너</small>
+                <h5 class="my-0">{{ selectedCenter.centerName }} / {{ selectedTrainer.trainerName }}</h5>
               </div>
+            </li>
+            <li class="list-group-item d-flex justify-content-between lh-sm">
+              <div>
+                <small class="text-body-secondary">이용 기간</small>
+                <h5 class="my-0">{{ selectedMonth }}개월</h5>
+              </div>
+            </li>
+            <li class="list-group-item d-flex justify-content-between lh-sm">
+              <div>
+                <small class="text-body-secondary">PT 횟수</small>
+                <h5 class="my-0">{{ selectedPT }}회</h5>
+              </div>
+            </li>
+            <li class="list-group-item d-flex justify-content-between lh-sm">
+              <div>
+                <h5 class="my-0">합계</h5>
+              </div>
+              <strong>
+                {{ formattedTotalPrice }}원
+              </strong>
+            </li>
+          </ul>
+
+          <div>
+            <form @submit.prevent="submitPayment">
+              <button class="btn btn-primary" type="submit" :disabled="isButtonDisabled">카카오페이로 결제하기</button>
             </form>
           </div>
         </div>
@@ -149,39 +132,31 @@
 </template>
 
 <script setup>
-import {onMounted, ref, watchEffect} from "vue";
+import {computed, onMounted, ref, watchEffect} from "vue";
 import axios from "axios";
 import Cookies from "vue-cookies";
 
-// Controller에서 AuthUser 추가하면서 잠시 주석
-// const memberId = ref(19);
-const totalPrice = ref(0);
-
-// 에러 관련
-const errorMessage = ref("");
-const isButtonDisabled = ref(true);
-
 // 선택한 센터
-const selectedCenter = ref({
-  centerId: '',
-  centerName: ''
-});
+const selectedCenter = ref('');
+// const selectedCenter = ref({
+//   centerId: '',
+//   centerName: ''
+// });
 
 // 선택한 트레이너
-const selectedTrainer = ref({
-  trainerId: '',
-  trainerName: ''
-});
+const selectedTrainer = ref('');
+// const selectedTrainer = ref({
+//   trainerId: '',
+//   trainerName: ''
+// });
 
-// 선택한 개월 수
+// 선택한 이용 기간
 const selectedMonth = ref("");
-// 선택한 pt 횟수
+
+// 선택한 PT 횟수
 const selectedPT = ref("");
 
 const payReadyUrl = ref("");
-
-// 결제버튼 눌렀을 경우 modal 창 보여주기 초기값
-const showModal = ref(false);
 
 // 센터 리스트
 const centerList = ref([]);
@@ -189,27 +164,59 @@ const centerList = ref([]);
 // 센터에 소속된 트레이너 리스트
 const trainerList = ref([]);
 
-// 개월 리스트
+// 이용 기간 리스트
 const monthSelectList = ref([
-  {name: "선택해주세요.", value: "", price: 0},
+  {name: "선택안함", value: 0, price: 0},
   {name: "1개월", value: 1, price: 50000},
-  {name: "3개월", value: 3, price: 150000},
-  {name: "6개월", value: 6, price: 300000},
-  {name: "12개월", value: 12, price: 600000}
+  {name: "3개월", value: 3, price: 130000},
+  {name: "6개월", value: 6, price: 220000},
+  {name: "12개월", value: 12, price: 400000}
 ]);
 
-// pt 리스트
+// PT 횟수 리스트
 const ptSelectList = ref([
-  {name: "선택안함", value: "", price: 0},
-  {name: "5회", value: 5, price: 200000},
-  {name: "10회", value: 10, price: 400000},
-  {name: "15회", value: 15, price: 600000},
-  {name: "20회", value: 20, price: 800000}
+  {name: "선택안함", value: 0, price: 0},
+  {name: "10회 / 1개월", value: 10, price: 300000},
+  {name: "20회 / 2개월", value: 20, price: 600000},
+  {name: "30회 / 3개월", value: 30, price: 800000},
+  {name: "60회 / 6개월", value: 60, price: 1000000}
 ]);
+
+// 이용 기간, PT 횟수 가격 합계
+const totalPrice = computed(() => {
+  const monthPrice = monthSelectList.value?.find(item => item.value === selectedMonth.value)?.price || 0;
+  const ptPrice = ptSelectList.value?.find(item => item.value === selectedPT.value)?.price || 0;
+  return monthPrice + ptPrice;
+});
+
+// 가격 합계에 쉼표 넣어주는 메서드
+const formattedTotalPrice = computed(() => {
+  return totalPrice.value.toLocaleString();
+});
+
+// TODO 선생님께 pt 선택시 3번째 블럭이 선택안함으로 바뀌는게 가능한지 여쭤보기
+// const selectPTChange = () => {
+//   if (selectedPT.value === 10) {
+//     selectedMonth.value = 1;
+//   }
+// }
+
+// 에러 관련
+const errorMessage = ref("");
+const isButtonDisabled = ref(true);
+
+
+// 결제버튼 눌렀을 경우 modal 창 보여주기 초기값
+const showModal = ref(false);
 
 // 결제버튼 눌렀을 시 실행되는 메서드
 const submitPayment = () => {
   showModal.value = true;
+}
+
+// modal 창에서 취소버튼
+const cancelPayment = () => {
+  showModal.value = false;
 }
 
 // modal 창에서 구매버튼
@@ -242,17 +249,11 @@ const confirmPayment = () => {
   sessionStorage.setItem("trainerId", selectedTrainer.value.trainerId);
 };
 
-// modal 창에서 취소버튼
-const cancelPayment = () => {
-  showModal.value = false;
-}
-
 // 선택 조건 확인하여 결제하기 버튼 활성화
 const checkCondition = () => {
   // 조건을 확인하고 버튼의 활성화 상태를 업데이트
-  if (selectedCenter.value && selectedTrainer.value && selectedMonth.value || selectedPT.value) {
+  if ((selectedCenter.value && selectedMonth.value) || selectedTrainer.value && selectedMonth.value || selectedPT.value) {
     isButtonDisabled.value = false; // 버튼 활성화
-
   } else {
     isButtonDisabled.value = true; // 버튼 비활성화
   }
@@ -263,8 +264,8 @@ watchEffect(() => {
   checkCondition();
 });
 
-// 센터를 선택하면 해당하는 트레이너 불러오는 axios
-const fetchTrainers = () => {
+// 센터를 선택하면 소속되어 있는 트레이너 불러오는 axios
+const getTrainers = () => {
   axios
       .get(`/api/membership/centers/${selectedCenter.value.centerId}`, {})
       .then((response) => {
@@ -294,9 +295,8 @@ onMounted(() => {
 .container {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
+  margin-left: 10rem;
+//justify-content: center; //align-items: center; height: 100vh;
 }
 
 .container > div {
@@ -312,12 +312,11 @@ onMounted(() => {
 }
 
 select {
-  padding: 0.5rem;
+  padding: 1rem;
   font-size: 1rem;
   border: 1px solid #ccc;
   border-radius: 4px;
-  width: 100%;
-  max-width: 300px;
+  width: 430px;
 }
 
 select:focus {
@@ -393,9 +392,8 @@ a:hover {
   text-decoration: underline;
 }
 
-h4 {
+.top-padding {
   padding-top: 3rem;
-  text-align: center;
 }
 
 .row {
@@ -407,4 +405,5 @@ h4 {
   padding-right: 0.5rem;
   padding-left: 0.5rem;
 }
+
 </style>

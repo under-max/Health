@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.request.membership.PayReadyRequest;
+import com.example.demo.response.membership.PayReadyResponse;
 import com.example.demo.response.membership.PaySuccessResponse;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +32,7 @@ public class KaKaoPayService {
     public static final String CID = "TC0ONETIME";
     private static final Map<String, String> store = new HashMap<>();
 
-    public ResponseEntity<PayReadyResponse> kakaoPayReady(Long memberId, PayReadyRequest request) {
+    public PayReadyResponse kakaoPayReady(Long memberId, PayReadyRequest request) {
 
         URI uri = UriComponentsBuilder
                 .fromUriString(HOST)
@@ -52,7 +53,21 @@ public class KaKaoPayService {
         if (request.getPt() == null) {
             request.setPt(0);
         }
+
+        if (request.getMonth() == 0) {
+            if (request.getPt() == 10) {
+                request.setMonth(1);
+            } else if(request.getPt() == 20) {
+                request.setMonth(2);
+            } else if (request.getPt() == 30) {
+                request.setMonth(3);
+            } else if (request.getPt() == 60) {
+                request.setMonth(6);
+            }
+        }
+
         String itemName = request.getCenterName() + ": 이용권(" + request.getMonth() + "개월, " + "PT " + request.getPt() + "회)";
+        log.info("itemName={}", itemName);
 
         // 서버로 요청할 Body
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
@@ -84,7 +99,7 @@ public class KaKaoPayService {
         log.info("StatusCode={}", response.getStatusCode());
         log.info("body={}", response.getBody());
 
-        return response;
+        return response.getBody();
     }
 
     public PaySuccessResponse kakaoPayApprove(Long memberId, String token) {
@@ -147,13 +162,6 @@ public class KaKaoPayService {
         log.info("successResponse={}", successResponse);
 
         return successResponse;
-    }
-
-    @Data
-    public static class PayReadyResponse {
-        private String tid;
-        private String next_redirect_pc_url;
-        private LocalDateTime created_at;
     }
 
     @Data
