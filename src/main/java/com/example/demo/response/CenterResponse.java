@@ -28,6 +28,12 @@ public class CenterResponse {
         this.fileName = center.getFileName();
     }
 
+
+    public CenterResponse(Integer id, String name){
+        this.id = id;
+        this.name = name;
+    }
+
     @Builder
     public CenterResponse(Integer id, String name, String address, String info, String phoneNumber, List<String> fileName){
         this.id = id;

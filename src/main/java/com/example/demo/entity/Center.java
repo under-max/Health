@@ -9,7 +9,8 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 public class Center {
-    private Integer Id;
+    private Integer id;
+
     private String name;
 
     private String address;
@@ -21,7 +22,8 @@ public class Center {
     private List<String> fileName;
 
     @Builder
-    public Center(String name, String address, String info, String phoneNumber, String file, List<String> fileName){
+    public Center(Integer id, String name, String address, String info, String phoneNumber, String file, List<String> fileName){
+        this.id = id;
         this.name = name;
         this.address = address;
         this.info = info;
