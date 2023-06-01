@@ -6,9 +6,21 @@
       <div class="col-md-6">
         <div>
           <div class="container">
+
+            <div>
+              <form>
+                <h4>
+                  <label class="text-primary" for="searchStore">검색</label>
+                  <input v-model="searchStore" id="searchStore"/>
+                  <button @click="searchStoreSubmit">검색</button>
+                </h4>
+              </form>
+            </div>
+
             <h4 class="d-flex justify-content-between align-items-center mb-3">
               <span class="text-primary">선택</span>
             </h4>
+
             <div>
 
               <div v-if="errorMessage">{{ errorMessage }}</div>
@@ -33,10 +45,8 @@
 
               <div>
                 <select v-model="selectedMonth">
-                  <option value="0">다음 중 하나를 선택하세요</option>
+                  <option value="">다음 중 하나를 선택하세요</option>
                   <option v-for="month in monthSelectList" :value="month.value">
-
-                    <!--                          :value="selectedPT !== NaN ? selectedMonth.value = '선택안함' : month.value"-->
                     {{ month.name }}
                   </option>
                 </select>
@@ -44,7 +54,7 @@
 
               <div>
                 <select v-model="selectedPT" @change="selectPTChange">
-                  <option value="0">다음 중 하나를 선택하세요</option>
+                  <option value="">다음 중 하나를 선택하세요</option>
                   <option v-for="pt in ptSelectList" :value="pt.value">{{ pt.name }}</option>
                 </select>
               </div>
@@ -141,6 +151,7 @@ import axios from "axios";
 import Cookies from "vue-cookies";
 
 
+
 // 선택한 센터
 const selectedCenter = ref('');
 // const selectedCenter = ref({
@@ -204,7 +215,6 @@ const formattedTotalPrice = computed(() => {
   return totalPrice.value.toLocaleString();
 });
 
-// TODO 선생님께 pt 선택시 3번째 블럭이 선택안함으로 바뀌는게 가능한지 여쭤보기
 const selectPTChange = () => {
   if (selectedPT.value == 10) {
     selectedMonth.value = "1";
