@@ -16,7 +16,7 @@ const successData = ref({
 });
 
 const goToMyInfo = () => {
-  router.replace("/");
+  router.replace(`/userDetail/${successData.value.memberId}`);
 }
 
 const goToHome = () => {

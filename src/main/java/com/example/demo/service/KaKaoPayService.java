@@ -174,7 +174,6 @@ public class KaKaoPayService {
         private LocalDateTime approved_at;
         private String payload;
     }
-
     @Data
     static class Amount {
         private String total;
@@ -184,6 +183,7 @@ public class KaKaoPayService {
         private String discount;
         private String green_deposit;
     }
+
 
     @Data
     static class CardInfo {
