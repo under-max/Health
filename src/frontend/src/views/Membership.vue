@@ -7,14 +7,19 @@
         <div>
           <div class="container">
 
+            <!-- 검색 기능 -->
             <div>
-              <form>
-                <h4>
-                  <label class="text-primary" for="searchStore">검색</label>
-                  <input v-model="searchStore" id="searchStore"/>
-                  <button @click="searchStoreSubmit">검색</button>
-                </h4>
-              </form>
+              <select v-model="searchType">
+                <option value="address">지역</option>
+                <option value="center">센터</option>
+              </select>
+              <br>
+              <label for="search" class="hidden-visually text-primary">검색: </label>
+              <input id="search" type="text" v-model="searchKeyword"/>
+
+              <button @click="searchConditionSubmit">
+                <span class="hidden-visually">검색</span>
+              </button>
             </div>
 
             <h4 class="d-flex justify-content-between align-items-center mb-3">
@@ -146,10 +151,9 @@
 </template>
 
 <script setup>
-import {computed, onMounted, ref, watch, watchEffect} from "vue";
+import {computed, onMounted, ref, watchEffect} from "vue";
 import axios from "axios";
 import Cookies from "vue-cookies";
-
 
 
 // 선택한 센터
@@ -171,10 +175,6 @@ const selectedMonth = ref("");
 
 // 선택한 PT 횟수
 const selectedPT = ref("");
-
-// watch(selectedPT,(currval, oldval)=>{
-//   console.log(currval);
-// })
 
 const payReadyUrl = ref("");
 
@@ -215,6 +215,7 @@ const formattedTotalPrice = computed(() => {
   return totalPrice.value.toLocaleString();
 });
 
+// PT횟수 선택시 이용기간 개월 수 변경
 const selectPTChange = () => {
   if (selectedPT.value == 10) {
     selectedMonth.value = "1";
@@ -227,10 +228,53 @@ const selectPTChange = () => {
   }
 }
 
+// 검색 기능
+const searchType = ref('address');
+const searchKeyword = ref('');
+
+// 센터 검색 버튼
+const searchConditionSubmit = () => {
+  console.log(searchType.value)
+  console.log(searchKeyword.value)
+
+  axios
+      .get(`/api/membership/centers?keyword=${searchKeyword.value}&type=${searchType.value}`, {
+        // params: {
+        // type: searchType.value,
+        // centerName: searchCenter.value,
+        // keyword: searchKeyword.value,
+        // }
+      })
+      .then((response) => {
+        console.log(response.data);
+        centerList.value = response.data;
+      })
+      .catch((error) => {
+        console.log(error)
+      });
+}
+
+// <input v-model="searchCondition" id="searchStore"/>
+// <button @click="searchConditionSubmit">검색</button>
+
 // 에러 관련
 const errorMessage = ref("");
 const isButtonDisabled = ref(true);
 
+// 선택 조건 확인하여 결제하기 버튼 활성화
+const checkCondition = () => {
+  // 조건을 확인하고 버튼의 활성화 상태를 업데이트
+  if ((selectedCenter.value && selectedMonth.value) || (selectedCenter.value && selectedTrainer.value && selectedPT.value)) {
+    isButtonDisabled.value = false; // 버튼 활성화
+  } else {
+    isButtonDisabled.value = true; // 버튼 비활성화
+  }
+};
+
+// 변경감지?
+watchEffect(() => {
+  checkCondition();
+});
 
 // 결제버튼 눌렀을 경우 modal 창 보여주기 초기값
 const showModal = ref(false);
@@ -276,21 +320,6 @@ const confirmPayment = () => {
   sessionStorage.setItem("trainerId", (selectedTrainer.value.trainerId ? selectedTrainer.value.trainerId : 0));
 };
 
-// 선택 조건 확인하여 결제하기 버튼 활성화
-const checkCondition = () => {
-  // 조건을 확인하고 버튼의 활성화 상태를 업데이트
-  if ((selectedCenter.value && selectedMonth.value) || (selectedCenter.value && selectedTrainer.value && selectedPT.value)) {
-    isButtonDisabled.value = false; // 버튼 활성화
-  } else {
-    isButtonDisabled.value = true; // 버튼 비활성화
-  }
-};
-
-// 변경감지?
-watchEffect(() => {
-  checkCondition();
-});
-
 // 센터를 선택하면 소속되어 있는 트레이너 불러오는 axios
 const getTrainers = () => {
   axios
@@ -306,8 +335,7 @@ const getTrainers = () => {
 // 등록되어있는 센터 가져오기
 onMounted(() => {
   axios
-      .get("/api/membership/centers" +
-          "", {})
+      .get(`/api/membership/centers?keyword=${searchKeyword.value}&type=${searchType.value}`, {})
       .then((response) => {
         centerList.value = response.data;
       })

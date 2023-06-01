@@ -3,6 +3,11 @@ import {onMounted, ref, watchEffect} from "vue";
 import axios from "axios";
 import Cookies from "vue-cookies";
 
+/**
+ * 삭제 예정
+ */
+
+
 // Controller에서 AuthUser 추가하면서 잠시 주석
 // const memberId = ref(19);
 const totalPrice = ref(0);

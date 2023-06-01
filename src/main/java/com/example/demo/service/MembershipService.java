@@ -40,14 +40,18 @@ public class MembershipService {
         return getMembershipByMembershipId(membershipId);
     }
 
-    public List<SimpleCenter> getCenters() {
-        return membershipMapper.findCenters().stream()
+    /**
+     * 검색 기능
+     */
+    public List<SimpleCenter> getCenters(String type, String keyword) {
+        List<SimpleCenter> all = membershipMapper.findByKeyword(type, keyword).stream()
                 .map(center -> SimpleCenter.builder()
                         .centerId(center.getId())
                         .centerName(center.getName())
                         .build())
                 .collect(Collectors.toList());
-
+        log.info("all={}", all);
+        return all;
     }
 
     public List<SimpleTrainer> getTrainers(Integer centerId) {
@@ -117,7 +121,7 @@ public class MembershipService {
     }
 
     private void updateMember(CreateMembershipRequest request) {
-        
+
         UpdateMemberDto dto = UpdateMemberDto.builder()
                 .memberId(request.getMemberId())
                 .centerId(request.getCenterId())
@@ -126,4 +130,5 @@ public class MembershipService {
 
         membershipMapper.updateMember(dto);
     }
+
 }

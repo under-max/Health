@@ -38,13 +38,23 @@
             id = #{memberId}
     </update>
 
-    <select id="findCenters" resultType="Center">
-        select id, name from CENTER
+    <select id="findByKeyword" resultType="Center">
+        select
+            id, name
+        from CENTER
+        <where>
+            <if test="type eq 'address'">
+                or address like concat ('%', #{keyword}, '%')
+            </if>
+            <if test="type eq 'center'">
+                or name like concat ('%', #{keyword}, '%')
+            </if>
+        </where>
     </select>
 
     <select id="findTrainers" resultType="Trainer">
         select t.id, m.name from TRAINER t
-            join MEMBER m on t.memberId = m.id
+                                     join MEMBER m on t.memberId = m.id
         where t.centerId = #{centerId}
     </select>
 

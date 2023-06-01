@@ -34,9 +34,17 @@ public class MembershipController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
+    /**
+     * 검색 기능
+     */
     @GetMapping("/centers")
-    public List<SimpleCenter> getCenters() {
-        return membershipService.getCenters();
+    public List<SimpleCenter> getCenters(@RequestParam String type, @RequestParam String keyword) {
+        log.info("type={}, keyword={}", type, keyword);
+
+        List<SimpleCenter> centerSearch = membershipService.getCenters(type, keyword);
+
+        log.info("centerSearch={}", centerSearch);
+        return centerSearch;
     }
 
     @GetMapping("/centers/{centerId}")
