@@ -1,7 +1,6 @@
 <template>
   <transition name="insertCenter">
-    <div class="black-bg">
-      <Toast :message="message" :isToastVisible="isToastVisible"></Toast>
+    <div class="black-bg">      
       <h1>aaaa</h1>
         <div class="white-bg">
           <form action="" enctype="multipart/form-data">
@@ -46,20 +45,6 @@
 import {ref, defineProps, defineEmits} from 'vue';
 import axios from 'axios';
 import Toast from '../ui/Toast.vue';
-//toast 로직
-let message = "";
-const isToastVisible = ref(false);
-
-let timeOut = null;
-const showToast = ()=> {
-    isToastVisible.value = true;
-    
-    timeOut = setTimeout(()=>{
-        isToastVisible.value = false;
-        clearTimeout(timeOut);
-    }, 1300);
-}
-
 
 //url
 const url = "http://localhost:8090/";
@@ -67,19 +52,15 @@ const url = "http://localhost:8090/";
 //Modal props 설정
 const props = defineProps({
   centerRegisterModal: Boolean,
+  modelValue: String,
 });
 
-const emit = defineEmits(["closeCenterRegisterModal", "checkMessage"]);
+const emit = defineEmits(["closeCenterRegisterModal", "modelValue"]);
 
 const closeModal = () => {
     emit("closeCenterRegisterModal");
 }
 
-checkMessage("ㅇㅇㅇㅇ");
-
-const checkMessage = (message) => {
-  emit("checkMessage", message)
-}
 
 //centerData설정
 const companyData = ref({
@@ -102,7 +83,7 @@ const centerTotalSubmit = async (e) => {
   e.preventDefault();
 
   const centerRigiData = new FormData();
-
+  
   for (let i = 0; i < centerImg.value.length; i++) {
     centerRigiData.append("centerImg", centerImg.value[i]);
   }
@@ -117,8 +98,7 @@ const centerTotalSubmit = async (e) => {
       headers: {
         "Content-Type": "multipart/form-data",
       },
-    });
-    console.log("야호 성공!");
+    });    
 
     //성공 이후 로직
     //초기화
@@ -127,17 +107,10 @@ const centerTotalSubmit = async (e) => {
     companyData.value.phoneNumber = "";
     companyData.value.info = "";
     //이미지 처리 초기화
-    centerImg.value = [];
-    message = "센터 등록 완료";
-    showToast();
-    message = "";
-    closeModal();
-  } catch (error) {
-    console.log("다시와라 애송이");
-    console.log(error);
-    message = "센터 등록 실패";
-    showToast();
-    message = "";
+    centerImg.value = [];     
+      
+  } catch (error) {    
+    console.log(error);   
   }
 };
 </script>
@@ -157,15 +130,5 @@ const centerTotalSubmit = async (e) => {
   padding: 20px;
 }
 
-.insertCenter-enter-from {
-  opacity: 0;
-}
 
-.insertCenter-enter-active {
-  transition: all 1s;
-}
-
-.insertCenter-enter-to {
-  opacity: 1;
-}
 </style>
