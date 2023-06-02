@@ -7,7 +7,7 @@ import com.example.demo.request.membership.SimpleCenter;
 import com.example.demo.request.membership.SimpleTrainer;
 import com.example.demo.request.membership.UpdateMemberDto;
 import com.example.demo.response.membership.MembershipResponse;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,14 +44,12 @@ public class MembershipService {
      * 검색 기능
      */
     public List<SimpleCenter> getCenters(String type, String keyword) {
-        List<SimpleCenter> all = membershipMapper.findByKeyword(type, keyword).stream()
+        return membershipMapper.findByKeyword(type, keyword).stream()
                 .map(center -> SimpleCenter.builder()
                         .centerId(center.getId())
                         .centerName(center.getName())
                         .build())
                 .collect(Collectors.toList());
-        log.info("all={}", all);
-        return all;
     }
 
     public List<SimpleTrainer> getTrainers(Integer centerId) {
@@ -102,7 +100,6 @@ public class MembershipService {
 
         Membership findMembership = getMembershipByMemberId(request.getMemberId());
 
-        //TODO 만약 선택하지 않았다면 조회하는 기능이 필요한가
         LocalDate start = findMembership.getEndDate();
         LocalDate addDate = start.plusMonths(request.getPaymentMonths());
 
@@ -130,5 +127,8 @@ public class MembershipService {
 
         membershipMapper.updateMember(dto);
     }
+
+
+
 
 }

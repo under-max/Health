@@ -1,152 +1,173 @@
 <template>
 
-  <h4>이용권안내!</h4>
-  <div class="container">
-    <div class="row top-padding">
-      <div class="col-md-6">
-        <div>
-          <div class="container">
+  <div class="flexcheck">
 
-            <!-- 검색 기능 -->
-            <div>
-              <select v-model="searchType">
-                <option value="address">지역</option>
-                <option value="center">센터</option>
-              </select>
-              <br>
-              <label for="search" class="hidden-visually text-primary">검색: </label>
-              <input id="search" type="text" v-model="searchKeyword"/>
+    <div class="sideBar">
+      <div>메뉴</div>
+      <div>
+        <RouterLink to="/membership">이용권 구매</RouterLink>
+      </div>
+      <div>
+        <RouterLink to="/shop">운동용품 구매</RouterLink>
+      </div>
+    </div>
 
-              <button @click="searchConditionSubmit">
-                <span class="hidden-visually">검색</span>
-              </button>
-            </div>
+    <!--  <h4>이용권안내!</h4>-->
+    <div class="container flexstyle">
+      <h4>이용권안내!</h4>
+      <div class="row top-padding">
+        <div class="col-md-6">
+          <div>
+            <div class="container flextstyle_sub">
 
-            <h4 class="d-flex justify-content-between align-items-center mb-3">
-              <span class="text-primary">선택</span>
-            </h4>
+              <!-- 검색 기능 -->
 
-            <div>
-
-              <div v-if="errorMessage">{{ errorMessage }}</div>
-
+              <h4 class="d-flex justify-content-between align-items-center mb-3 flex_h4Style">
+                <span class="text-light">센터 검색</span>
+              </h4>
               <div>
-                <select v-model="selectedCenter" @change="getTrainers">
-                  <option value="">다음 중 하나를 선택하세요</option>
-                  <option v-for="center in centerList" :value="center">
-                    {{ center.centerName }}
-                  </option>
+                <select v-model="searchType" style="width: 100px; height: 30px; padding: 0px">
+                  <option value="address">지역</option>
+                  <option value="center">센터</option>
                 </select>
+                <br>
+                <input id="search" type="text" v-model="searchKeyword"/>
+
+                <button @click="searchConditionSubmit">
+                  <span class="hidden-visually">검색</span>
+                </button>
               </div>
 
-              <div>
-                <select v-model="selectedTrainer">
-                  <option value="">다음 중 하나를 선택하세요</option>
-                  <option v-for="trainer in trainerList" :value="trainer">
-                    {{ trainer.trainerName }}
-                  </option>
-                </select>
-              </div>
+              <h4 class="d-flex justify-content-between align-items-center mb-3 flex_h4Style">
+                <span class="text-light">이용권 선택</span>
+              </h4>
+
 
               <div>
-                <select v-model="selectedMonth">
-                  <option value="">다음 중 하나를 선택하세요</option>
-                  <option v-for="month in monthSelectList" :value="month.value">
-                    {{ month.name }}
-                  </option>
-                </select>
+
+                <div v-if="errorMessage">{{ errorMessage }}</div>
+
+                <div>
+                  <select v-model="selectedCenter" @change="getTrainers">
+                    <option value="">센터를 선택해주세요.</option>
+                    <option v-for="center in centerList" :value="center">
+                      {{ center.centerName }}
+                    </option>
+                  </select>
+                </div>
+
+                <div>
+                  <select v-model="selectedTrainer" v-if="trainerList.length !== 0">
+                    <option value="">트레이너를 선택해주세요.</option>
+                    <option v-for="trainer in trainerList" :value="trainer">
+                      {{ trainer.trainerName }}
+                    </option>
+                  </select>
+                  <select v-else>
+                    <option value="">등록되어 있는 트레이너가 없습니다.</option>
+                  </select>
+                </div>
+
+                <div>
+                  <select v-model="selectedMonth" :disabled="isMonthDisabled ? true : isMonthDisabled">
+                    <option value="">이용 기간을 선택해주세요.</option>
+                    <option v-for="month in monthSelectList" :value="month.value">
+                      {{ month.name }}
+                    </option>
+                  </select>
+                </div>
+
+                <div>
+                  <select v-model="selectedPT" @change="selectPTChange">
+                    <option value="">PT 횟수를 선택해주세요</option>
+                    <option v-for="pt in ptSelectList" :value="pt.value">{{ pt.name }}</option>
+                  </select>
+                </div>
               </div>
 
-              <div>
-                <select v-model="selectedPT" @change="selectPTChange">
-                  <option value="">다음 중 하나를 선택하세요</option>
-                  <option v-for="pt in ptSelectList" :value="pt.value">{{ pt.name }}</option>
-                </select>
-              </div>
-            </div>
 
-
-            <div v-if="showModal" class="modal-overlay">
-              <div class="modal modal-sheet position-static d-block bg-body-secondary p-4 py-md-5"
-                   tabindex="-1" role="dialog" id="modalChoice">
-                <div class="modal-dialog" role="document">
-                  <div class="modal-content rounded-3 shadow">
-                    <div class="modal-body p-4 text-center">
-                      <p class="mb-0">구매 결정</p>
-                      <p class="mb-0">지점 : {{ selectedCenter.centerName }}</p>
-                      <p class="mb-0">담당 트레이너: {{ selectedTrainer.trainerName }}</p>
-                      <p class="mb-0">이용 기간 : {{ selectedMonth }}개월</p>
-                      <p class="mb-0">PT 횟수 : {{ selectedPT }}회</p>
-                      <p class="mb-0">구매 가격 : {{ formattedTotalPrice }}원 </p>
-                    </div>
-                    <div class="modal-footer flex-nowrap p-0">
-                      <button type="button"
-                              class="btn btn-lg btn-link fs-6 text-decoration-none col-6 py-3 m-0 rounded-0 border-end"
-                              @click="confirmPayment"><strong>사요</strong></button>
-                      <button type="button"
-                              class="btn btn-lg btn-link fs-6 text-decoration-none col-6 py-3 m-0 rounded-0"
-                              data-bs-dismiss="modal" @click="cancelPayment">안사요
-                      </button>
+              <div v-if="showModal" class="modal-overlay">
+                <div class="modal modal-sheet position-static d-block bg-body-secondary p-4 py-md-5"
+                     tabindex="-1" role="dialog" id="modalChoice">
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content rounded-3 shadow">
+                      <div class="modal-body p-4 text-center">
+                        <p class="mb-0">결제 정보</p>
+                        <p class="mb-0">지점 : {{ selectedCenter.centerName }}</p>
+                        <p class="mb-0">담당 트레이너: {{ selectedTrainer.trainerName }}</p>
+                        <p class="mb-0">이용 기간 : {{ selectedMonth }}개월</p>
+                        <p class="mb-0">PT 횟수 : {{ selectedPT }}회</p>
+                        <p class="mb-0">결제 금액 : {{ formattedTotalPrice }}원 </p>
+                      </div>
+                      <div class="modal-footer flex-nowrap p-0">
+                        <button type="button"
+                                class="btn btn-lg btn-link fs-6 text-decoration-none col-6 py-3 m-0 rounded-0 border-end"
+                                @click="confirmPayment"><strong>사요</strong></button>
+                        <button type="button"
+                                class="btn btn-lg btn-link fs-6 text-decoration-none col-6 py-3 m-0 rounded-0"
+                                data-bs-dismiss="modal" @click="cancelPayment">안사요
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <div v-if="payReadyUrl">
-              <p>결제 링크:</p>
-              <a :href="payReadyUrl" target="_blank"> {{ payReadyUrl }}</a>
+              <div v-if="payReadyUrl">
+                <p>결제 링크:</p>
+                <a :href="payReadyUrl" target="_blank"> {{ payReadyUrl }}</a>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
 
-      <div class="col-md-6">
-        <div class="row col-lg-8">
-          <!--          <div class="col-md-8 col-lg-6 order-md-last">-->
-          <h4 class="d-flex justify-content-between align-items-center mb-3">
-            <span class="text-primary">선택 사항</span>
-          </h4>
-          <ul class="list-group mb-3">
-            <li class="list-group-item d-flex justify-content-between lh-sm">
-              <div>
-                <small class="text-body-secondary">센터 / 트레이너</small>
-                <h5 class="my-0">{{ selectedCenter.centerName }} / {{ selectedTrainer.trainerName }}</h5>
-              </div>
-            </li>
-            <li class="list-group-item d-flex justify-content-between lh-sm">
-              <div>
-                <small class="text-body-secondary">이용 기간</small>
-                <h5 class="my-0">{{ selectedMonth }}개월</h5>
-              </div>
-            </li>
-            <li class="list-group-item d-flex justify-content-between lh-sm">
-              <div>
-                <small class="text-body-secondary">PT 횟수</small>
-                <h5 class="my-0">{{ selectedPT }}회</h5>
-              </div>
-            </li>
-            <li class="list-group-item d-flex justify-content-between lh-sm">
-              <div>
-                <h5 class="my-0">합계</h5>
-              </div>
-              <strong>
-                {{ formattedTotalPrice }}원
-              </strong>
-            </li>
-          </ul>
+        <div class="col-md-6">
+          <div class="row col-lg-8">
+            <!--          <div class="col-md-8 col-lg-6 order-md-last">-->
+            <h4 class="d-flex justify-content-between align-items-center mb-3">
+              <span class="text-primary">선택 사항</span>
+            </h4>
+            <ul class="list-group mb-3">
+              <li class="list-group-item d-flex justify-content-between lh-sm">
+                <div>
+                  <small class="text-body-secondary">센터 / 트레이너</small>
+                  <h5 class="my-0">{{ selectedCenter.centerName }} / {{ selectedTrainer.trainerName }}</h5>
+                </div>
+              </li>
+              <li class="list-group-item d-flex justify-content-between lh-sm">
+                <div>
+                  <small class="text-body-secondary">이용 기간</small>
+                  <h5 class="my-0">{{ selectedMonth }}개월</h5>
+                </div>
+              </li>
+              <li class="list-group-item d-flex justify-content-between lh-sm">
+                <div>
+                  <small class="text-body-secondary">PT 횟수</small>
+                  <h5 class="my-0">{{ selectedPT }}회</h5>
+                </div>
+              </li>
+              <li class="list-group-item d-flex justify-content-between lh-sm">
+                <div>
+                  <h5 class="my-0">결제 금액</h5>
+                </div>
+                <strong>
+                  {{ formattedTotalPrice }}원
+                </strong>
+              </li>
+            </ul>
 
-          <div>
-            <form @submit.prevent="submitPayment">
-              <button class="btn btn-primary" type="submit" :disabled="isButtonDisabled">카카오페이로 결제하기</button>
-            </form>
+            <div>
+              <form @submit.prevent="submitPayment">
+                <button class="btn btn-primary" type="submit" :disabled="isButtonDisabled">카카오페이 결제</button>
+              </form>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
+  </div>
 
 </template>
 
@@ -154,7 +175,8 @@
 import {computed, onMounted, ref, watchEffect} from "vue";
 import axios from "axios";
 import Cookies from "vue-cookies";
-
+import SideBar from "@/components/SideBar.vue";
+import {RouterLink} from "vue-router";
 
 // 선택한 센터
 const selectedCenter = ref('');
@@ -182,7 +204,7 @@ const payReadyUrl = ref("");
 const centerList = ref([]);
 
 // 센터에 소속된 트레이너 리스트
-const trainerList = ref([]);
+const trainerList = ref(['']);
 
 // 이용 기간 리스트
 const monthSelectList = ref([
@@ -215,6 +237,9 @@ const formattedTotalPrice = computed(() => {
   return totalPrice.value.toLocaleString();
 });
 
+const isMonthDisabled = () => {
+  return !!selectedPT.value;
+}
 // PT횟수 선택시 이용기간 개월 수 변경
 const selectPTChange = () => {
   if (selectedPT.value == 10) {
@@ -228,7 +253,7 @@ const selectPTChange = () => {
   }
 }
 
-// 검색 기능
+// 검색 키워드 변수
 const searchType = ref('address');
 const searchKeyword = ref('');
 
@@ -238,13 +263,7 @@ const searchConditionSubmit = () => {
   console.log(searchKeyword.value)
 
   axios
-      .get(`/api/membership/centers?keyword=${searchKeyword.value}&type=${searchType.value}`, {
-        // params: {
-        // type: searchType.value,
-        // centerName: searchCenter.value,
-        // keyword: searchKeyword.value,
-        // }
-      })
+      .get(`/api/membership/centers?keyword=${searchKeyword.value}&type=${searchType.value}`, {})
       .then((response) => {
         console.log(response.data);
         centerList.value = response.data;
@@ -253,9 +272,6 @@ const searchConditionSubmit = () => {
         console.log(error)
       });
 }
-
-// <input v-model="searchCondition" id="searchStore"/>
-// <button @click="searchConditionSubmit">검색</button>
 
 // 에러 관련
 const errorMessage = ref("");
@@ -325,6 +341,9 @@ const getTrainers = () => {
   axios
       .get(`/api/membership/centers/${selectedCenter.value.centerId}`, {})
       .then((response) => {
+        if (response.data.size == 0) {
+          selectedTrainer.value = '등록되어 있는 트레이너가 없습니다.';
+        }
         trainerList.value = response.data;
       })
       .catch((error) => {
@@ -348,11 +367,48 @@ onMounted(() => {
 
 <style scoped>
 
+.sideBar {
+  background-color: #f5f5f5;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  width: 200px;
+  font-family: Arial, sans-serif;
+}
+
+.sideBar > div {
+  margin-bottom: 10px;
+}
+
+.sideBar > div:first-child {
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.RouterLink {
+  display: block;
+  padding: 5px;
+  text-decoration: none;
+  color: #333;
+  transition: background-color 0.3s;
+}
+
+.RouterLink:hover {
+  background-color: #ddd;
+}
+
+.flexcheck {
+  display: flex;
+}
+
+flextstyle_sub {
+  padding: 0;
+}
+
 .container {
   display: flex;
   flex-direction: column;
-  margin-left: 10rem;
-//justify-content: center; //align-items: center; height: 100vh;
+//margin-left: 10rem; //justify-content: center; //align-items: center; height: 100vh;
 }
 
 .container > div {

@@ -39,12 +39,12 @@ public class MembershipController {
      */
     @GetMapping("/centers")
     public List<SimpleCenter> getCenters(@RequestParam String type, @RequestParam String keyword) {
-        log.info("type={}, keyword={}", type, keyword);
+        log.info("검색 -> type={}, keyword={}", type, keyword);
 
-        List<SimpleCenter> centerSearch = membershipService.getCenters(type, keyword);
+        List<SimpleCenter> centers = membershipService.getCenters(type, keyword);
 
-        log.info("centerSearch={}", centerSearch);
-        return centerSearch;
+        log.info("centerSearch={}", centers);
+        return centers;
     }
 
     @GetMapping("/centers/{centerId}")
