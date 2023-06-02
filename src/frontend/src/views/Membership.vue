@@ -1,6 +1,6 @@
 <template>
 
-  <div class="flexcheck">
+  <div class="flex-check">
 
     <div class="sideBar">
       <div>메뉴</div>
@@ -13,35 +13,33 @@
     </div>
 
     <!--  <h4>이용권안내!</h4>-->
-    <div class="container flexstyle">
+    <div class="container flex-style">
       <h4>이용권안내!</h4>
       <div class="row top-padding">
         <div class="col-md-6">
           <div>
-            <div class="container flextstyle_sub">
+            <div class="container flex-style-sub">
 
               <!-- 검색 기능 -->
-
               <h4 class="d-flex justify-content-between align-items-center mb-3 flex_h4Style">
                 <span class="text-light">센터 검색</span>
               </h4>
+
               <div>
                 <select v-model="searchType" style="width: 100px; height: 30px; padding: 0px">
                   <option value="address">지역</option>
                   <option value="center">센터</option>
                 </select>
-                <br>
                 <input id="search" type="text" v-model="searchKeyword"/>
 
-                <button @click="searchConditionSubmit">
-                  <span class="hidden-visually">검색</span>
+                <button class="btn btn-secondary" @click="searchConditionSubmit">
+                  검색
                 </button>
               </div>
 
               <h4 class="d-flex justify-content-between align-items-center mb-3 flex_h4Style">
                 <span class="text-light">이용권 선택</span>
               </h4>
-
 
               <div>
 
@@ -69,9 +67,10 @@
                 </div>
 
                 <div>
-                  <select v-model="selectedMonth" :disabled="isMonthDisabled ? true : isMonthDisabled">
+                  <select v-model="selectedMonth" :disabled="isMonthDisabled">
                     <option value="">이용 기간을 선택해주세요.</option>
-                    <option v-for="month in monthSelectList" :value="month.value">
+                    <option v-for="month in monthSelectList" :value="month.value"
+                            :disabled="isMonthOptionDisabled(month)">
                       {{ month.name }}
                     </option>
                   </select>
@@ -86,7 +85,7 @@
               </div>
 
 
-              <div v-if="showModal" class="modal-overlay">
+              <div v-if="showPaymentModal" class="modal-overlay">
                 <div class="modal modal-sheet position-static d-block bg-body-secondary p-4 py-md-5"
                      tabindex="-1" role="dialog" id="modalChoice">
                   <div class="modal-dialog" role="document">
@@ -96,7 +95,7 @@
                         <p class="mb-0">지점 : {{ selectedCenter.centerName }}</p>
                         <p class="mb-0">담당 트레이너: {{ selectedTrainer.trainerName }}</p>
                         <p class="mb-0">이용 기간 : {{ selectedMonth }}개월</p>
-                        <p class="mb-0">PT 횟수 : {{ selectedPT }}회</p>
+                        <p class="mb-0">PT 횟수 : {{ selectedPT === '' ? 0 : selectedPT }}회</p>
                         <p class="mb-0">결제 금액 : {{ formattedTotalPrice }}원 </p>
                       </div>
                       <div class="modal-footer flex-nowrap p-0">
@@ -126,7 +125,7 @@
           <div class="row col-lg-8">
             <!--          <div class="col-md-8 col-lg-6 order-md-last">-->
             <h4 class="d-flex justify-content-between align-items-center mb-3">
-              <span class="text-primary">선택 사항</span>
+              <span class="text-light">선택 사항</span>
             </h4>
             <ul class="list-group mb-3">
               <li class="list-group-item d-flex justify-content-between lh-sm">
@@ -166,7 +165,6 @@
         </div>
       </div>
     </div>
-
   </div>
 
 </template>
@@ -175,28 +173,22 @@
 import {computed, onMounted, ref, watchEffect} from "vue";
 import axios from "axios";
 import Cookies from "vue-cookies";
-import SideBar from "@/components/SideBar.vue";
 import {RouterLink} from "vue-router";
+
+// 에러 관련
+const errorMessage = ref("");
 
 // 선택한 센터
 const selectedCenter = ref('');
-// const selectedCenter = ref({
-//   centerId: '',
-//   centerName: ''
-// });
 
 // 선택한 트레이너
 const selectedTrainer = ref('');
-// const selectedTrainer = ref({
-//   trainerId: '',
-//   trainerName: ''
-// });
 
 // 선택한 이용 기간
-const selectedMonth = ref("");
+const selectedMonth = ref('');
 
 // 선택한 PT 횟수
-const selectedPT = ref("");
+const selectedPT = ref('');
 
 const payReadyUrl = ref("");
 
@@ -237,9 +229,14 @@ const formattedTotalPrice = computed(() => {
   return totalPrice.value.toLocaleString();
 });
 
-const isMonthDisabled = () => {
-  return !!selectedPT.value;
-}
+// PT 횟수 선택시 이용 기간 disabled 기능
+const isMonthDisabled = computed(() => {
+  return [10, 20, 30, 60].includes(selectedPT.value); // 선택한 값이 10, 20, 30, 60 중 하나인지 확인
+});
+const isMonthOptionDisabled = ((month) => {
+  return isMonthDisabled.value && month.value !== selectedMonth.value;
+});
+
 // PT횟수 선택시 이용기간 개월 수 변경
 const selectPTChange = () => {
   if (selectedPT.value == 10) {
@@ -259,9 +256,6 @@ const searchKeyword = ref('');
 
 // 센터 검색 버튼
 const searchConditionSubmit = () => {
-  console.log(searchType.value)
-  console.log(searchKeyword.value)
-
   axios
       .get(`/api/membership/centers?keyword=${searchKeyword.value}&type=${searchType.value}`, {})
       .then((response) => {
@@ -273,11 +267,10 @@ const searchConditionSubmit = () => {
       });
 }
 
-// 에러 관련
-const errorMessage = ref("");
-const isButtonDisabled = ref(true);
 
 // 선택 조건 확인하여 결제하기 버튼 활성화
+const isButtonDisabled = ref(true);
+
 const checkCondition = () => {
   // 조건을 확인하고 버튼의 활성화 상태를 업데이트
   if ((selectedCenter.value && selectedMonth.value) || (selectedCenter.value && selectedTrainer.value && selectedPT.value)) {
@@ -293,16 +286,17 @@ watchEffect(() => {
 });
 
 // 결제버튼 눌렀을 경우 modal 창 보여주기 초기값
-const showModal = ref(false);
+const showPaymentModal = ref(false);
 
-// 결제버튼 눌렀을 시 실행되는 메서드
+// 결제버튼 눌렀을 시 modal 창 실행되는 메서드
 const submitPayment = () => {
-  showModal.value = true;
+  console.log(selectedPT.value)
+  showPaymentModal.value = true;
 }
 
 // modal 창에서 취소버튼
 const cancelPayment = () => {
-  showModal.value = false;
+  showPaymentModal.value = false;
 }
 
 // modal 창에서 구매버튼
@@ -385,30 +379,17 @@ onMounted(() => {
   font-size: 16px;
 }
 
-.RouterLink {
-  display: block;
-  padding: 5px;
-  text-decoration: none;
-  color: #333;
-  transition: background-color 0.3s;
-}
-
-.RouterLink:hover {
-  background-color: #ddd;
-}
-
-.flexcheck {
+.flex-check {
   display: flex;
 }
 
-flextstyle_sub {
+flex-style-sub {
   padding: 0;
 }
 
 .container {
   display: flex;
   flex-direction: column;
-//margin-left: 10rem; //justify-content: center; //align-items: center; height: 100vh;
 }
 
 .container > div {
