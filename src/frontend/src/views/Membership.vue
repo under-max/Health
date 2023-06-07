@@ -12,7 +12,6 @@
       </div>
     </div>
 
-    <!--  <h4>이용권안내!</h4>-->
     <div class="container flex-style">
       <h4>이용권안내!</h4>
       <div class="row top-padding">
@@ -120,10 +119,8 @@
           </div>
         </div>
 
-
         <div class="col-md-6">
           <div class="row col-lg-8">
-            <!--          <div class="col-md-8 col-lg-6 order-md-last">-->
             <h4 class="d-flex justify-content-between align-items-center mb-3">
               <span class="text-light">선택 사항</span>
             </h4>

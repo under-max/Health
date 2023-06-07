@@ -1,3 +1,25 @@
+<template>
+  <div class="container">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title"><strong>===상세내역===</strong></h5>
+        <p class="card-text">
+          지점 : {{ successData.centerName }} <br>
+          기한 : {{ successData.paymentMonths }}개월 <br>
+          pt : {{ successData.remainingPT }}회 <br>
+          가격 : {{ successData.totalPrice }}원 <br>
+          결제일 : {{ successData.approvedDate }} <br>
+          결제시간 : {{ successData.approvedTime }} <br>
+        </p>
+      </div>
+    </div>
+    <div class="buttons">
+      <button class="btn btn-primary" @click="goToMyInfo">내 정보</button>
+      <button class="btn btn-secondary" @click="goToHome">홈으로</button>
+    </div>
+  </div>
+</template>
+
 <script setup>
 import {onMounted, ref} from "vue";
 import axios from 'axios';
@@ -70,27 +92,6 @@ onMounted(() => {
 });
 </script>
 
-<template>
-  <div class="container">
-    <div class="card">
-      <div class="card-body">
-        <h5 class="card-title"><strong>===상세내역===</strong></h5>
-        <p class="card-text">
-          지점 : {{ successData.centerName }} <br>
-          기한 : {{ successData.paymentMonths }}개월 <br>
-          pt : {{ successData.remainingPT }}회 <br>
-          가격 : {{ successData.totalPrice }}원 <br>
-          결제일 : {{ successData.approvedDate }} <br>
-          결제시간 : {{ successData.approvedTime }} <br>
-        </p>
-      </div>
-    </div>
-    <div class="buttons">
-      <button class="btn btn-primary" @click="goToMyInfo">내 정보</button>
-      <button class="btn btn-secondary" @click="goToHome">홈으로</button>
-    </div>
-  </div>
-</template>
 
 <style scoped>
 .container {

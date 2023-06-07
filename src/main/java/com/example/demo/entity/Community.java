@@ -1,5 +1,6 @@
 package com.example.demo.entity;
 
+import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.ToString;
@@ -19,8 +20,15 @@ public class Community {
     private LocalDateTime inserted;
     private List<String> fileName;
 
+    @Builder
+    public Community(String title, String content, String writer) {
+        this.title = title;
+        this.content = content;
+        this.writer = writer;
+    }
+
     public enum Grade {
-        Notice, Free
+        NOTICE, FREE
     }
 
 }

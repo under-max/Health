@@ -1,9 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.example.demo.mapper.MembershipMapper">
+<mapper namespace="com.example.demo.mapper.CommunityMapper">
 
-    <select id="findAll" resultType="Community">
+    <insert id="createBoard" useGeneratedKeys="true" keyProperty="id">
+        insert into COMMUNITY (title, content, writer)
+        values
+            (#{title}, #{content}, #{writer})
+    </insert>
+
+    <select id="findById" resultType="Community">
         select * from COMMUNITY
+        where id = #{boardId}
+    </select>
+
+    <select id="findAllSortById" resultType="Community">
+        select * from COMMUNITY
+        order by id desc
+    </select>
+
+    <select id="findAllSortByLike" resultType="Community">
+        select * from COMMUNITY
+        order by likeCount desc
+    </select>
+
+    <select id="findAllSortByComment" resultType="Community">
+        select * from COMMUNITY
+        order by commentCount desc
+    </select>
+
+    <select id="findAllSortByView" resultType="Community">
+        select * from COMMUNITY
+        order by viewCount desc
     </select>
 
 </mapper>

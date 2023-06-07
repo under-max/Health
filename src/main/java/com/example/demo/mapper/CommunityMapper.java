@@ -8,5 +8,16 @@ import java.util.List;
 @Mapper
 public interface CommunityMapper {
 
-    List<Community> findAll();
+    Integer createBoard(Community community);
+
+    List<Community> findAllSortById();
+
+    List<Community> findAllSortByLike();
+
+    List<Community> findAllSortByComment();
+
+    List<Community> findAllSortByView();
+
+    Community findById(Integer boardId);
+
 }

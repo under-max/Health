@@ -14,6 +14,8 @@ import AddInfo from "@/views/AddInfo.vue";
 import TrainerDetail from "@/views/TrainerDetail.vue";
 import SuccessPage from "@/views/payment/SuccessPage.vue";
 import CancelPage from "@/views/payment/CancelPage.vue";
+import CreateBoard from "@/views/board/CreateBoard.vue";
+import GetBoard from "@/views/board/GetBoard.vue";
 
 
 const router = createRouter({
@@ -90,6 +92,17 @@ const router = createRouter({
             path: '/payment/cancel',
             name: 'cancelPage',
             component: CancelPage
+        },
+        {
+            path: '/community/new',
+            name: 'createBoard',
+            component: CreateBoard
+        },
+        {
+            path: '/community/:boardId',
+            name: 'getBoard',
+            component: GetBoard,
+            props: true
         }
     ]
 })

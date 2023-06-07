@@ -13,7 +13,7 @@ import java.util.Optional;
 @Mapper
 public interface MembershipMapper {
 
-    Integer createMembership(Membership membership);
+    void createMembership(Membership membership);
 
     Optional<Membership> findByMembershipId(Integer membershipId);
 
