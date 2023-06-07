@@ -1,39 +1,55 @@
 <template>
-  <div class="container">
-    <table class="table table-hover" style="text-align: center; font-size: 12px">
+  <div class="container-lg">
+    <h1>게시물 목록 - 작업중!!</h1>
+    <a href="/member/signup">회원가입</a>
+    게시물 수 : ${pageInfo['numOfRecords']}
+    <form action="${pageLink }">
+
+      <select name="maxPageSize">
+        <option value="15">15개씩 보기</option>
+      </select>
+      <input type="submit" value="보기" />
+    </form>
+
+    <table class="table table-hover">
       <thead>
       <tr>
-        <th class="w-auto" style="text-align: center;">카테고리</th>
-        <th class="w-auto" style="text-align: center;" v-if="showQnA">채택여부</th>
-        <th class="w-auto" style="text-align: center;">&nbsp;</th>
-        <th class="w-50" style="text-align: center">제목</th>
-        <th class="w-auto" style="text-align: center;">작성자</th>
-        <th class="w-auto" style="text-align: center;">조회수</th>
-        <th class="w-auto" style="text-align: center;">등록 일시</th>
-        <th class="w-auto" style="text-align: center;">수정 일시</th>
+        <th>번호</th>
+        <th>
+          <i class="fa-solid fa-thumbs-up"></i>
+        </th>
+        <th>제목</th>
+        <th>작성자</th>
+        <th>조회수</th>
+        <th>작성일시</th>
       </tr>
       </thead>
       <tbody>
-      <tr v-for="post in postList" v-bind:key="post">
-        <td>{{ post.category }}</td>
-
-        <td v-if="showQnA">
-          <span v-if="post.adoptedCommentId">&#9989;</span>
-          <span v-else>&nbsp</span>
-        </td>
-        <td v-if="post.fileFlag">&#128193;</td>
-        <td v-else>&nbsp</td>
-
-        <td class="d-flex justify-content-start">
-          <router-link :to="{path: `/boards/${boardName}/${post.postId}`}">{{ post.title }}</router-link>
-        </td>
-        <td>{{ post.author }}</td>
-        <td>{{ post.hits }}</td>
-        <td>{{ post.createdDate }}</td>
-        <td>{{ post.modifiedDate }}</td>
-      </tr>
+        <tr>
+          <td>${board.id }</td>
+          <td>${board.likeCount }</td>
+          <td>
+            <a href="/id/${board.id }"> ${board.title } </a>
+          </td>
+          <td>${board.writer }</td>
+          <td>${board.hit }</td>
+          <td>${board.inserted }</td>
+        </tr>
       </tbody>
     </table>
+  </div>
+
+  <div class="container-lg">
+    <div class="row">
+      <nav aria-label="Page navigation example">
+
+        <ul class="pagination justify-content-center">
+
+
+
+        </ul>
+      </nav>
+    </div>
   </div>
 </template>
 
