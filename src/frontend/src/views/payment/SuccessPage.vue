@@ -59,7 +59,7 @@ onMounted(() => {
               console.log(response.data);
             })
             .catch((error) => {
-              console.log(error)
+              console.log(error);
             });
       })
       .catch((error) => {
