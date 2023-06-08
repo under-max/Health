@@ -17,8 +17,12 @@ public class Community {
     private String title;
     private String content;
     private String writer;
+    private Integer likeCount;
     private LocalDateTime inserted;
     private List<String> fileName;
+
+    public Community() {
+    }
 
     @Builder
     public Community(String title, String content, String writer) {

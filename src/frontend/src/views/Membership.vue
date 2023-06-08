@@ -31,7 +31,7 @@
                 </select>
                 <input id="search" type="text" v-model="searchKeyword"/>
 
-                <button class="btn btn-secondary" @click="searchConditionSubmit">
+                <button class="btn btn-secondary" @click="searchConditionBtn">
                   검색
                 </button>
               </div>
@@ -155,7 +155,7 @@
 
             <div>
               <form @submit.prevent="submitPayment">
-                <button class="btn btn-primary" type="submit" :disabled="isButtonDisabled">카카오페이 결제</button>
+                <button class="btn btn-primary" type="submit" :disabled="isButtonDisabled">카카오페이 결제 <i class="fa-solid fa-barcode"></i></button>
               </form>
             </div>
           </div>
@@ -173,7 +173,7 @@ import Cookies from "vue-cookies";
 import {RouterLink} from "vue-router";
 
 // 에러 관련
-const errorMessage = ref("");
+const errorMessage = ref('');
 
 // 선택한 센터
 const selectedCenter = ref('');
@@ -187,13 +187,17 @@ const selectedMonth = ref('');
 // 선택한 PT 횟수
 const selectedPT = ref('');
 
-const payReadyUrl = ref("");
+const payReadyUrl = ref('');
 
 // 센터 리스트
 const centerList = ref([]);
 
 // 센터에 소속된 트레이너 리스트
 const trainerList = ref(['']);
+
+// 검색 키워드 관련
+const searchType = ref('address');
+const searchKeyword = ref('');
 
 // 이용 기간 리스트
 const monthSelectList = ref([
@@ -247,14 +251,10 @@ const selectPTChange = () => {
   }
 }
 
-// 검색 키워드 변수
-const searchType = ref('address');
-const searchKeyword = ref('');
-
 // 센터 검색 버튼
-const searchConditionSubmit = () => {
+const searchConditionBtn = () => {
   axios
-      .get(`/api/membership/centers?keyword=${searchKeyword.value}&type=${searchType.value}`, {})
+      .get(`/api/membership/centers?type=${searchType.value}&keyword=${searchKeyword.value}`, {})
       .then((response) => {
         console.log(response.data);
         centerList.value = response.data;

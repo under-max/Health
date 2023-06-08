@@ -44,7 +44,7 @@ public class MembershipService {
      * 검색 기능
      */
     public List<SimpleCenter> getCenters(String type, String keyword) {
-        return membershipMapper.findByKeyword(type, keyword).stream()
+        return membershipMapper.findCenters(type, keyword).stream()
                 .map(center -> SimpleCenter.builder()
                         .centerId(center.getId())
                         .centerName(center.getName())

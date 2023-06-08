@@ -38,7 +38,7 @@
             id = #{memberId}
     </update>
 
-    <select id="findByKeyword" resultType="Center">
+    <select id="findCenters" resultType="Center">
         select
             id, name
         from CENTER
@@ -54,7 +54,7 @@
 
     <select id="findTrainers" resultType="Trainer">
         select t.id, m.name from TRAINER t
-                                     join MEMBER m on t.memberId = m.id
+            join MEMBER m on t.memberId = m.id
         where t.centerId = #{centerId}
     </select>
 

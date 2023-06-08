@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container-lg">
 
     <div class="mb-3">
       <label for="" class="form-label">제목</label>
@@ -17,7 +17,8 @@
 
     <!--  <input type="file" accept="image/*" multiple/>-->
     <div>
-      <button class="btn btn-light" type="button" @click="createBtn">등록</button>
+      <button class="btn btn-primary" type="button" @click="createBtn">등록</button>
+      <button class="btn btn-secondary" type="button" @click="goListBtn">목록</button>
     </div>
   </div>
 </template>
@@ -33,6 +34,10 @@ const title = ref('');
 const content = ref('');
 
 const userName = ref('');
+
+const goListBtn = () => {
+  router.push('/community')
+}
 
 const createBtn = () => {
   const token = Cookies.get('accessToken');
@@ -82,8 +87,7 @@ onMounted(() => {
 
 
 <style scoped>
-.container {
+.container-lg {
   margin-top: 100px;
-  margin-bottom: 10px;
 }
 </style>

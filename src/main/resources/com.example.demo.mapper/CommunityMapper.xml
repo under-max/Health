@@ -13,7 +13,7 @@
         where id = #{boardId}
     </select>
 
-    <select id="findAllSortById" resultType="Community">
+    <select id="findAllDefault" resultType="Community">
         select * from COMMUNITY
         order by id desc
     </select>
@@ -32,6 +32,20 @@
         select * from COMMUNITY
         order by viewCount desc
     </select>
+
+    <update id="updateLikeUp">
+        update COMMUNITY
+        set
+            likeCount = likeCount + 1
+        where id = #{boardId}
+    </update>
+
+    <update id="updateLikeDown">
+        update COMMUNITY
+        set
+            likeCount = likeCount - 1
+        where id = #{boardId}
+    </update>
 
 </mapper>
 

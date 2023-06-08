@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.AuthUser;
 import com.example.demo.response.CommunityResponse;
+import com.example.demo.response.ErrorResponse;
 import com.example.demo.service.CommunityService;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,7 @@ public class CommunityController {
     @PostMapping("/community")
     public ResponseEntity<String> createBoard(@RequestBody CreateBoardRequest request, AuthUser authUser) {
         log.info("request={}", request);
+
         Boolean ok = communityService.createBoard(authUser.getUserId(), request);
 
         if (ok) {
@@ -31,14 +33,34 @@ public class CommunityController {
     }
 
     @GetMapping("/community")
-    public List<CommunityResponse> getCommunityList(@RequestParam(defaultValue = "id") String sort) {
-        List<CommunityResponse> communityList = communityService.getCommunityList(sort);
+    public List<CommunityResponse> getBoardList(@RequestParam(defaultValue = "all") String type,
+                                                @RequestParam(defaultValue = "") String keyword,
+                                                @RequestParam(defaultValue = "id") String sort) {
+
+        log.info("boardList -> type={}, keyword={}, sort={}", type, keyword, sort);
+
+        List<CommunityResponse> communityList = communityService.getBoardList(type, keyword, sort);
         return communityList;
     }
 
-    @GetMapping("/community/{boardId}")
+    @PatchMapping("/community/board/{boardId}/likeUp")
+    public Integer updateLikeUp(@PathVariable Integer boardId) {
+        return communityService.updateLikeUp(boardId);
+    }
+
+    @PatchMapping("/community/board/{boardId}/likeDown")
+    public Integer updateLikeDown(@PathVariable Integer boardId) {
+        return communityService.updateLikeDown(boardId);
+    }
+
+    @GetMapping("/community/board/{boardId}")
     public BoardResponse getBoard(@PathVariable Integer boardId) {
         return communityService.getBoard(boardId);
+    }
+
+    @PutMapping("/community/board/{boardId}")
+    public String updateBoard(@PathVariable Integer boardId) {
+        return null;
     }
 
     @GetMapping("/community/getWriter")
@@ -57,13 +79,15 @@ public class CommunityController {
         private String title;
         private String content;
         private String writer;
+        private Integer likeCount;
         private String inserted;
 
         @Builder
-        public BoardResponse(String title, String content, String writer, String inserted) {
+        public BoardResponse(String title, String content, String writer, Integer likeCount, String inserted) {
             this.title = title;
             this.content = content;
             this.writer = writer;
+            this.likeCount = likeCount;
             this.inserted = inserted;
         }
     }

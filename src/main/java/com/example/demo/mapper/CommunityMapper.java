@@ -4,13 +4,16 @@ import com.example.demo.entity.Community;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
+import java.util.Optional;
 
 @Mapper
 public interface CommunityMapper {
 
     Integer createBoard(Community community);
 
-    List<Community> findAllSortById();
+    Optional<Community> findById(Integer boardId);
+
+    List<Community> findAllDefault();
 
     List<Community> findAllSortByLike();
 
@@ -18,6 +21,7 @@ public interface CommunityMapper {
 
     List<Community> findAllSortByView();
 
-    Community findById(Integer boardId);
+    void updateLikeUp(Integer boardId);
 
+    void updateLikeDown(Integer boardId);
 }

@@ -5,16 +5,35 @@ import com.example.demo.response.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import java.lang.reflect.Field;
+
 
 @Slf4j
 @ControllerAdvice
 public class ExceptionController {
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseBody
+    public ResponseEntity<ErrorResponse> illegalArgumentExHandler(IllegalArgumentException e) {
+
+        log.info("exception handler 호출");
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .code("BAD")
+                .message(e.getMessage())
+                .build();
+
+        log.info("errorResponse={}", errorResponse);
+
+        return ResponseEntity.badRequest().body(errorResponse);
+    }
+
     @ResponseBody
     @ExceptionHandler(JJinBBangException.class)
     public ResponseEntity<ErrorResponse> JJinBBangExceptionHandler(JJinBBangException e) {

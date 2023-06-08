@@ -23,7 +23,7 @@ public interface MembershipMapper {
 
     Integer updateMember(UpdateMemberDto dto);
 
-    List<Center> findByKeyword(@Param("type") String type, @Param("keyword") String keyword);
+    List<Center> findCenters(@Param("type") String type, @Param("keyword") String keyword);
 
     List<Trainer> findTrainers(Integer centerId);
 
