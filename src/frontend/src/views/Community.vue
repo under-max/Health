@@ -46,22 +46,23 @@
 
     </div>
 
-    <div class="d-flex justify-content-center">
-      <nav class="navbar bg-body-tertiary">
-        <div class="container-fluid">
-          <select class="form-select flex-grow-0" style="width: 100px;" name="type" v-model="searchType">
-            <option value="all">전체</option>
-            <option value="title">제목</option>
-            <option value="content">본문</option>
-            <option value="writer">작성자</option>
-          </select>
-          <form class="d-flex" role="search">
-            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"
-                   v-model="searchKeyword">
-            <button class="btn btn-success" type="button" @click="searchConditionBtn">search</button>
-          </form>
+    <!-- Modal -->
+    <div @click="showLikeModal" class="modal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="showLikeModal = false"></button>
+          </div>
+          <div class="modal-body">
+            <!-- 모달 내용 -->123
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" @click="showLikeModal = false">Close</button>
+            <button type="button" class="btn btn-primary">Save changes</button>
+          </div>
         </div>
-      </nav>
+      </div>
     </div>
 
     <table class="table table-hover">
@@ -79,10 +80,10 @@
       <tr v-for="board in boardList">
         <td>{{ board.id }}</td>
         <td>
-          <RouterLink :to="{ name: 'getBoard', params: {boardId: board.id}}"> {{ board.title }}</RouterLink>
+          <RouterLink :to="{ name: 'getBoard', params: {boardId: board.id}}">{{ board.title }}</RouterLink>
         </td>
         <td>{{ board.writer }}</td>
-        <td>2</td>
+        <td>{{ board.viewCount }}</td>
         <td>{{ board.likeCount }}</td>
         <td>{{ board.inserted }}</td>
       </tr>
@@ -95,12 +96,13 @@
 <script setup>
 
 
-import {computed, onMounted, ref} from "vue";
+import {computed, onMounted, ref, watch} from "vue";
 import axios from "axios";
-import {RouterLink, useRouter} from "vue-router";
+import {RouterLink, useRoute, useRouter} from "vue-router";
 import Cookies from "vue-cookies";
 
 const router = useRouter();
+const route = useRoute();
 
 // 검색 키워드 관련
 const searchType = ref('all');
@@ -115,6 +117,10 @@ const boardList = ref([]);
 // 목록 초기값
 const selectedSort = ref('최신순');
 
+const showLike = ref(false);
+const showLikeModal = () => {
+  showLike.value = true;
+}
 // 목록에서 선택한 값에 맞게 반환
 const selectedSortLabel = computed(() => {
   switch (selectedSort.value) {
@@ -136,19 +142,21 @@ const createBtn = () => {
   if (Cookies.get('accessToken')) {
     router.push('/community/new');
   } else {
-    const ok = confirm("로그인이 필요합니다.");
-    if (ok) {
-      router.push('/login');
-    } else {
-      router.push('/community');
-    }
+    showLike.value = true;
+    // showLikeModal.value = !showLikeModal.value;
+    // const ok = confirm("로그인이 필요합니다.");
+  //   if (ok) {
+  //     router.push('/login');
+  //   } else {
+  //     router.push('/community');
+  //   }
   }
-}
+};
 
 // dropdown 버튼
 const dropDownBtn = () => {
   isExpanded.value = !isExpanded.value;
-}
+};
 
 // 센터 검색 버튼
 const searchConditionBtn = () => {
@@ -169,43 +177,99 @@ const searchConditionBtn = () => {
       });
 }
 
-// 게시글 순서선택
+
+
 const selectSort = (sortValue) => {
-  isExpanded.value = !isExpanded.value;
+  isExpanded.value = false;
   selectedSort.value = sortValue;
 
+  // 게시글 순서선택
+  const query = {
+    type: searchType.value,
+    keyword: searchKeyword.value,
+    sort: selectedSortLabel.value
+  };
+
+  // 현재 URL에 쿼리 파라미터 추가 또는 변경
+  router.replace({query}).then(() => {
+    // 목록 요청
+    getBoardList();
+  });
+};
+
+// watch를 사용하여 선택한 값이 변경될 때마다 sessionStorage에 저장
+watch([selectedSort, searchType, searchKeyword], () => {
+  sessionStorage.setItem("selectedSort", selectedSort.value);
+  sessionStorage.setItem("searchType", searchType.value);
+  sessionStorage.setItem("searchKeyword", searchKeyword.value);
+});
+
+const getBoardList = () => {
   axios
       .get("/api/community", {
-        params: {
-          type: searchType.value,
-          keyword: searchKeyword.value,
-          sort: selectedSortLabel.value
-        }
+        params: route.query // 현재 URL의 쿼리 파라미터를 사용하여 요청
       })
       .then((response) => {
         boardList.value = response.data;
       })
       .catch((error) => {
-        console.log(error)
+        console.log(error);
       });
-}
+};
 
 onMounted(() => {
-  axios
-      .get("/api/community", {
-        params: {
-          type: searchType.value,
-          keyword: searchKeyword.value,
-          sort: selectedSortLabel.value
-        }
-      })
-      .then((response) => {
-        boardList.value = response.data;
-      })
-      .catch((error) => {
-        console.log(error)
-      });
+  // 뒤로가기 이벤트 감지
+  window.onpopstate = function (event) {
+    if (event.state == null) {
+      selectedSort.value = sessionStorage.getItem("selectedSort") || "최신순";
+      searchType.value = sessionStorage.getItem("searchType") || "all";
+      searchKeyword.value = sessionStorage.getItem("searchKeyword") || "";
+
+      getBoardList();
+    }
+  };
+  getBoardList();
 });
+
+
+
+// const selectSort = (sortValue) => {
+//   isExpanded.value = !isExpanded.value;
+//   selectedSort.value = sortValue;
+//
+//   axios
+//       .get("/api/community", {
+//         params: {
+//           type: searchType.value,
+//           keyword: searchKeyword.value,
+//           sort: selectedSortLabel.value
+//         }
+//       })
+//       .then((response) => {
+//         boardList.value = response.data;
+//       })
+//       .catch((error) => {
+//         console.log(error)
+//       });
+// }
+
+// onMounted(() => {
+//   axios
+//       .get("/api/community", {
+//         params: {
+//           type: searchType.value,
+//           keyword: searchKeyword.value,
+//           sort: selectedSortLabel.value
+//         }
+//       })
+//       .then((response) => {
+//         console.log(response.data)
+//         boardList.value = response.data;
+//       })
+//       .catch((error) => {
+//         console.log(error)
+//       });
+// });
 
 </script>
 

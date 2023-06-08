@@ -13,9 +13,25 @@
         where id = #{boardId}
     </select>
 
-    <select id="findAllDefault" resultType="Community">
+    <select id="findAll" resultType="Community">
         select * from COMMUNITY
-        order by id desc
+        <if test="sort eq 'id'">
+            order by id desc
+        </if>
+
+        <if test="sort eq 'like'">
+            order by likeCount desc
+        </if>
+
+        <if test="sort eq 'comment'">
+            order by commentCount desc
+        </if>
+
+        <if test="sort eq 'view'">
+            order by viewCount desc
+        </if>
+
+
     </select>
 
     <select id="findAllSortByLike" resultType="Community">
@@ -44,6 +60,13 @@
         update COMMUNITY
         set
             likeCount = likeCount - 1
+        where id = #{boardId}
+    </update>
+
+    <update id="viewCount">
+        update COMMUNITY
+        set
+            viewCount = viewCount + 1
         where id = #{boardId}
     </update>
 

@@ -53,7 +53,7 @@
 
         </ul>
       </div>
-    </nav>   
+    </nav>
   </header>
 </template>
 
@@ -80,35 +80,35 @@ const logout = function () {
   height: 50px;
   width: 100%;
   margin-bottom: 0px;
-  
+
 }
 .navBar {
   position: fixed;
   z-index: 99;
   top: 0;
-  width: 100%;  
+  width: 100%;
   border: 2px, solid, black;
 }
 
 .no_dot {
   list-style-type: none;
-  display: flex;  
+  display: flex;
   justify-content: space-around;
-  
+
   margin: 0px;
 }
 
 .no_dot a{
   text-decoration: none;
-  color: white;   
+  color: white;
   font-size: 21px;
-  
+
 }
 
 .no_dot button {
   background-color: #112470;
   border: none;
-  border-radius: 50px;  
+  border-radius: 50px;
 }
 
 .no_dot button:hover{

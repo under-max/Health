@@ -13,7 +13,7 @@ public interface CommunityMapper {
 
     Optional<Community> findById(Integer boardId);
 
-    List<Community> findAllDefault();
+    List<Community> findAll(String sort);
 
     List<Community> findAllSortByLike();
 
@@ -24,4 +24,6 @@ public interface CommunityMapper {
     void updateLikeUp(Integer boardId);
 
     void updateLikeDown(Integer boardId);
+
+    void viewCount(Integer boardId);
 }

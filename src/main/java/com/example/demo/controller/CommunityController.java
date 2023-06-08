@@ -2,9 +2,10 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.AuthUser;
 import com.example.demo.response.CommunityResponse;
-import com.example.demo.response.ErrorResponse;
 import com.example.demo.service.CommunityService;
-import lombok.*;
+import lombok.Builder;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +33,16 @@ public class CommunityController {
         }
     }
 
+    @GetMapping("/community/getWriter")
+    public String getWriter(AuthUser authUser) {
+        return communityService.getWriter(authUser.getUserId());
+    }
+
+    @GetMapping("/community/board/{boardId}")
+    public BoardResponse getBoard(@PathVariable Integer boardId) {
+        return communityService.getBoard(boardId);
+    }
+
     @GetMapping("/community")
     public List<CommunityResponse> getBoardList(@RequestParam(defaultValue = "all") String type,
                                                 @RequestParam(defaultValue = "") String keyword,
@@ -44,28 +55,18 @@ public class CommunityController {
     }
 
     @PatchMapping("/community/board/{boardId}/likeUp")
-    public Integer updateLikeUp(@PathVariable Integer boardId) {
+    public Integer updateLikeUp(@PathVariable Integer boardId, AuthUser authUser) {
         return communityService.updateLikeUp(boardId);
     }
 
     @PatchMapping("/community/board/{boardId}/likeDown")
-    public Integer updateLikeDown(@PathVariable Integer boardId) {
+    public Integer updateLikeDown(@PathVariable Integer boardId, AuthUser authUser) {
         return communityService.updateLikeDown(boardId);
-    }
-
-    @GetMapping("/community/board/{boardId}")
-    public BoardResponse getBoard(@PathVariable Integer boardId) {
-        return communityService.getBoard(boardId);
     }
 
     @PutMapping("/community/board/{boardId}")
     public String updateBoard(@PathVariable Integer boardId) {
         return null;
-    }
-
-    @GetMapping("/community/getWriter")
-    public String getWriter(AuthUser authUser) {
-        return communityService.getWriter(authUser.getUserId());
     }
 
     @Data
@@ -79,14 +80,16 @@ public class CommunityController {
         private String title;
         private String content;
         private String writer;
+        private Integer viewCount;
         private Integer likeCount;
         private String inserted;
 
         @Builder
-        public BoardResponse(String title, String content, String writer, Integer likeCount, String inserted) {
+        public BoardResponse(String title, String content, String writer, Integer viewCount, Integer likeCount, String inserted) {
             this.title = title;
             this.content = content;
             this.writer = writer;
+            this.viewCount = viewCount;
             this.likeCount = likeCount;
             this.inserted = inserted;
         }

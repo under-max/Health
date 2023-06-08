@@ -55,11 +55,14 @@ public class CommunityService {
                 .title(findBoard.getTitle())
                 .content(findBoard.getContent())
                 .writer(findBoard.getWriter())
+                .viewCount(findBoard.getViewCount())
                 .likeCount(findBoard.getLikeCount())
                 .inserted(getFormatted(findBoard))
                 .build();
 
         log.info("getBoard() response={}", response);
+
+        communityMapper.viewCount(boardId);
 
         return response;
     }
@@ -84,14 +87,29 @@ public class CommunityService {
     }
 
     private List<CommunityResponse> getSortList(String type, String keyword, String sort) {
+
+        List<CommunityResponse> collect = communityMapper.findAll(sort).stream()
+                .map(community -> CommunityResponse.builder()
+                        .id(community.getId())
+                        .title(community.getTitle())
+                        .writer(community.getWriter())
+                        .viewCount(community.getViewCount())
+                        .likeCount(community.getLikeCount())
+                        .inserted(getFormatted(community))
+                        .build()).collect(Collectors.toList());
+
+        return collect;
+    }
+    private List<CommunityResponse> getSortList1(String type, String keyword, String sort) {
         List<CommunityResponse> collect = null;
 
         if (sort.equals("id")) {
-            collect = communityMapper.findAllDefault().stream()
+            collect = communityMapper.findAll(sort).stream()
                     .map(community -> CommunityResponse.builder()
                             .id(community.getId())
                             .title(community.getTitle())
                             .writer(community.getWriter())
+                            .viewCount(community.getViewCount())
                             .likeCount(community.getLikeCount())
                             .inserted(getFormatted(community))
                             .build()).collect(Collectors.toList());
