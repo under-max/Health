@@ -112,13 +112,11 @@ onMounted(() => {
   });
 });
 
-
 </script>
 
 <style scoped>
 .table {
   color: white;
 }
-
 
 </style>

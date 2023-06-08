@@ -1,11 +1,6 @@
 <template>
   <div>
     <h1>일정 관리</h1>
-    <!--    <ul>-->
-    <!--      <li v-for="(value, key) in schedule" :key="key">-->
-    <!--        {{ key }}: {{ value }}-->
-    <!--      </li>-->
-    <!--    </ul>-->
     <div class="calendar">
       <div class="header">
         <button @click="previousMonth">&lt;</button>
@@ -24,17 +19,24 @@
             <div>{{ day.date }}</div>
             <div class="event" v-if="day.events.length >= 0 ">
               <div v-if="day.events.length > 0">
+                <!--                <div v-for="item in schedule" :key="item.memberId">-->
+                <!--                  <input type="hidden" name="item.memberId">-->
+                <!--                  이름: {{ item.memberName }}-->
+                <!--                  시간: {{ item.ptTime }}-->
+                <!--                  남은 PT: {{ item.remainingPT }}-->
 
+                <!--                </div>-->
               </div>
             </div>
             <div class="event" v-if="day.date > 0">
               <!-- Button trigger modal -->
               <!--              <div v-for="date in day.date" :key="day.date">-->
-              <div v-for="(value, key) in schedule" :key="key">
-                <div v-if="day.date === key+1 ">
-                  <li>{{ key+1 }} : {{ value }}</li>
+              <div v-for="item in schedule" :key="item.memberId">
+                <div v-if="day.date === 1">
+                  이름: {{ item.memberName }}
+                  시간: {{ item.ptTime }}
+                  남은 PT: {{ item.remainingPT }}
                   <i @click="deleteEvent()" class="fa-solid fa-xmark"></i>
-                  <br>
                 </div>
 
               </div>
@@ -113,7 +115,13 @@ const showSchedule = ref(false);
 const userSelect = ref({});
 const timeSelect = ref()
 
-const schedule = ref(new Map());
+const schedule = ref({
+  trainerId: '',
+  memberId: '',
+  memberName: '',
+  ptTime: '',
+  remainingPT: ''
+});
 
 // 일정 데이터 초기화
 const events = ref([]);
@@ -212,11 +220,11 @@ const saveModal = () => {
     ptTime: time
   })
       .then((response) => {
-        // const newEvent = {
-        //   memberName: userSelect.value.name,
-        //   ptTime: time,
-        //   remainingPT: userSelect.value.remainingPT,
-        // };
+        const newEvent = {
+          memberName: userSelect.value.name,
+          ptTime: time,
+          remainingPT: userSelect.value.remainingPT,
+        };
         closeModal();
       })
       .catch((error) => {
@@ -274,12 +282,8 @@ const calendar = computed(() => {
 onMounted(() => {
   axios.get("/api/schedule/list")
       .then((response) => {
-        const responseData = response.data;
-
-        // Convert the Map object from the response to a JavaScript Map
-        schedule.value = new Map(Object.entries(responseData));
-
-        console.log(schedule.value);
+        schedule.value = response.data;
+        console.log(schedule.value)
       })
       .catch((error) => {
         if (error.response) {
@@ -318,7 +322,6 @@ button {
 table {
   width: 100%;
   border-collapse: collapse;
-  color : white;
 }
 
 th,
