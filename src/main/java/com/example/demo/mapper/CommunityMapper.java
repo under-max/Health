@@ -1,5 +1,6 @@
 package com.example.demo.mapper;
 
+import com.example.demo.controller.CommunityController;
 import com.example.demo.entity.Community;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -28,5 +29,8 @@ public interface CommunityMapper {
 
     void viewCount(Integer boardId);
 
+    Integer updateBoard(@Param("boardId") Integer boardId, @Param("writer") String writer, @Param("title") String title, @Param("content") String content);
+
     Integer deleteBoard(@Param("boardId") Integer boardId, @Param("writer") String writer);
+
 }

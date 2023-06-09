@@ -17,6 +17,7 @@ import CancelPage from "@/views/payment/CancelPage.vue";
 import CreateBoard from "@/views/board/CreateBoard.vue";
 import GetBoard from "@/views/board/GetBoard.vue";
 import Notice from "@/views/board/Notice.vue";
+import ModifyBoard from "@/views/board/ModifyBoard.vue";
 
 
 const router = createRouter({
@@ -103,6 +104,12 @@ const router = createRouter({
             path: '/community/board/:boardId',
             name: 'getBoard',
             component: GetBoard,
+            props: true
+        },
+        {
+            path: '/community/board/:boardId/modify',
+            name: 'modifyBoard',
+            component: ModifyBoard,
             props: true
         },
         {

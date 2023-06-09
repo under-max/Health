@@ -200,6 +200,13 @@ watch([selectedSort, searchType, searchKeyword], () => {
 });
 
 const getBoardList = () => {
+  // 게시글 순서선택
+  const query = {
+    type: searchType.value,
+    keyword: searchKeyword.value,
+    sort: selectedSortLabel.value
+  };
+
   axios
       .get("/api/community", {
         params: route.query // 현재 URL의 쿼리 파라미터를 사용하여 요청

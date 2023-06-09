@@ -70,6 +70,17 @@
         where id = #{boardId}
     </update>
 
+    <update id="updateBoard">
+        update COMMUNITY
+        set
+            title = #{title},
+            content = #{content}
+        where
+            id = #{boardId}
+                and
+            writer = #{writer}
+    </update>
+
     <delete id="deleteBoard">
         delete from COMMUNITY
         where

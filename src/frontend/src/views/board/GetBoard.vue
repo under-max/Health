@@ -2,31 +2,28 @@
 
   <div class="container-lg">
 
+    <div class="d-flex justify-content-between">
+
+      <div id="info">
+        <span>{{ board.writer }}</span>
+        <span> / </span>
+        <span><i class="fa-solid fa-binoculars"></i> {{ board.viewCount }}</span>
+        <span> / </span>
+        <span><i class="fa-solid fa-bolt"></i> {{ board.likeCount }}</span>
+        <span> / </span>
+        <span>{{ board.inserted }}</span>
+      </div>
+
+      <div>
+        <button type="button" class="btn btn-secondary" @click="modifyBtn">수정</button>
+        <button type="button" class="btn btn-danger" @click="deleteBtn">삭제</button>
+      </div>
+
+    </div>
+
     <div class="mb-3">
       <label for="" class="form-label">제목</label>
       <input type="text" class="form-control" :value="board.title" readonly/>
-    </div>
-
-    <div class="d-flex justify-content-sm-start">
-      <div class="mb-3">
-        <label for="" class="form-label">작성자</label>
-        <input type="text" class="form-control" :value="board.writer" readonly/>
-      </div>
-
-      <div class="mb-3">
-        <label for="" class="form-label">작성일시</label>
-        <input type="text" class="form-control" :value="board.inserted" readonly/>
-      </div>
-
-      <div class="mb-3">
-        <label for="" class="form-label">조회수</label>
-        <input type="text" class="form-control" :value="board.viewCount" readonly/>
-      </div>
-
-      <div class="mb-3">
-        <label for="" class="form-label">추천수</label>
-        <input type="text" class="form-control" :value="board.likeCount" readonly/>
-      </div>
     </div>
 
     <div class="mb-3">
@@ -34,7 +31,7 @@
       <textarea class="form-control" rows="10" readonly>{{board.content}}</textarea>
     </div>
 
-    <div class="d-flex justify-content-between">
+    <div class="d-flex justify-content-end">
       <div class="mb-3">
         <button type="button" class="btn btn-primary" @click="likeUpBtn"><i class="fa-solid fa-chevron-up"></i>
         </button>
@@ -43,12 +40,12 @@
         </button>
       </div>
 
-      <div>
-        <button type="button" class="btn btn-secondary" @click="modifyBtn">수정</button>
-        <button type="button" class="btn btn-danger" @click="deleteBtn">삭제</button>
-      </div>
     </div>
 
+    <div class="d-flex border-danger">
+      <textarea v-model="commentContent" class="comment-textarea"></textarea>
+      <button @click="submitComment" class="comment-button">댓글</button>
+    </div>
 
   </div>
 
@@ -72,14 +69,10 @@ const board = ref({
   title: '',
   content: '',
   writer: '',
+  viewCount: '',
   likeCount: '',
   inserted: ''
 });
-
-// 추천 버튼 로그인 체크 함수
-const loginCheck = (like) => {
-
-};
 
 // 추천 업 버튼
 const likeUpBtn = () => {
@@ -137,10 +130,12 @@ const likeDownBtn = () => {
   }
 };
 
+// 게시글 수정
 const modifyBtn = () => {
-
+  router.push(`/community/board/${props.boardId}/modify`);
 };
 
+// 게시글 삭제
 const deleteBtn = () => {
   const token = Cookies.get('accessToken');
 
@@ -168,10 +163,7 @@ const deleteBtn = () => {
   } else {
     router.push(router.currentRoute.value.fullPath);
   }
-
-
 };
-
 
 onMounted(() => {
   axios
@@ -193,6 +185,25 @@ onMounted(() => {
 
 .container-lg {
   margin-top: 100px;
+}
+
+#info {
+  color: white;
+}
+
+.comment-textarea {
+  width: 100%;
+  height: 100px;
+  padding: 10px;
+  border: 1px solid #ccc;
+}
+
+.comment-button {
+  padding: 5px 10px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  cursor: pointer;
 }
 
 </style>

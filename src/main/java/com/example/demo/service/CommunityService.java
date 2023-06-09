@@ -84,14 +84,29 @@ public class CommunityService {
         return findBoard.getLikeCount();
     }
 
+    public Boolean updateBoard(Integer boardId, Long userId, CommunityController.UpdateBoardRequest request) {
+        Integer cnt = 0;
+        User findUser = findUser(userId);
+        String writer = findUser.getNickName();
+        Community findBoard = findBoard(boardId);
+
+        if (findBoard.getWriter().equals(writer)) {
+            cnt = communityMapper.updateBoard(boardId, writer, request.getTitle(), request.getContent());
+        } else {
+            throw new IllegalArgumentException("작성자만 수정이 가능합니다.");
+        }
+
+        return cnt == 1;
+    }
+
     public Boolean deleteBoard(Integer boardId, Long userId) {
         Integer cnt = 0;
         User findUser = findUser(userId);
-        String nickName = findUser.getNickName();
+        String writer = findUser.getNickName();
         Community findBoard = findBoard(boardId);
 
-        if (findBoard.getWriter().equals(nickName)) {
-            cnt = communityMapper.deleteBoard(boardId, nickName);
+        if (findBoard.getWriter().equals(writer)) {
+            cnt = communityMapper.deleteBoard(boardId, writer);
         }
 
         return cnt == 1;
@@ -121,7 +136,7 @@ public class CommunityService {
                 .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
     }
 
-    private static String getFormatted(Community findBoard) {
+    private String getFormatted(Community findBoard) {
         return findBoard.getInserted().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     }
 
@@ -170,5 +185,4 @@ public class CommunityService {
         }
         return collect;
     }
-
 }

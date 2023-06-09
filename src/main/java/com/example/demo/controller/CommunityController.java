@@ -64,9 +64,19 @@ public class CommunityController {
         return communityService.updateLikeDown(boardId);
     }
 
-    @PutMapping("/community/board/{boardId}")
-    public String updateBoard(@PathVariable Integer boardId) {
-        return null;
+    @PatchMapping("/community/board/{boardId}")
+    public ResponseEntity<String> updateBoard(@PathVariable Integer boardId,
+                              @RequestBody UpdateBoardRequest request,
+                              AuthUser authUser) {
+
+        log.info("update request={}", request);
+        Boolean ok = communityService.updateBoard(boardId, authUser.getUserId(), request);
+
+        if (ok) {
+            return new ResponseEntity<>("게시글이 수정되었습니다.", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("게시글 수정에 실패하였습니다.", HttpStatus.BAD_REQUEST);
+        }
     }
 
     @DeleteMapping("/community/board/{boardId}")
@@ -82,6 +92,12 @@ public class CommunityController {
 
     @Data
     public static class CreateBoardRequest {
+        private String title;
+        private String content;
+    }
+
+    @Data
+    public static class UpdateBoardRequest {
         private String title;
         private String content;
     }
