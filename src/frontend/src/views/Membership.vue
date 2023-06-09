@@ -264,7 +264,6 @@ const searchConditionBtn = () => {
       });
 }
 
-
 // 선택 조건 확인하여 결제하기 버튼 활성화
 const isButtonDisabled = ref(true);
 
@@ -319,7 +318,7 @@ const confirmPayment = () => {
       })
       .catch((error) => {
         console.log(error);
-        this.errorMessage = error.response.data.message;
+        alert(error.response.data.message);
       });
   // SuccessPage.vue에서 사용할 데이터 저장
   sessionStorage.setItem("centerId", selectedCenter.value.centerId);

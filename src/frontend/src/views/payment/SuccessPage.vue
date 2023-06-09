@@ -7,7 +7,7 @@
           지점 : {{ successData.centerName }} <br>
           기한 : {{ successData.paymentMonths }}개월 <br>
           pt : {{ successData.remainingPT }}회 <br>
-          가격 : {{ successData.totalPrice }}원 <br>
+          가격 : {{ formattedTotalPrice }}원 <br>
           결제일 : {{ successData.approvedDate }} <br>
           결제시간 : {{ successData.approvedTime }} <br>
         </p>
@@ -21,7 +21,7 @@
 </template>
 
 <script setup>
-import {onMounted, ref} from "vue";
+import {computed, onMounted, ref} from "vue";
 import axios from 'axios';
 import router from "@/router";
 import Cookies from "vue-cookies";
@@ -37,6 +37,11 @@ const successData = ref({
   approvedTime: ''
 });
 
+// 가격 합계에 쉼표 넣어주는 메서드
+const formattedTotalPrice = computed(() => {
+  return successData.value.totalPrice.toLocaleString();
+});
+
 const goToMyInfo = () => {
   router.replace(`/userDetail/${successData.value.memberId}`);
 }
@@ -44,6 +49,7 @@ const goToMyInfo = () => {
 const goToHome = () => {
   router.replace("/");
 }
+
 // kakaoPay 성공
 const urlParams = new URLSearchParams(window.location.search);
 const pg_token = urlParams.get('pg_token');
@@ -91,7 +97,6 @@ onMounted(() => {
 
 });
 </script>
-
 
 <style scoped>
 .container {

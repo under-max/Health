@@ -44,7 +44,7 @@
 
     <div class="d-flex border-danger">
       <textarea v-model="commentContent" class="comment-textarea"></textarea>
-      <button @click="submitComment" class="comment-button">댓글</button>
+      <button @click="CommentBtn" class="comment-button">댓글</button>
     </div>
 
   </div>
@@ -73,6 +73,28 @@ const board = ref({
   likeCount: '',
   inserted: ''
 });
+
+const commentContent = ref('');
+
+function CommentBtn(event) {
+  event.preventDefault(); // 폼 기본 동작 방지
+
+  const token = Cookies.get('accessToken');
+
+  axios
+      .post('/api/community/comment', {
+        comment: commentContent.value
+      }, {
+        headers: {
+          Authorization: token
+        }
+      })
+      .then((response) => {
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+};
 
 // 추천 업 버튼
 const likeUpBtn = () => {

@@ -1,7 +1,10 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.AuthUser;
+import com.example.demo.request.board.CreateBoardRequest;
+import com.example.demo.request.board.UpdateBoardRequest;
 import com.example.demo.response.CommunityResponse;
+import com.example.demo.response.board.BoardResponse;
 import com.example.demo.service.CommunityService;
 import lombok.Builder;
 import lombok.Data;
@@ -33,16 +36,6 @@ public class CommunityController {
         }
     }
 
-    @GetMapping("/community/getWriter")
-    public String getWriter(AuthUser authUser) {
-        return communityService.getWriter(authUser.getUserId());
-    }
-
-    @GetMapping("/community/board/{boardId}")
-    public BoardResponse getBoard(@PathVariable Integer boardId) {
-        return communityService.getBoard(boardId);
-    }
-
     @GetMapping("/community")
     public List<CommunityResponse> getBoardList(@RequestParam(defaultValue = "all") String type,
                                                 @RequestParam(defaultValue = "") String keyword,
@@ -54,20 +47,20 @@ public class CommunityController {
         return communityList;
     }
 
-    @PatchMapping("/community/board/{boardId}/likeUp")
-    public Integer updateLikeUp(@PathVariable Integer boardId, AuthUser authUser) {
-        return communityService.updateLikeUp(boardId);
+    @GetMapping("/community/getWriter")
+    public String getWriter(AuthUser authUser) {
+        return communityService.getWriter(authUser.getUserId());
     }
 
-    @PatchMapping("/community/board/{boardId}/likeDown")
-    public Integer updateLikeDown(@PathVariable Integer boardId, AuthUser authUser) {
-        return communityService.updateLikeDown(boardId);
+    @GetMapping("/community/board/{boardId}")
+    public BoardResponse getBoard(@PathVariable Integer boardId) {
+        return communityService.getBoard(boardId);
     }
 
     @PatchMapping("/community/board/{boardId}")
     public ResponseEntity<String> updateBoard(@PathVariable Integer boardId,
-                              @RequestBody UpdateBoardRequest request,
-                              AuthUser authUser) {
+                                              @RequestBody UpdateBoardRequest request,
+                                              AuthUser authUser) {
 
         log.info("update request={}", request);
         Boolean ok = communityService.updateBoard(boardId, authUser.getUserId(), request);
@@ -90,35 +83,22 @@ public class CommunityController {
         }
     }
 
-    @Data
-    public static class CreateBoardRequest {
-        private String title;
-        private String content;
+    /**
+     * 추천 기능
+     */
+    @PatchMapping("/community/board/{boardId}/likeUp")
+    public Integer updateLikeUp(@PathVariable Integer boardId, AuthUser authUser) {
+        return communityService.updateLikeUp(boardId);
     }
 
-    @Data
-    public static class UpdateBoardRequest {
-        private String title;
-        private String content;
+    @PatchMapping("/community/board/{boardId}/likeDown")
+    public Integer updateLikeDown(@PathVariable Integer boardId, AuthUser authUser) {
+        return communityService.updateLikeDown(boardId);
     }
 
-    @Data
-    public static class BoardResponse {
-        private String title;
-        private String content;
-        private String writer;
-        private Integer viewCount;
-        private Integer likeCount;
-        private String inserted;
+    /**
+     * 댓글 기능
+     */
 
-        @Builder
-        public BoardResponse(String title, String content, String writer, Integer viewCount, Integer likeCount, String inserted) {
-            this.title = title;
-            this.content = content;
-            this.writer = writer;
-            this.viewCount = viewCount;
-            this.likeCount = likeCount;
-            this.inserted = inserted;
-        }
-    }
+
 }

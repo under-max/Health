@@ -1,12 +1,14 @@
 package com.example.demo.service;
 
-import com.example.demo.controller.CommunityController;
 import com.example.demo.entity.Community;
 import com.example.demo.entity.User;
 import com.example.demo.exception.UserNotFound;
 import com.example.demo.mapper.CommunityMapper;
 import com.example.demo.mapper.UserMapper;
+import com.example.demo.request.board.CreateBoardRequest;
+import com.example.demo.request.board.UpdateBoardRequest;
 import com.example.demo.response.CommunityResponse;
+import com.example.demo.response.board.BoardResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -25,7 +27,7 @@ public class CommunityService {
     private final CommunityMapper communityMapper;
     private final UserMapper userMapper;
 
-    public Boolean createBoard(Long userId, CommunityController.CreateBoardRequest request) {
+    public Boolean createBoard(Long userId, CreateBoardRequest request) {
 
         User user = findUser(userId);
 
@@ -48,10 +50,10 @@ public class CommunityService {
         return collect;
     }
 
-    public CommunityController.BoardResponse getBoard(Integer boardId) {
+    public BoardResponse getBoard(Integer boardId) {
         Community findBoard = findBoard(boardId);
 
-        CommunityController.BoardResponse response = CommunityController.BoardResponse.builder()
+        BoardResponse response = BoardResponse.builder()
                 .title(findBoard.getTitle())
                 .content(findBoard.getContent())
                 .writer(findBoard.getWriter())
@@ -84,7 +86,7 @@ public class CommunityService {
         return findBoard.getLikeCount();
     }
 
-    public Boolean updateBoard(Integer boardId, Long userId, CommunityController.UpdateBoardRequest request) {
+    public Boolean updateBoard(Integer boardId, Long userId, UpdateBoardRequest request) {
         Integer cnt = 0;
         User findUser = findUser(userId);
         String writer = findUser.getNickName();
