@@ -15,16 +15,26 @@
 
       <div class="mb-3">
         <label for="" class="form-label">작성일시</label>
-        <input type="text" readonly class="form-control" :value="board.inserted"/>
+        <input type="text" class="form-control" :value="board.inserted" readonly/>
+      </div>
+
+      <div class="mb-3">
+        <label for="" class="form-label">조회수</label>
+        <input type="text" class="form-control" :value="board.viewCount" readonly/>
+      </div>
+
+      <div class="mb-3">
+        <label for="" class="form-label">추천수</label>
+        <input type="text" class="form-control" :value="board.likeCount" readonly/>
       </div>
     </div>
 
     <div class="mb-3">
       <label for="" class="form-label">본문</label>
-      <textarea class="form-control" readonly rows="10">{{board.content}}</textarea>
+      <textarea class="form-control" rows="10" readonly>{{board.content}}</textarea>
     </div>
 
-    <div class="justify-content-end">
+    <div class="d-flex justify-content-between">
       <div class="mb-3">
         <button type="button" class="btn btn-primary" @click="likeUpBtn"><i class="fa-solid fa-chevron-up"></i>
         </button>
@@ -32,34 +42,13 @@
         <button type="button" class="btn btn-danger" @click="likeDownBtn"><i class="fa-solid fa-chevron-down"></i>
         </button>
       </div>
-    </div>
 
-    <div v-if="showLikeModal" class="modal-overlay">
-      <div class="modal modal-sheet position-static d-block bg-body-secondary p-4 py-md-5"
-           tabindex="-1" role="dialog" id="modalChoice">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content rounded-3 shadow">
-            <div class="modal-body p-4 text-center">
-              <p class="mb-0">결제 정보</p>
-              <p class="mb-0">지점 : {{ selectedCenter.centerName }}</p>
-              <p class="mb-0">담당 트레이너: {{ selectedTrainer.trainerName }}</p>
-              <p class="mb-0">이용 기간 : {{ selectedMonth }}개월</p>
-              <p class="mb-0">PT 횟수 : {{ selectedPT === '' ? 0 : selectedPT }}회</p>
-              <p class="mb-0">결제 금액 : {{ formattedTotalPrice }}원 </p>
-            </div>
-            <div class="modal-footer flex-nowrap p-0">
-              <button type="button"
-                      class="btn btn-lg btn-link fs-6 text-decoration-none col-6 py-3 m-0 rounded-0 border-end"
-                      @click="confirmPayment"><strong>사요</strong></button>
-              <button type="button"
-                      class="btn btn-lg btn-link fs-6 text-decoration-none col-6 py-3 m-0 rounded-0"
-                      data-bs-dismiss="modal" @click="cancelPayment">안사요
-              </button>
-            </div>
-          </div>
-        </div>
+      <div>
+        <button type="button" class="btn btn-secondary" @click="modifyBtn">수정</button>
+        <button type="button" class="btn btn-danger" @click="deleteBtn">삭제</button>
       </div>
     </div>
+
 
   </div>
 
@@ -76,7 +65,7 @@ const props = defineProps({
   boardId: {
     type: [Number, String],
     required: true
-  },
+  }
 });
 
 const board = ref({
@@ -85,7 +74,12 @@ const board = ref({
   writer: '',
   likeCount: '',
   inserted: ''
-})
+});
+
+// 추천 버튼 로그인 체크 함수
+const loginCheck = (like) => {
+
+};
 
 // 추천 업 버튼
 const likeUpBtn = () => {
@@ -105,7 +99,7 @@ const likeUpBtn = () => {
           console.log(error);
         });
   } else {
-    const ok = confirm("로그인이 필요합니다.");
+    const ok = confirm("로그인이 필요한 기능입니다. 로그인 페이지로 이동하시겠습니까?");
     if (ok) {
       router.push('/login');
     } else {
@@ -113,7 +107,7 @@ const likeUpBtn = () => {
       router.push(router.currentRoute.value.fullPath);
     }
   }
-}
+};
 
 // 추천 다운 버튼
 const likeDownBtn = () => {
@@ -133,7 +127,7 @@ const likeDownBtn = () => {
           console.log(error);
         });
   } else {
-    const ok = confirm("로그인이 필요합니다.");
+    const ok = confirm("로그인이 필요한 기능입니다. 로그인 페이지로 이동하시겠습니까?");
     if (ok) {
       router.push('/login');
     } else {
@@ -142,6 +136,42 @@ const likeDownBtn = () => {
     }
   }
 };
+
+const modifyBtn = () => {
+
+};
+
+const deleteBtn = () => {
+  const token = Cookies.get('accessToken');
+
+  const ok = confirm("게시글을 삭제하시겠습니까?");
+
+  if (ok) {
+    axios
+        .delete(`/api/community/board/${props.boardId}`, {
+          headers: {
+            Authorization: token
+          }
+        })
+        .then((response) => {
+          if (response.data) {
+            alert(response.data);
+            router.replace('/community');
+          }
+        })
+        .catch((error) => {
+          if (error.response.data) {
+            alert(error.response.data);
+            router.push(router.currentRoute.value.fullPath);
+          }
+        });
+  } else {
+    router.push(router.currentRoute.value.fullPath);
+  }
+
+
+};
+
 
 onMounted(() => {
   axios
@@ -156,6 +186,7 @@ onMounted(() => {
         alert(error.response.data.message);
       });
 });
+
 </script>
 
 <style scoped>

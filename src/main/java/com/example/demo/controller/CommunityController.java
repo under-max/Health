@@ -69,6 +69,17 @@ public class CommunityController {
         return null;
     }
 
+    @DeleteMapping("/community/board/{boardId}")
+    public ResponseEntity<String> deleteBoard(@PathVariable Integer boardId, AuthUser authUser) {
+        Boolean ok = communityService.deleteBoard(boardId, authUser.getUserId());
+
+        if (ok) {
+            return new ResponseEntity<>("게시글이 삭제되었습니다.", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("게시글 삭제에 실패하였습니다.", HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @Data
     public static class CreateBoardRequest {
         private String title;

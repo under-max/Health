@@ -16,7 +16,7 @@
     </div>
 
     <!--  <input type="file" accept="image/*" multiple/>-->
-    <div>
+    <div class="d-flex justify-content-end">
       <button class="btn btn-primary" type="button" @click="createBtn">등록</button>
       <button class="btn btn-secondary" type="button" @click="goListBtn">목록</button>
     </div>
@@ -90,4 +90,5 @@ onMounted(() => {
 .container-lg {
   margin-top: 100px;
 }
+
 </style>

@@ -70,5 +70,13 @@
         where id = #{boardId}
     </update>
 
+    <delete id="deleteBoard">
+        delete from COMMUNITY
+        where
+            id = #{boardId}
+                and
+            writer = #{writer}
+    </delete>
+
 </mapper>
 

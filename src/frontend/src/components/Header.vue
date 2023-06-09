@@ -30,7 +30,7 @@
           </li>
 
           <li>
-            <button>
+            <button @click="btn">
               <RouterLink to="/community">커뮤니티</RouterLink>
             </button>
           </li>
@@ -72,6 +72,10 @@ const logout = function () {
     Cookies.remove('accessToken'); // 쿠키에서 access token 값 삭제
     Cookies.remove('refreshToken'); // 쿠키에서 refresh token 값 삭제
     router.replace("/")
+}
+
+const btn = () => {
+  window.location.reload();
 }
 </script>
 

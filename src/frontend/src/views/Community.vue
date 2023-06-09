@@ -46,23 +46,22 @@
 
     </div>
 
-    <!-- Modal -->
-    <div @click="showLikeModal" class="modal" tabindex="-1">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="showLikeModal = false"></button>
-          </div>
-          <div class="modal-body">
-            <!-- 모달 내용 -->123
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" @click="showLikeModal = false">Close</button>
-            <button type="button" class="btn btn-primary">Save changes</button>
-          </div>
+    <div class="d-flex justify-content-center">
+      <nav class="navbar bg-body-tertiary">
+        <div class="container-fluid">
+          <select class="form-select flex-grow-0" style="width: 100px;" name="type" v-model="searchType">
+            <option value="all">전체</option>
+            <option value="title">제목</option>
+            <option value="content">본문</option>
+            <option value="writer">작성자</option>
+          </select>
+          <form class="d-flex" role="search">
+            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"
+                   v-model="searchKeyword">
+            <button class="btn btn-success" type="button" @click="searchConditionBtn">search</button>
+          </form>
         </div>
-      </div>
+      </nav>
     </div>
 
     <table class="table table-hover">
@@ -117,10 +116,6 @@ const boardList = ref([]);
 // 목록 초기값
 const selectedSort = ref('최신순');
 
-const showLike = ref(false);
-const showLikeModal = () => {
-  showLike.value = true;
-}
 // 목록에서 선택한 값에 맞게 반환
 const selectedSortLabel = computed(() => {
   switch (selectedSort.value) {
@@ -137,20 +132,22 @@ const selectedSortLabel = computed(() => {
   }
 });
 
-// 작성하기 버튼
-const createBtn = () => {
+const loginCheck = () => {
   if (Cookies.get('accessToken')) {
     router.push('/community/new');
   } else {
-    showLike.value = true;
-    // showLikeModal.value = !showLikeModal.value;
-    // const ok = confirm("로그인이 필요합니다.");
-  //   if (ok) {
-  //     router.push('/login');
-  //   } else {
-  //     router.push('/community');
-  //   }
+    const ok = confirm("로그인이 필요한 기능입니다. 로그인 페이지로 이동하시겠습니까?");
+    if (ok) {
+      router.push('/login');
+    } else {
+      router.push('/community');
+    }
   }
+};
+
+// 작성하기 버튼
+const createBtn = () => {
+  loginCheck();
 };
 
 // dropdown 버튼
@@ -177,8 +174,6 @@ const searchConditionBtn = () => {
       });
 }
 
-
-
 const selectSort = (sortValue) => {
   isExpanded.value = false;
   selectedSort.value = sortValue;
@@ -191,7 +186,7 @@ const selectSort = (sortValue) => {
   };
 
   // 현재 URL에 쿼리 파라미터 추가 또는 변경
-  router.replace({query}).then(() => {
+  router.push({query}).then(() => {
     // 목록 요청
     getBoardList();
   });
@@ -228,48 +223,9 @@ onMounted(() => {
       getBoardList();
     }
   };
+
   getBoardList();
 });
-
-
-
-// const selectSort = (sortValue) => {
-//   isExpanded.value = !isExpanded.value;
-//   selectedSort.value = sortValue;
-//
-//   axios
-//       .get("/api/community", {
-//         params: {
-//           type: searchType.value,
-//           keyword: searchKeyword.value,
-//           sort: selectedSortLabel.value
-//         }
-//       })
-//       .then((response) => {
-//         boardList.value = response.data;
-//       })
-//       .catch((error) => {
-//         console.log(error)
-//       });
-// }
-
-// onMounted(() => {
-//   axios
-//       .get("/api/community", {
-//         params: {
-//           type: searchType.value,
-//           keyword: searchKeyword.value,
-//           sort: selectedSortLabel.value
-//         }
-//       })
-//       .then((response) => {
-//         console.log(response.data)
-//         boardList.value = response.data;
-//       })
-//       .catch((error) => {
-//         console.log(error)
-//       });
-// });
 
 </script>
 

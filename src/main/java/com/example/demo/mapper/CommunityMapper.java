@@ -2,6 +2,7 @@ package com.example.demo.mapper;
 
 import com.example.demo.entity.Community;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,4 +27,6 @@ public interface CommunityMapper {
     void updateLikeDown(Integer boardId);
 
     void viewCount(Integer boardId);
+
+    Integer deleteBoard(@Param("boardId") Integer boardId, @Param("writer") String writer);
 }

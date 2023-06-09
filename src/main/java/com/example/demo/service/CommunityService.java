@@ -27,16 +27,17 @@ public class CommunityService {
 
     public Boolean createBoard(Long userId, CommunityController.CreateBoardRequest request) {
 
-        User user = userMapper.findById(userId).orElseThrow(UserNotFound::new);
+        User user = findUser(userId);
 
         Community community = Community.builder()
                 .title(request.getTitle())
                 .content(request.getContent())
-                .writer(user.getName())
+                .writer(user.getNickName())
                 .build();
 
         return (communityMapper.createBoard(community) == 1);
     }
+
 
     public List<CommunityResponse> getBoardList(String type, String keyword, String sort) {
 
@@ -48,8 +49,7 @@ public class CommunityService {
     }
 
     public CommunityController.BoardResponse getBoard(Integer boardId) {
-        Community findBoard = communityMapper.findById(boardId)
-                .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+        Community findBoard = findBoard(boardId);
 
         CommunityController.BoardResponse response = CommunityController.BoardResponse.builder()
                 .title(findBoard.getTitle())
@@ -74,16 +74,27 @@ public class CommunityService {
 
     public Integer updateLikeUp(Integer boardId) {
         communityMapper.updateLikeUp(boardId);
-        Community findBoard = communityMapper.findById(boardId)
-                .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+        Community findBoard = findBoard(boardId);
         return findBoard.getLikeCount();
     }
 
     public Integer updateLikeDown(Integer boardId) {
         communityMapper.updateLikeDown(boardId);
-        Community findBoard = communityMapper.findById(boardId)
-                .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+        Community findBoard = findBoard(boardId);
         return findBoard.getLikeCount();
+    }
+
+    public Boolean deleteBoard(Integer boardId, Long userId) {
+        Integer cnt = 0;
+        User findUser = findUser(userId);
+        String nickName = findUser.getNickName();
+        Community findBoard = findBoard(boardId);
+
+        if (findBoard.getWriter().equals(nickName)) {
+            cnt = communityMapper.deleteBoard(boardId, nickName);
+        }
+
+        return cnt == 1;
     }
 
     private List<CommunityResponse> getSortList(String type, String keyword, String sort) {
@@ -100,6 +111,20 @@ public class CommunityService {
 
         return collect;
     }
+
+    private User findUser(Long userId) {
+        return userMapper.findById(userId).orElseThrow(UserNotFound::new);
+    }
+
+    private Community findBoard(Integer boardId) {
+        return communityMapper.findById(boardId)
+                .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+    }
+
+    private static String getFormatted(Community findBoard) {
+        return findBoard.getInserted().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+    }
+
     private List<CommunityResponse> getSortList1(String type, String keyword, String sort) {
         List<CommunityResponse> collect = null;
 
@@ -146,7 +171,4 @@ public class CommunityService {
         return collect;
     }
 
-    private static String getFormatted(Community findBoard) {
-        return findBoard.getInserted().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-    }
 }
