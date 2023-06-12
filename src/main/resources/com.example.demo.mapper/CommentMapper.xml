@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.CommentMapper">
+
+    <insert id="addComment">
+        insert into COMMENT (boardId, content, writer)
+        values
+            (#{boardId}, #{content}, #{writer})
+    </insert>
+
+    <select id="findAllByBoardId" resultType="Comment">
+        select * from COMMENT
+        where boardId = #{boardId}
+        order by inserted desc
+    </select>
+
+    <update id="updateComment">
+        update COMMENT
+        set
+            content = #{content}
+        where
+            id = #{boardId}
+                and
+            writer = #{writer}
+    </update>
+
+    <delete id="deleteComment">
+        delete from COMMENT
+        where
+            id = #{boardId}
+                and
+            writer = #{writer}
+    </delete>
+
+</mapper>
+

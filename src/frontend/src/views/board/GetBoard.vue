@@ -44,7 +44,25 @@
 
     <div class="d-flex border-danger">
       <textarea v-model="commentContent" class="comment-textarea"></textarea>
-      <button @click="CommentBtn" class="comment-button">댓글</button>
+      <button @click="addCommentBtn" class="comment-button">댓글</button>
+    </div>
+
+    <br>
+
+    <div class="card">
+      <div class="card-header">댓글 리스트</div>
+      <ul class="list-group" v-for="comment in commentList">
+        <li class="list-group-item d-flex justify-content-between">
+          <div>{{ comment.content }}</div>
+          <div class="d-flex">
+            <div>{{ comment.writer }} &nbsp;</div>
+            <div>{{ comment.inserted }} &nbsp;</div>
+            <button @click="modifyCommentBtn" class="badge btn btn-secondary">수정</button>
+            <button @click="deleteCommentBtn" class="badge btn btn-danger">삭제</button>
+          </div>
+        </li>
+      </ul>
+
     </div>
 
   </div>
@@ -74,17 +92,60 @@ const board = ref({
   inserted: ''
 });
 
+const commentList = ref([]);
+
 const commentContent = ref('');
 
-function CommentBtn(event) {
+// 댓글 등록
+const addCommentBtn = (event) => {
   event.preventDefault(); // 폼 기본 동작 방지
 
   const token = Cookies.get('accessToken');
 
   axios
-      .post('/api/community/comment', {
-        comment: commentContent.value
+      .post(`/api/community/board/${props.boardId}/comment`, {
+        content: commentContent.value
       }, {
+        headers: {
+          Authorization: token
+        }
+      })
+      .then((response) => {
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+};
+
+// 댓글 수정
+const modifyCommentBtn = (event) => {
+  event.preventDefault(); // 폼 기본 동작 방지
+
+  const token = Cookies.get('accessToken');
+
+  axios
+      .put(`/api/community/board/${props.boardId}/comment`, {
+        content: commentContent.value
+      }, {
+        headers: {
+          Authorization: token
+        }
+      })
+      .then((response) => {
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+};
+
+// 댓글 삭제
+const deleteCommentBtn = (event) => {
+  event.preventDefault(); // 폼 기본 동작 방지
+
+  const token = Cookies.get('accessToken');
+
+  axios
+      .delete(`/api/community/board/${props.boardId}/comment`, {
         headers: {
           Authorization: token
         }
@@ -193,6 +254,20 @@ onMounted(() => {
       .then((response) => {
         console.log(response.data);
         board.value = response.data;
+      })
+      .catch((error) => {
+        console.log(error)
+        router.replace("/community")
+        alert(error.response.data.message);
+      });
+});
+
+onMounted(() => {
+  axios
+      .get(`/api/community/board/${props.boardId}/comment`, {})
+      .then((response) => {
+        console.log(response.data);
+        commentList.value = response.data;
       })
       .catch((error) => {
         console.log(error)

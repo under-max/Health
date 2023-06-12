@@ -1,14 +1,18 @@
 package com.example.demo.service;
 
+import com.example.demo.controller.CommunityController;
+import com.example.demo.entity.Comment;
 import com.example.demo.entity.Community;
 import com.example.demo.entity.User;
 import com.example.demo.exception.UserNotFound;
+import com.example.demo.mapper.CommentMapper;
 import com.example.demo.mapper.CommunityMapper;
 import com.example.demo.mapper.UserMapper;
 import com.example.demo.request.board.CreateBoardRequest;
 import com.example.demo.request.board.UpdateBoardRequest;
 import com.example.demo.response.CommunityResponse;
 import com.example.demo.response.board.BoardResponse;
+import com.example.demo.response.board.CommentResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -25,6 +29,7 @@ import java.util.stream.Collectors;
 public class CommunityService {
 
     private final CommunityMapper communityMapper;
+    private final CommentMapper commentMapper;
     private final UserMapper userMapper;
 
     public Boolean createBoard(Long userId, CreateBoardRequest request) {
@@ -186,5 +191,50 @@ public class CommunityService {
             throw new IllegalArgumentException("원하시는 정렬을 할 수 없습니다.");
         }
         return collect;
+    }
+
+    public Boolean addComment(Integer boardId, Long userId, CommunityController.CreateCommentRequest request) {
+
+        User findUser = findUser(userId);
+
+        String content = request.getContent();
+        String writer = findUser.getNickName();
+
+        log.info("boardId={}, writer={}, content={}", boardId, writer, content);
+
+        return (commentMapper.addComment(boardId, content, writer) == 1);
+    }
+
+    public List<CommentResponse> getCommentList(Integer boardId) {
+
+        List<Comment> commentList = commentMapper.findAllByBoardId(boardId);
+
+        List<CommentResponse> responseList = commentList.stream()
+                .map(comment -> CommentResponse.builder()
+                        .content(comment.getContent())
+                        .writer(comment.getWriter())
+                        .inserted(comment.getInserted().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+                        .build()).collect(Collectors.toList());
+
+        log.info("commentResponseList={}", responseList);
+        return responseList;
+    }
+
+    public void modifyComment(Integer boardId, Long userId) {
+
+        User user = findUser(userId);
+
+        String writer = user.getNickName();
+
+        commentMapper.updateComment(boardId, writer);
+    }
+
+    public void deleteComment(Integer boardId, Long userId) {
+
+        User user = findUser(userId);
+
+        String writer = user.getNickName();
+
+        commentMapper.deleteComment(boardId, writer);
     }
 }

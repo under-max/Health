@@ -5,8 +5,8 @@ import com.example.demo.request.board.CreateBoardRequest;
 import com.example.demo.request.board.UpdateBoardRequest;
 import com.example.demo.response.CommunityResponse;
 import com.example.demo.response.board.BoardResponse;
+import com.example.demo.response.board.CommentResponse;
 import com.example.demo.service.CommunityService;
-import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,12 +18,16 @@ import java.util.List;
 
 @Slf4j
 @RestController
+@RequestMapping("/community")
 @RequiredArgsConstructor
 public class CommunityController {
 
     private final CommunityService communityService;
 
-    @PostMapping("/community")
+    /**
+     * 게시글 기능
+     */
+    @PostMapping
     public ResponseEntity<String> createBoard(@RequestBody CreateBoardRequest request, AuthUser authUser) {
         log.info("request={}", request);
 
@@ -36,7 +40,7 @@ public class CommunityController {
         }
     }
 
-    @GetMapping("/community")
+    @GetMapping
     public List<CommunityResponse> getBoardList(@RequestParam(defaultValue = "all") String type,
                                                 @RequestParam(defaultValue = "") String keyword,
                                                 @RequestParam(defaultValue = "id") String sort) {
@@ -47,17 +51,17 @@ public class CommunityController {
         return communityList;
     }
 
-    @GetMapping("/community/getWriter")
+    @GetMapping("/getWriter")
     public String getWriter(AuthUser authUser) {
         return communityService.getWriter(authUser.getUserId());
     }
 
-    @GetMapping("/community/board/{boardId}")
+    @GetMapping("/board/{boardId}")
     public BoardResponse getBoard(@PathVariable Integer boardId) {
         return communityService.getBoard(boardId);
     }
 
-    @PatchMapping("/community/board/{boardId}")
+    @PatchMapping("/board/{boardId}")
     public ResponseEntity<String> updateBoard(@PathVariable Integer boardId,
                                               @RequestBody UpdateBoardRequest request,
                                               AuthUser authUser) {
@@ -72,7 +76,7 @@ public class CommunityController {
         }
     }
 
-    @DeleteMapping("/community/board/{boardId}")
+    @DeleteMapping("/board/{boardId}")
     public ResponseEntity<String> deleteBoard(@PathVariable Integer boardId, AuthUser authUser) {
         Boolean ok = communityService.deleteBoard(boardId, authUser.getUserId());
 
@@ -86,12 +90,12 @@ public class CommunityController {
     /**
      * 추천 기능
      */
-    @PatchMapping("/community/board/{boardId}/likeUp")
+    @PatchMapping("/board/{boardId}/likeUp")
     public Integer updateLikeUp(@PathVariable Integer boardId, AuthUser authUser) {
         return communityService.updateLikeUp(boardId);
     }
 
-    @PatchMapping("/community/board/{boardId}/likeDown")
+    @PatchMapping("/board/{boardId}/likeDown")
     public Integer updateLikeDown(@PathVariable Integer boardId, AuthUser authUser) {
         return communityService.updateLikeDown(boardId);
     }
@@ -99,6 +103,32 @@ public class CommunityController {
     /**
      * 댓글 기능
      */
+    @PostMapping("/board/{boardId}/comment")
+    public void addComment(@PathVariable Integer boardId, @RequestBody CreateCommentRequest request, AuthUser authUser) {
+        communityService.addComment(boardId, authUser.getUserId(), request);
+    }
+
+    @GetMapping("/board/{boardId}/comment")
+    public List<CommentResponse> getCommentList(@PathVariable Integer boardId) {
+        return communityService.getCommentList(boardId);
+    }
+
+    @PutMapping("/board/{boardId}/comment")
+    public void modifyComment(@PathVariable Integer boardId, AuthUser authUser) {
+        communityService.modifyComment(boardId, authUser.getUserId());
+    }
+
+    @DeleteMapping("/board/{boardId}/comment")
+    public void deleteComment(@PathVariable Integer boardId, AuthUser authUser) {
+        communityService.deleteComment(boardId, authUser.getUserId());
+    }
+
+
+
+    @Data
+    public static class CreateCommentRequest {
+        private String content;
+    }
 
 
 }

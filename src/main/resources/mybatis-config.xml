@@ -9,5 +9,6 @@
         <mapper resource="com.example.demo.mapper/MembershipMapper.xml"/>
         <mapper resource="com.example.demo.mapper/CenterMapper.xml"/>
         <mapper resource="com.example.demo.mapper/CommunityMapper.xml"/>
+        <mapper resource="com.example.demo.mapper/CommentMapper.xml"/>
     </mappers>
 </configuration>
