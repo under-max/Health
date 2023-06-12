@@ -1,9 +1,11 @@
-package com.example.demo.response;
+package com.example.demo.response.board;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class CommunityResponse {
 
     private Integer id;

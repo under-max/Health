@@ -1,26 +1,15 @@
 <template>
 
-  <div class="flex-check">
+  <div class="container">
 
-    <div class="sideBar">
-      <div>메뉴</div>
-      <div>
-        <RouterLink to="/membership">이용권 구매</RouterLink>
-      </div>
-      <div>
-        <RouterLink to="/shop">운동용품 구매</RouterLink>
-      </div>
-    </div>
-
-    <div class="container flex-style">
-      <h4>이용권안내!</h4>
+    <div class="d-flex justify-content-center">
       <div class="row top-padding">
         <div class="col-md-6">
           <div>
-            <div class="container flex-style-sub">
+            <div>
 
               <!-- 검색 기능 -->
-              <h4 class="d-flex justify-content-between align-items-center mb-3 flex_h4Style">
+              <h4 class="d-flex justify-content-between">
                 <span class="text-light">센터 검색</span>
               </h4>
 
@@ -36,7 +25,7 @@
                 </button>
               </div>
 
-              <h4 class="d-flex justify-content-between align-items-center mb-3 flex_h4Style">
+              <h4 class="d-flex justify-content-between">
                 <span class="text-light">이용권 선택</span>
               </h4>
 
@@ -121,29 +110,29 @@
 
         <div class="col-md-6">
           <div class="row col-lg-8">
-            <h4 class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="d-flex justify-content-between mb-3">
               <span class="text-light">선택 사항</span>
             </h4>
             <ul class="list-group mb-3">
-              <li class="list-group-item d-flex justify-content-between lh-sm">
+              <li class="list-group-item d-flex justify-content-between">
                 <div>
                   <small class="text-body-secondary">센터 / 트레이너</small>
                   <h5 class="my-0">{{ selectedCenter.centerName }} / {{ selectedTrainer.trainerName }}</h5>
                 </div>
               </li>
-              <li class="list-group-item d-flex justify-content-between lh-sm">
+              <li class="list-group-item d-flex justify-content-between">
                 <div>
                   <small class="text-body-secondary">이용 기간</small>
                   <h5 class="my-0">{{ selectedMonth }}개월</h5>
                 </div>
               </li>
-              <li class="list-group-item d-flex justify-content-between lh-sm">
+              <li class="list-group-item d-flex justify-content-between">
                 <div>
                   <small class="text-body-secondary">PT 횟수</small>
                   <h5 class="my-0">{{ selectedPT }}회</h5>
                 </div>
               </li>
-              <li class="list-group-item d-flex justify-content-between lh-sm">
+              <li class="list-group-item d-flex justify-content-between">
                 <div>
                   <h5 class="my-0">결제 금액</h5>
                 </div>
@@ -162,6 +151,7 @@
         </div>
       </div>
     </div>
+
   </div>
 
 </template>
@@ -357,47 +347,8 @@ onMounted(() => {
 
 <style scoped>
 
-.sideBar {
-  background-color: #f5f5f5;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  padding: 10px;
-  width: 200px;
-  font-family: Arial, sans-serif;
-}
-
-.sideBar > div {
-  margin-bottom: 10px;
-}
-
-.sideBar > div:first-child {
-  font-weight: bold;
-  font-size: 16px;
-}
-
-.flex-check {
-  display: flex;
-}
-
 flex-style-sub {
   padding: 0;
-}
-
-.container {
-  display: flex;
-  flex-direction: column;
-}
-
-.container > div {
-  margin-bottom: 1rem;
-}
-
-.container form {
-  margin-bottom: 1rem;
-}
-
-.container p {
-  margin-bottom: 0.5rem;
 }
 
 select {
@@ -472,27 +423,8 @@ button.btn-primary:hover {
   flex-grow: 1;
 }
 
-a {
-  color: #007bff;
-  text-decoration: none;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
 .top-padding {
   padding-top: 3rem;
-}
-
-.row {
-  margin-right: -0.5rem;
-  margin-left: -0.5rem;
-}
-
-.col-md-6 {
-  padding-right: 0.5rem;
-  padding-left: 0.5rem;
 }
 
 </style>

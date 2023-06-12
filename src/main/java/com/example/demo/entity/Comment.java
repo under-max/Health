@@ -11,8 +11,8 @@ import java.time.LocalDateTime;
 public class Comment {
     private Integer id;
     private Integer boardId;
-    private String content;
     private String writer;
+    private String content;
     private LocalDateTime inserted;
 
     public Comment() {

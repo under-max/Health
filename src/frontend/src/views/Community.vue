@@ -13,13 +13,13 @@
 
       <ul class="nav justify-content-center">
         <li class="nav-item">
-          <RouterLink class="nav-link active" aria-current="page" to="/community">게시판</RouterLink>
+          <router-link class="nav-link active" aria-current="page" to="/community">게시판</router-link>
         </li>
         <li class="nav-item">
-          <RouterLink class="nav-link" to="/community/notice">공지사항</RouterLink>
+          <router-link class="nav-link" to="/community/notice">공지사항</router-link>
         </li>
         <li class="nav-item">
-          <RouterLink class="nav-link" to="/community/qna">1:1문의</RouterLink>
+          <router-link class="nav-link" to="/community/qna">1:1문의</router-link>
         </li>
       </ul>
 
@@ -79,7 +79,7 @@
       <tr v-for="board in boardList">
         <td>{{ board.id }}</td>
         <td>
-          <RouterLink :to="{ name: 'getBoard', params: {boardId: board.id}}">{{ board.title }}</RouterLink>
+          <router-link :to="{ name: 'getBoard', params: {boardId: board.id}}">{{ board.title }}</router-link>
         </td>
         <td>{{ board.writer }}</td>
         <td>{{ board.viewCount }}</td>

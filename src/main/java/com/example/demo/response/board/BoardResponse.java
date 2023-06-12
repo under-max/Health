@@ -2,8 +2,10 @@ package com.example.demo.response.board;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class BoardResponse {
     private String title;
     private String content;

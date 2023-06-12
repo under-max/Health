@@ -1,6 +1,5 @@
 package com.example.demo.service;
 
-import com.example.demo.controller.CommunityController;
 import com.example.demo.entity.Comment;
 import com.example.demo.entity.Community;
 import com.example.demo.entity.User;
@@ -10,9 +9,13 @@ import com.example.demo.mapper.CommunityMapper;
 import com.example.demo.mapper.UserMapper;
 import com.example.demo.request.board.CreateBoardRequest;
 import com.example.demo.request.board.UpdateBoardRequest;
-import com.example.demo.response.CommunityResponse;
+import com.example.demo.request.comment.CommentRequest;
+import com.example.demo.request.comment.CreateCommentDto;
+import com.example.demo.request.comment.DeleteCommentDto;
+import com.example.demo.request.comment.UpdateCommentDto;
+import com.example.demo.response.board.CommunityResponse;
 import com.example.demo.response.board.BoardResponse;
-import com.example.demo.response.board.CommentResponse;
+import com.example.demo.response.comment.CommentResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -34,15 +37,21 @@ public class CommunityService {
 
     public Boolean createBoard(Long userId, CreateBoardRequest request) {
 
-        User user = findUser(userId);
+        try {
 
-        Community community = Community.builder()
-                .title(request.getTitle())
-                .content(request.getContent())
-                .writer(user.getNickName())
-                .build();
+            User user = findUser(userId);
 
-        return (communityMapper.createBoard(community) == 1);
+            Community community = Community.builder()
+                    .title(request.getTitle())
+                    .content(request.getContent())
+                    .writer(user.getNickName())
+                    .build();
+
+            return (communityMapper.createBoard(community) == 1);
+        } catch (Exception e) {
+            log.error(String.valueOf(e));
+            return false;
+        }
     }
 
 
@@ -56,7 +65,10 @@ public class CommunityService {
     }
 
     public BoardResponse getBoard(Integer boardId) {
-        Community findBoard = findBoard(boardId);
+//        Community findBoard = findBoard(boardId);
+
+        Community findBoard =  communityMapper.findById(boardId)
+                .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
 
         BoardResponse response = BoardResponse.builder()
                 .title(findBoard.getTitle())
@@ -91,7 +103,7 @@ public class CommunityService {
         return findBoard.getLikeCount();
     }
 
-    public Boolean updateBoard(Integer boardId, Long userId, UpdateBoardRequest request) {
+    public Boolean updateBoard(Long userId, Integer boardId, UpdateBoardRequest request) {
         Integer cnt = 0;
         User findUser = findUser(userId);
         String writer = findUser.getNickName();
@@ -106,7 +118,7 @@ public class CommunityService {
         return cnt == 1;
     }
 
-    public Boolean deleteBoard(Integer boardId, Long userId) {
+    public Boolean deleteBoard(Long userId, Integer boardId) {
         Integer cnt = 0;
         User findUser = findUser(userId);
         String writer = findUser.getNickName();
@@ -193,16 +205,22 @@ public class CommunityService {
         return collect;
     }
 
-    public Boolean addComment(Integer boardId, Long userId, CommunityController.CreateCommentRequest request) {
+    /**
+     * 댓글 기능
+     */
+    public Boolean addComment(Long userId, Integer boardId, String content) {
 
-        User findUser = findUser(userId);
+        User user = findUser(userId);
 
-        String content = request.getContent();
-        String writer = findUser.getNickName();
+        CreateCommentDto createCommentDto = CreateCommentDto.builder()
+                .boardId(boardId)
+                .writer(user.getNickName())
+                .content(content)
+                .build();
 
-        log.info("boardId={}, writer={}, content={}", boardId, writer, content);
+        log.info("boardId={}, writer={}, content={}", createCommentDto.getBoardId(), createCommentDto.getWriter(), createCommentDto.getContent());
 
-        return (commentMapper.addComment(boardId, content, writer) == 1);
+        return (commentMapper.addComment(createCommentDto) == 1);
     }
 
     public List<CommentResponse> getCommentList(Integer boardId) {
@@ -211,8 +229,9 @@ public class CommunityService {
 
         List<CommentResponse> responseList = commentList.stream()
                 .map(comment -> CommentResponse.builder()
-                        .content(comment.getContent())
+                        .id(comment.getId())
                         .writer(comment.getWriter())
+                        .content(comment.getContent())
                         .inserted(comment.getInserted().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
                         .build()).collect(Collectors.toList());
 
@@ -220,21 +239,30 @@ public class CommunityService {
         return responseList;
     }
 
-    public void modifyComment(Integer boardId, Long userId) {
+    public Boolean modifyComment(Long userId, Integer boardId, CommentRequest request) {
 
         User user = findUser(userId);
 
-        String writer = user.getNickName();
+        UpdateCommentDto updateCommentDto = UpdateCommentDto.builder()
+                .boardId(boardId)
+                .commentId(request.getCommentId())
+                .writer(user.getNickName())
+                .content(request.getContent())
+                .build();
 
-        commentMapper.updateComment(boardId, writer);
+        return (commentMapper.updateComment(updateCommentDto) == 1);
     }
 
-    public void deleteComment(Integer boardId, Long userId) {
+    public Boolean deleteComment(Long userId, Integer boardId, Integer commentId) {
 
         User user = findUser(userId);
 
-        String writer = user.getNickName();
+        DeleteCommentDto deleteCommentDto = DeleteCommentDto.builder()
+                .boardId(boardId)
+                .commentId(commentId)
+                .writer(user.getNickName())
+                .build();
 
-        commentMapper.deleteComment(boardId, writer);
+        return (commentMapper.deleteComment(deleteCommentDto) == 1);
     }
 }

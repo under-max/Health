@@ -3,11 +3,11 @@ package com.example.demo.controller;
 import com.example.demo.entity.AuthUser;
 import com.example.demo.request.board.CreateBoardRequest;
 import com.example.demo.request.board.UpdateBoardRequest;
-import com.example.demo.response.CommunityResponse;
+import com.example.demo.request.comment.CommentRequest;
 import com.example.demo.response.board.BoardResponse;
-import com.example.demo.response.board.CommentResponse;
+import com.example.demo.response.board.CommunityResponse;
+import com.example.demo.response.comment.CommentResponse;
 import com.example.demo.service.CommunityService;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -67,7 +67,7 @@ public class CommunityController {
                                               AuthUser authUser) {
 
         log.info("update request={}", request);
-        Boolean ok = communityService.updateBoard(boardId, authUser.getUserId(), request);
+        Boolean ok = communityService.updateBoard(authUser.getUserId(), boardId, request);
 
         if (ok) {
             return new ResponseEntity<>("게시글이 수정되었습니다.", HttpStatus.OK);
@@ -78,7 +78,7 @@ public class CommunityController {
 
     @DeleteMapping("/board/{boardId}")
     public ResponseEntity<String> deleteBoard(@PathVariable Integer boardId, AuthUser authUser) {
-        Boolean ok = communityService.deleteBoard(boardId, authUser.getUserId());
+        Boolean ok = communityService.deleteBoard(authUser.getUserId(), boardId);
 
         if (ok) {
             return new ResponseEntity<>("게시글이 삭제되었습니다.", HttpStatus.OK);
@@ -104,8 +104,14 @@ public class CommunityController {
      * 댓글 기능
      */
     @PostMapping("/board/{boardId}/comment")
-    public void addComment(@PathVariable Integer boardId, @RequestBody CreateCommentRequest request, AuthUser authUser) {
-        communityService.addComment(boardId, authUser.getUserId(), request);
+    public ResponseEntity<String> addComment(@PathVariable Integer boardId, @RequestBody CommentRequest request, AuthUser authUser) {
+        Boolean ok = communityService.addComment(authUser.getUserId(), boardId, request.getContent());
+
+        if (ok) {
+            return new ResponseEntity<>("댓글이 등록되었습니다.", HttpStatus.CREATED);
+        } else {
+            return new ResponseEntity<>("댓글 등록에 실패하였습니다.", HttpStatus.BAD_REQUEST);
+        }
     }
 
     @GetMapping("/board/{boardId}/comment")
@@ -114,21 +120,26 @@ public class CommunityController {
     }
 
     @PutMapping("/board/{boardId}/comment")
-    public void modifyComment(@PathVariable Integer boardId, AuthUser authUser) {
-        communityService.modifyComment(boardId, authUser.getUserId());
+    public ResponseEntity<String> modifyComment(@PathVariable Integer boardId, @RequestBody CommentRequest request, AuthUser authUser) {
+        log.info("comment modify request={}", request);
+        Boolean ok = communityService.modifyComment(authUser.getUserId(), boardId, request);
+
+        if (ok) {
+            return new ResponseEntity<>("댓글이 수정되었습니다.", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("댓글 수정에 실패하였습니다.", HttpStatus.BAD_REQUEST);
+        }
     }
 
-    @DeleteMapping("/board/{boardId}/comment")
-    public void deleteComment(@PathVariable Integer boardId, AuthUser authUser) {
-        communityService.deleteComment(boardId, authUser.getUserId());
+    @DeleteMapping("/board/{boardId}/comment/{commentId}")
+    public ResponseEntity<String> deleteComment(@PathVariable Integer boardId, @PathVariable Integer commentId, AuthUser authUser) {
+        Boolean ok = communityService.deleteComment(authUser.getUserId(), boardId, commentId);
+
+        if (ok) {
+            return new ResponseEntity<>("댓글이 삭제되었습니다.", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("댓글 삭제에 실패하였습니다.", HttpStatus.BAD_REQUEST);
+        }
     }
-
-
-
-    @Data
-    public static class CreateCommentRequest {
-        private String content;
-    }
-
 
 }

@@ -3,9 +3,9 @@
 <mapper namespace="com.example.demo.mapper.CommentMapper">
 
     <insert id="addComment">
-        insert into COMMENT (boardId, content, writer)
+        insert into COMMENT (boardId, writer, content)
         values
-            (#{boardId}, #{content}, #{writer})
+            (#{boardId}, #{writer}, #{content})
     </insert>
 
     <select id="findAllByBoardId" resultType="Comment">
@@ -19,17 +19,21 @@
         set
             content = #{content}
         where
-            id = #{boardId}
+            boardId = #{boardId}
                 and
             writer = #{writer}
+                and
+            id = #{commentId}
     </update>
 
     <delete id="deleteComment">
         delete from COMMENT
         where
-            id = #{boardId}
+            boardId = #{boardId}
                 and
             writer = #{writer}
+                and
+            id = #{commentId}
     </delete>
 
 </mapper>
