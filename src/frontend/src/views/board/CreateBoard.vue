@@ -18,7 +18,7 @@
     <!--  <input type="file" accept="image/*" multiple/>-->
     <div class="d-flex justify-content-end">
       <button class="btn btn-primary" type="button" @click="createBtn">등록</button>
-      <button class="btn btn-secondary" type="button" @click="goListBtn">목록</button>
+      <button class="btn btn-warning" type="button" @click="goListBtn">목록</button>
     </div>
   </div>
 </template>
@@ -83,8 +83,8 @@ onMounted(() => {
         console.log(error)
       });
 });
-</script>
 
+</script>
 
 <style scoped>
 .container-lg {

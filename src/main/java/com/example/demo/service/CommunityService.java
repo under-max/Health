@@ -37,23 +37,16 @@ public class CommunityService {
 
     public Boolean createBoard(Long userId, CreateBoardRequest request) {
 
-        try {
+        User user = findUser(userId);
 
-            User user = findUser(userId);
+        Community community = Community.builder()
+                .title(request.getTitle())
+                .content(request.getContent())
+                .writer(user.getNickName())
+                .build();
 
-            Community community = Community.builder()
-                    .title(request.getTitle())
-                    .content(request.getContent())
-                    .writer(user.getNickName())
-                    .build();
-
-            return (communityMapper.createBoard(community) == 1);
-        } catch (Exception e) {
-            log.error(String.valueOf(e));
-            return false;
-        }
+        return (communityMapper.createBoard(community) == 1);
     }
-
 
     public List<CommunityResponse> getBoardList(String type, String keyword, String sort) {
 
@@ -65,10 +58,8 @@ public class CommunityService {
     }
 
     public BoardResponse getBoard(Integer boardId) {
-//        Community findBoard = findBoard(boardId);
 
-        Community findBoard =  communityMapper.findById(boardId)
-                .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+        Community findBoard = findBoard(boardId);
 
         BoardResponse response = BoardResponse.builder()
                 .title(findBoard.getTitle())

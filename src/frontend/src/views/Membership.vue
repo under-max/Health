@@ -9,7 +9,7 @@
             <div>
 
               <!-- 검색 기능 -->
-              <h4 class="d-flex justify-content-between">
+              <h4>
                 <span class="text-light">센터 검색</span>
               </h4>
 
@@ -25,13 +25,11 @@
                 </button>
               </div>
 
-              <h4 class="d-flex justify-content-between">
+              <h4>
                 <span class="text-light">이용권 선택</span>
               </h4>
 
               <div>
-
-                <div v-if="errorMessage">{{ errorMessage }}</div>
 
                 <div>
                   <select v-model="selectedCenter" @change="getTrainers">
@@ -70,8 +68,8 @@
                     <option v-for="pt in ptSelectList" :value="pt.value">{{ pt.name }}</option>
                   </select>
                 </div>
-              </div>
 
+              </div>
 
               <div v-if="showPaymentModal" class="modal-overlay">
                 <div class="modal modal-sheet position-static d-block bg-body-secondary p-4 py-md-5"
@@ -89,10 +87,10 @@
                       <div class="modal-footer flex-nowrap p-0">
                         <button type="button"
                                 class="btn btn-lg btn-link fs-6 text-decoration-none col-6 py-3 m-0 rounded-0 border-end"
-                                @click="confirmPayment"><strong>사요</strong></button>
+                                @click="confirmPayment"><strong>구매</strong></button>
                         <button type="button"
                                 class="btn btn-lg btn-link fs-6 text-decoration-none col-6 py-3 m-0 rounded-0"
-                                data-bs-dismiss="modal" @click="cancelPayment">안사요
+                                data-bs-dismiss="modal" @click="cancelPayment">취소
                         </button>
                       </div>
                     </div>
@@ -110,23 +108,23 @@
 
         <div class="col-md-6">
           <div class="row col-lg-8">
-            <h4 class="d-flex justify-content-between mb-3">
+            <h4>
               <span class="text-light">선택 사항</span>
             </h4>
             <ul class="list-group mb-3">
-              <li class="list-group-item d-flex justify-content-between">
+              <li class="list-group-item">
                 <div>
                   <small class="text-body-secondary">센터 / 트레이너</small>
                   <h5 class="my-0">{{ selectedCenter.centerName }} / {{ selectedTrainer.trainerName }}</h5>
                 </div>
               </li>
-              <li class="list-group-item d-flex justify-content-between">
+              <li class="list-group-item">
                 <div>
                   <small class="text-body-secondary">이용 기간</small>
                   <h5 class="my-0">{{ selectedMonth }}개월</h5>
                 </div>
               </li>
-              <li class="list-group-item d-flex justify-content-between">
+              <li class="list-group-item">
                 <div>
                   <small class="text-body-secondary">PT 횟수</small>
                   <h5 class="my-0">{{ selectedPT }}회</h5>
@@ -144,7 +142,8 @@
 
             <div>
               <form @submit.prevent="submitPayment">
-                <button class="btn btn-primary" type="submit" :disabled="isButtonDisabled">카카오페이 결제 <i class="fa-solid fa-barcode"></i></button>
+                <button class="btn btn-primary" type="submit" :disabled="isButtonDisabled">카카오페이 결제 <i
+                    class="fa-solid fa-barcode"></i></button>
               </form>
             </div>
           </div>
@@ -347,10 +346,6 @@ onMounted(() => {
 
 <style scoped>
 
-flex-style-sub {
-  padding: 0;
-}
-
 select {
   padding: 1rem;
   font-size: 1rem;
@@ -424,7 +419,7 @@ button.btn-primary:hover {
 }
 
 .top-padding {
-  padding-top: 3rem;
+  padding-top: 20vh;
 }
 
 </style>

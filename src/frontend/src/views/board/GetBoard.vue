@@ -15,8 +15,15 @@
       </div>
 
       <div>
-        <button type="button" class="btn btn-secondary" @click="modifyBtn">수정</button>
-        <button type="button" class="btn btn-danger" @click="deleteBtn">삭제</button>
+        <div v-if="currentUser === boardWriter">
+          <button type="button" class="btn btn-secondary" @click="modifyBtn">수정</button>
+          <button type="button" class="btn btn-danger" @click="deleteBtn">삭제</button>
+          <button class="btn btn-warning" type="button" @click="goListBtn">목록</button>
+        </div>
+
+        <div v-else>
+          <button class="btn btn-warning" type="button" @click="goListBtn">목록</button>
+        </div>
       </div>
 
     </div>
@@ -46,7 +53,7 @@
       <div v-if="Cookies.get('accessToken')">
         <div class="d-flex border-danger">
           <textarea v-model="addCommentContent" class="comment-textarea" placeholder="댓글을 입력해주세요."></textarea>
-          <button @click="addCommentBtn" class="comment-button">댓글</button>
+          <button @click="addCommentBtn" class="comment-button">댓글 쓰기</button>
         </div>
       </div>
 
@@ -57,10 +64,7 @@
             <router-link to="/login">로그인</router-link>
             이 필요합니다.
           </div>
-          <!--          <textarea readonly class="comment-textarea">-->
-          <!--            댓글을 쓰려면 <a href="/login">로그인</a>이 필요합니다.-->
-          <!--          </textarea>-->
-          <button class="comment-button" disabled>댓글</button>
+          <button class="comment-button" disabled>댓글 쓰기</button>
         </div>
       </div>
     </div>
@@ -75,10 +79,13 @@
           <div class="d-flex">
             <div>{{ comment.writer }} /&nbsp;</div>
             <div>{{ comment.inserted }} &nbsp;</div>
-            <button type="button" @click="assignCommentId(comment.id)" class="badge btn btn-secondary"
-                    data-bs-toggle="modal" data-bs-target="#myModal">수정
-            </button>
-            <button type="button" @click="deleteCommentBtn(comment.id)" class="badge btn btn-danger">삭제</button>
+            <div v-if="currentUser === comment.writer">
+              <button type="button" @click="assignCommentId(comment.id, comment.content)"
+                      class="badge btn btn-secondary"
+                      data-bs-toggle="modal" data-bs-target="#myModal">수정
+              </button>
+              <button type="button" @click="deleteCommentBtn(comment.id)" class="badge btn btn-danger">삭제</button>
+            </div>
           </div>
         </li>
       </ul>
@@ -91,7 +98,7 @@
 
           <!-- Modal Header -->
           <div class="modal-header">
-            <h4 class="modal-title">Modal Heading</h4>
+            <h4 class="modal-title">댓글 수정</h4>
             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
           </div>
 
@@ -129,6 +136,7 @@ const props = defineProps({
   }
 });
 
+// 게시글 정보
 const board = ref({
   title: '',
   content: '',
@@ -138,6 +146,7 @@ const board = ref({
   inserted: ''
 });
 
+// 댓글 리스트
 const commentList = ref([]);
 
 const addCommentContent = ref('');
@@ -145,8 +154,13 @@ const modifyCommentContent = ref('');
 
 const commentId = ref('');
 
-const assignCommentId = (id) => {
+const currentUser = ref('');
+const boardWriter = ref('');
+
+// 할당 변수
+const assignCommentId = (id, content) => {
   commentId.value = id;
+  modifyCommentContent.value = content;
 };
 
 // 댓글 등록
@@ -198,12 +212,10 @@ const modifyCommentBtn = () => {
         .then((response) => {
           alert(response.data);
           viewComment();
-          modifyCommentContent.value = "";
         })
         .catch((error) => {
           console.error(error);
           alert(error.response.data);
-          alert(error.response.data.message);
         });
   } else {
     const ok = confirm("로그인이 필요한 기능입니다. 로그인 페이지로 이동하시겠습니까?");
@@ -306,6 +318,11 @@ const likeDownBtn = () => {
   }
 };
 
+// 목록으로 가기
+const goListBtn = () => {
+  router.push('/community')
+}
+
 // 게시글 수정
 const modifyBtn = () => {
   router.push(`/community/board/${props.boardId}/modify`);
@@ -355,7 +372,6 @@ onMounted(() => {
   axios
       .get(`/api/community/board/${props.boardId}/comment`, {})
       .then((response) => {
-        console.log(response.data);
         commentList.value = response.data;
       })
       .catch((error) => {
@@ -370,13 +386,31 @@ onMounted(() => {
   axios
       .get(`/api/community/board/${props.boardId}`, {})
       .then((response) => {
-        console.log(response.data);
         board.value = response.data;
+        boardWriter.value = response.data.writer;
       })
       .catch((error) => {
         console.log(error);
         router.replace("/community");
         alert(error.response.data.message);
+      });
+});
+
+// 로그인한 회원 이름 가져오기
+onMounted(() => {
+  const token = Cookies.get('accessToken');
+
+  axios
+      .get("/api/community/getWriter", {
+        headers: {
+          Authorization: token
+        }
+      })
+      .then((response) => {
+        currentUser.value = response.data;
+      })
+      .catch((error) => {
+        console.log(error)
       });
 });
 
@@ -393,7 +427,7 @@ onMounted(() => {
 }
 
 .comment-div {
-  width: 100%;
+  width: 90%;
   height: 100px;
   padding: 10px;
   border: 1px solid #ccc;
@@ -401,13 +435,14 @@ onMounted(() => {
 }
 
 .comment-textarea {
-  width: 100%;
+  width: 90%;
   height: 100px;
   padding: 10px;
   border: 1px solid #ccc;
 }
 
 .comment-button {
+  width: 10%;
   padding: 5px 10px;
   background-color: #007bff;
   color: #fff;
