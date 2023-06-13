@@ -149,12 +149,16 @@ const board = ref({
 // 댓글 리스트
 const commentList = ref([]);
 
+// 등록, 수정 댓글
 const addCommentContent = ref('');
 const modifyCommentContent = ref('');
 
 const commentId = ref('');
 
-const currentUser = ref('');
+// 현재 로그인한 사용자의 닉네임
+const currentUser = ref('guest');
+
+// 게시글 작성자
 const boardWriter = ref('');
 
 // 할당 변수
@@ -355,6 +359,7 @@ const deleteBtn = () => {
   }
 };
 
+// 댓글 등록,수정,삭제 시 결과가 바로 반응되게 하려고 함수로 만듦.
 const viewComment = () => {
   axios
       .get(`/api/community/board/${props.boardId}/comment`, {})
@@ -366,6 +371,26 @@ const viewComment = () => {
         alert(error.response.data.message);
       });
 }
+
+// 로그인한 회원 닉네임 가져오기
+onMounted(() => {
+  const token = Cookies.get('accessToken');
+
+  if (token) {
+    axios
+        .get("/api/community/getWriter", {
+          headers: {
+            Authorization: token
+          }
+        })
+        .then((response) => {
+          currentUser.value = response.data;
+        })
+        .catch((error) => {
+          console.log(error)
+        });
+  }
+});
 
 // 댓글 내용
 onMounted(() => {
@@ -393,24 +418,6 @@ onMounted(() => {
         console.log(error);
         router.replace("/community");
         alert(error.response.data.message);
-      });
-});
-
-// 로그인한 회원 이름 가져오기
-onMounted(() => {
-  const token = Cookies.get('accessToken');
-
-  axios
-      .get("/api/community/getWriter", {
-        headers: {
-          Authorization: token
-        }
-      })
-      .then((response) => {
-        currentUser.value = response.data;
-      })
-      .catch((error) => {
-        console.log(error)
       });
 });
 

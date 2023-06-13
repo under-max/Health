@@ -1,5 +1,5 @@
 <template>
-<header class="navBars">
+  <header class="navBars">
     <nav class="navBar">
       <div class="desktop">
         <ul class="no_dot">
@@ -12,9 +12,11 @@
           </li>
 
           <li>
-            <button>
-              <RouterLink to="/exercise">운동관리</RouterLink>
-            </button>
+            <template v-if="isLoggedIn">
+              <button>
+                <RouterLink to="/exercise">운동관리</RouterLink>
+              </button>
+            </template>
           </li>
 
           <li>
@@ -30,7 +32,7 @@
           </li>
 
           <li>
-            <button @click="btn">
+            <button>
               <RouterLink to="/community">커뮤니티</RouterLink>
             </button>
           </li>
@@ -43,10 +45,10 @@
             </template>
             <template v-else>
               <button @click="logout()">
-                  <RouterLink to="/">로그아웃</RouterLink>
+                <RouterLink to="/">로그아웃</RouterLink>
               </button>
               <button>
-                  <RouterLink to="/info">개인정보수정</RouterLink>
+                <RouterLink to="/info">개인정보수정</RouterLink>
               </button>
             </template>
           </li>
@@ -68,24 +70,22 @@ import router from "@/router";
 const token = computed(() => store.getters.getToken);
 const isLoggedIn = computed(() => !!token.value);
 const logout = function () {
-    store.commit("setToken", ""); // 로그아웃 시 토큰 초기화
-    Cookies.remove('accessToken'); // 쿠키에서 access token 값 삭제
-    Cookies.remove('refreshToken'); // 쿠키에서 refresh token 값 삭제
-    router.replace("/")
+  store.commit("setToken", ""); // 로그아웃 시 토큰 초기화
+  Cookies.remove('accessToken'); // 쿠키에서 access token 값 삭제
+  Cookies.remove('refreshToken'); // 쿠키에서 refresh token 값 삭제
+  router.replace("/")
 }
 
-const btn = () => {
-  window.location.reload();
-}
 </script>
 
 <style scoped>
-.navBars{
+.navBars {
   height: 50px;
   width: 100%;
   margin-bottom: 0px;
 
 }
+
 .navBar {
   position: fixed;
   z-index: 99;
@@ -102,7 +102,7 @@ const btn = () => {
   margin: 0px;
 }
 
-.no_dot a{
+.no_dot a {
   text-decoration: none;
   color: white;
   font-size: 21px;
@@ -115,12 +115,12 @@ const btn = () => {
   border-radius: 50px;
 }
 
-.no_dot button:hover{
+.no_dot button:hover {
   background-color: rgba(255, 255, 255, 0.3);
   padding: 10px 30px;
 }
 
-.no_dot li:not(:first-of-type){
+.no_dot li:not(:first-of-type) {
   margin-top: 15px;
   margin-bottom: 15px;
 

@@ -79,7 +79,7 @@ public class CommunityService {
 
     public String getWriter(Long userId) {
         User user = userMapper.findById(userId).get();
-        return user.getName();
+        return user.getNickName();
     }
 
     public Integer updateLikeUp(Integer boardId) {
