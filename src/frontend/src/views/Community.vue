@@ -91,7 +91,26 @@
       </tbody>
     </table>
   </div>
-  
+
+  <!-- pagination -->
+  <nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-center">
+      <li class="page-item">
+        <button class="page-link" aria-label="Previous" @click="navigateToPage(1)">
+          <span aria-hidden="true">&laquo;</span>
+        </button>
+      </li>
+      <li v-for="pageNum in computedPageRange" :key="pageNum" class="page-item">
+<!--      <li v-for="pageNum in computedPageRange" :key="pageNum" :class="['page-item', { 'active': pageNum === pageInfo.currentPageNumber }]">-->
+        <button class="page-link" @click="navigateToPage(pageNum)">{{ pageNum }}</button>
+      </li>
+      <li class="page-item">
+        <button class="page-link" aria-label="Next" @click="navigateToPage(pageInfo.lastPageNumber)">
+          <span aria-hidden="true">&raquo;</span>
+        </button>
+      </li>
+    </ul>
+  </nav>
 
 </template>
 
@@ -104,11 +123,17 @@ import Cookies from "vue-cookies";
 const router = useRouter();
 const route = useRoute();
 
+const computedPageRange = computed(() => {
+  const rangeStart = pageInfo.value.leftPageNumber;
+  const rangeEnd = pageInfo.value.rightPageNumber;
+  return Array.from({ length: rangeEnd - rangeStart + 1 }, (_, index) => rangeStart + index);
+});
+
 // 페이지 관련 정보
 const pageInfo = ref({
   leftPageNumber: '',
   rightPageNumber: '',
-  page: '',
+  currentPageNumber: '',
   lastPageNumber: '',
   records: ''
 });
@@ -163,15 +188,14 @@ const dropDownBtn = () => {
 
 // 센터 검색 버튼
 const searchConditionBtn = () => {
-  const query = {
-    type: searchType.value,
-    keyword: searchKeyword.value,
-    sort: selectedSortLabel.value
-  };
-
   axios
-      .get(`/api/community`, {
-        params: query
+      .get(`/api/community/board`, {
+        params: {
+          page: pageInfo.value.currentPageNumber,
+          type: searchType.value,
+          keyword: searchKeyword.value,
+          sort: selectedSortLabel.value
+        }
       })
       .then((response) => {
         console.log(response.data);
@@ -207,16 +231,29 @@ watch([selectedSort, searchType, searchKeyword], () => {
   sessionStorage.setItem("searchKeyword", searchKeyword.value);
 });
 
-const getBoardList = () => {
-  // 게시글 순서선택
-  const query = {
-    type: searchType.value,
-    keyword: searchKeyword.value,
-    sort: selectedSortLabel.value
-  };
-
+// 페이지 버튼
+const navigateToPage = (page) => {
+  console.log(page);
   axios
-      .get("/api/community", {
+      .get("/api/community/board", {
+        params: {
+          page: page
+        }
+      })
+      .then((response) => {
+        console.log(response.data);
+        boardList.value = response.data.list;
+        pageInfo.value = response.data.pageInfo;
+      })
+      .catch((error) => {
+        console.log(error);
+        alert(error.response.data.message);
+      });
+};
+
+const getBoardList = () => {
+  axios
+      .get("/api/community/board", {
         params: route.query // 현재 URL의 쿼리 파라미터를 사용하여 요청
       })
       .then((response) => {

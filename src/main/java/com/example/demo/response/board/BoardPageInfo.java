@@ -10,15 +10,15 @@ public class BoardPageInfo {
 
     private Integer leftPageNumber;
     private Integer rightPageNumber;
-    private Integer page;
+    private Integer currentPageNumber;
     private Integer lastPageNumber;
     private Integer records;
 
     @Builder
-    public BoardPageInfo(Integer leftPageNumber, Integer rightPageNumber, Integer page, Integer lastPageNumber, Integer records) {
+    public BoardPageInfo(Integer leftPageNumber, Integer rightPageNumber, Integer currentPageNumber, Integer lastPageNumber, Integer records) {
         this.leftPageNumber = leftPageNumber;
         this.rightPageNumber = rightPageNumber;
-        this.page = page;
+        this.currentPageNumber = currentPageNumber;
         this.lastPageNumber = lastPageNumber;
         this.records = records;
     }

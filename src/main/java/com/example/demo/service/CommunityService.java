@@ -131,7 +131,7 @@ public class CommunityService {
     private CommunityResponse getSortList(Integer page, String type, String keyword, String sort) {
 
         // 한 페이지 당 row 개수
-        Integer rowPage = 10;
+        Integer rowPage = 20;
 
         // sql query limit 절에 사용할 시작 인덱스
         Integer startIndex = (page - 1) * rowPage;
@@ -144,15 +144,15 @@ public class CommunityService {
         Integer lastPageNumber = (records - 1) / rowPage + 1;
 
         // 왼쪽 페이지 번호
-        Integer leftPageNum = Math.max(page - 5, 1);
+        Integer leftPageNumber = Math.max(page - 5, 1);
 
         // 오른쪽 페이지 번호
-        Integer rightPageNum = Math.min(leftPageNum + 9, lastPageNumber);
+        Integer rightPageNumber = Math.min(leftPageNumber + 9, lastPageNumber);
 
         BoardPageInfo pageInfo = BoardPageInfo.builder()
-                .leftPageNumber(leftPageNum)
-                .rightPageNumber(rightPageNum)
-                .page(page)
+                .leftPageNumber(leftPageNumber)
+                .rightPageNumber(rightPageNumber)
+                .currentPageNumber(page)
                 .lastPageNumber(lastPageNumber)
                 .records(records)
                 .build();

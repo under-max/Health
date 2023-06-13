@@ -378,7 +378,7 @@ onMounted(() => {
 
   if (token) {
     axios
-        .get("/api/community/getWriter", {
+        .get("/api/community/board/getWriter", {
           headers: {
             Authorization: token
           }

@@ -18,7 +18,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/community")
+@RequestMapping("/community/board")
 @RequiredArgsConstructor
 public class CommunityController {
 
@@ -56,12 +56,12 @@ public class CommunityController {
         return communityService.getWriter(authUser.getUserId());
     }
 
-    @GetMapping("/board/{boardId}")
+    @GetMapping("/{boardId}")
     public BoardResponse getBoard(@PathVariable Integer boardId) {
         return communityService.getBoard(boardId);
     }
 
-    @PatchMapping("/board/{boardId}")
+    @PatchMapping("/{boardId}")
     public ResponseEntity<String> updateBoard(@PathVariable Integer boardId,
                                               @RequestBody UpdateBoardRequest request,
                                               AuthUser authUser) {
@@ -76,7 +76,7 @@ public class CommunityController {
         }
     }
 
-    @DeleteMapping("/board/{boardId}")
+    @DeleteMapping("/{boardId}")
     public ResponseEntity<String> deleteBoard(@PathVariable Integer boardId, AuthUser authUser) {
         Boolean ok = communityService.deleteBoard(authUser.getUserId(), boardId);
 
@@ -90,12 +90,12 @@ public class CommunityController {
     /**
      * 추천 기능
      */
-    @PatchMapping("/board/{boardId}/likeUp")
+    @PatchMapping("/{boardId}/likeUp")
     public Integer updateLikeUp(@PathVariable Integer boardId, AuthUser authUser) {
         return communityService.updateLikeUp(boardId);
     }
 
-    @PatchMapping("/board/{boardId}/likeDown")
+    @PatchMapping("/{boardId}/likeDown")
     public Integer updateLikeDown(@PathVariable Integer boardId, AuthUser authUser) {
         return communityService.updateLikeDown(boardId);
     }
@@ -103,7 +103,7 @@ public class CommunityController {
     /**
      * 댓글 기능
      */
-    @PostMapping("/board/{boardId}/comment")
+    @PostMapping("/{boardId}/comment")
     public ResponseEntity<String> addComment(@PathVariable Integer boardId, @RequestBody CommentRequest request, AuthUser authUser) {
         Boolean ok = communityService.addComment(authUser.getUserId(), boardId, request.getContent());
 
@@ -114,12 +114,12 @@ public class CommunityController {
         }
     }
 
-    @GetMapping("/board/{boardId}/comment")
+    @GetMapping("/{boardId}/comment")
     public List<CommentResponse> getCommentList(@PathVariable Integer boardId) {
         return communityService.getCommentList(boardId);
     }
 
-    @PutMapping("/board/{boardId}/comment")
+    @PutMapping("/{boardId}/comment")
     public ResponseEntity<String> modifyComment(@PathVariable Integer boardId, @RequestBody CommentRequest request, AuthUser authUser) {
         log.info("comment modify request={}", request);
         Boolean ok = communityService.modifyComment(authUser.getUserId(), boardId, request);
@@ -131,7 +131,7 @@ public class CommunityController {
         }
     }
 
-    @DeleteMapping("/board/{boardId}/comment/{commentId}")
+    @DeleteMapping("/{boardId}/comment/{commentId}")
     public ResponseEntity<String> deleteComment(@PathVariable Integer boardId, @PathVariable Integer commentId, AuthUser authUser) {
         Boolean ok = communityService.deleteComment(authUser.getUserId(), boardId, commentId);
 
