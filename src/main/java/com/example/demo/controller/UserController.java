@@ -77,10 +77,15 @@ public class UserController {
     }
 
 
-    @GetMapping("/test/user/{id}")
-    public UserDetailResponse userDetail(@PathVariable Long id, AuthUser authUser) {
-        UserDetailResponse userDetailRes = userService.getUserTest(id);
-        return userDetailRes;
+    @GetMapping("/user/get/{id}")
+    public UserDetailResponse getUserDetail(@PathVariable Long id, AuthUser authUser) {
+        UserDetailResponse getUserDetail = userService.getUserDetail(id);
+        return getUserDetail;
+    }
+
+    @PostMapping("/user/getAuthority")
+    public Integer getAuthority(AuthUser authUser) {
+        return userService.getAuthority(authUser.getUserId());
     }
 
 

@@ -1,96 +1,36 @@
 <template>
-  <div>
-    <h1>일정 관리</h1>
-    <!--    <ul>-->
-    <!--      <li v-for="(value, key) in schedule" :key="key">-->
-    <!--        {{ key }}: {{ value }}-->
-    <!--      </li>-->
-    <!--    </ul>-->
-    <div class="calendar">
-      <div class="header">
-        <button @click="previousMonth">&lt;</button>
-        <h2>{{ currentMonth }}</h2>
-        <button @click="nextMonth">&gt;</button>
+  <hr>
+  <div class="row justify-content-center">
+    <div class="col-12 col-md-8 col-lg-6">
+      <h1>트레이너 상세 페이지</h1>
+
+      <div class="mb-3">
+        <label for="" class="form-label">트레이너 이름</label>
+        <input type="text" class="form-control" :value="trainer.name" id="inputTrainerName" readonly>
       </div>
-      <table>
-        <thead>
-        <tr>
-          <th v-for="day in daysOfWeek" :key="day">{{ day }}</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr v-for="week in calendar" :key="week">
-          <td v-for="day in week" :key="day.date" :class="{ 'today': day.isToday, 'selected': isSelected(day) }">
-            <div>{{ day.date }}</div>
-            <div class="event" v-if="day.events.length >= 0 ">
-              <div v-if="day.events.length > 0">
-
-              </div>
-            </div>
-            <div class="event" v-if="day.date > 0">
-              <!-- Button trigger modal -->
-              <!--              <div v-for="date in day.date" :key="day.date">-->
-              <div v-for="(value, key) in schedule" :key="key">
-                <div v-if="day.date === key+1 ">
-                  <li>{{ key+1 }} : {{ value }}</li>
-                  <i @click="deleteEvent()" class="fa-solid fa-xmark"></i>
-                  <br>
-                </div>
-
-              </div>
-              <!--              </div>-->
-              <button @click="openModal(day)" type="button" class="btn btn-primary" data-bs-toggle="modal">
-                일정 등록
-              </button>
-            </div>
-          </td>
-        </tr>
-        </tbody>
-      </table>
-    </div>
-    <div>
-
-    </div>
-
-
-    <!-- 모달 창 -->
-    <div v-if="showSchedule">
-      <div class="modal-overlay" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h1 class="modal-title fs-5" id="exampleModalLabel">일정 등록</h1>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
-                      @click="closeModal"></button>
-            </div>
-            <div class="modal-body">
-              <!-- 모달 내용 -->
-              <h3>고객리스트</h3>
-              이름: <select v-model="userSelect">
-              <option disabled selected>고객리스트</option>
-              <option v-for="user in list" :value="user">{{ user.name }}</option>
-            </select>
-              <br>
-              시간: <select v-model="timeSelect">
-              <option disabled selected>시간</option>
-              <option v-for="time in 24" :key="time">{{ time }}</option>
-
-            </select>
-              <p>남은 PT 횟수 : {{ userSelect.remainingPT }}</p>
-            </div>
-            <div class="modal-footer">
-              <!-- 모달 닫기 버튼 -->
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="closeModal">닫기</button>
-              <button type="button" class="btn btn-primary" @click="saveModal">저장</button>
-            </div>
-          </div>
-        </div>
+      <div class="mb-3">
+        <label for="" class="form-label">센터 이름</label>
+        <input type="text" class="form-control" :value="trainer.centerName" id="inputCenterName" readonly>
       </div>
-    </div>
+      <div class="mb-3">
+        <label for="" class="form-label">센터 주소</label>
+        <input type="text" class="form-control" :value="trainer.centerAddress" id="inputCenterName" readonly>
+      </div>
+      <div class="mb-3">
+        <label for="" class="form-label">센터 정보</label>
+        <input type="text" class="form-control" :value="trainer.centerInfo" id="inputCenterName" readonly>
+      </div>
+      <!-- 트레이너로 로그인했을 경우 아래 두가지만 수정가능하도록 수정예정     -->
+      <div class="mb-3">
+        <label for="" class="form-label">트레이너 정보</label>
+        <input type="text" class="form-control" :value="trainer.trainerInfo" id="inputCenterName">
+      </div>
+      <div class="mb-3">
+        <label for="" class="form-label">트레이너 상세 정보</label>
+        <input type="text" class="form-control" :value="trainer.infoDetail" id="inputCenterName">
+      </div>
 
 
-    <div v-for="user in list">
-      <p>{{ user.id }} {{ user.name }} {{ user.remainingPT }}</p>
     </div>
   </div>
 
@@ -98,329 +38,40 @@
 </template>
 
 <script setup>
-import {ref, computed, onMounted, defineProps} from 'vue';
+
+import {onMounted, ref} from "vue";
 import axios from "axios";
 
-const count = ref(1);
-// 일정 추가
-const newEvent = ref('');
-// 달력 데이터 초기화
-const currentDate = new Date();
-const year = ref(currentDate.getFullYear());
-const month = ref(currentDate.getMonth());
-const daysOfWeek = ['일', '월', '화', '수', '목', '금', '토'];
-const showSchedule = ref(false);
-const userSelect = ref({});
-const timeSelect = ref()
+const trainer = ref({})
 
-const schedule = ref(new Map());
-
-// 일정 데이터 초기화
-const events = ref([]);
-const realEvents = ref({})
-const selectedDate = ref(null);
-
-const scheduleList = ref({
-  memberId: '',
-  ptTime: ''
-});
-
-// 해당 트레이너의 고객리스트 저장
-const list = ref({
-  id: '',
-  name: '',
-  remainingPT: '',
-});
-
-// 아직 사용안함
-const deleteSchedule = () => {
-  schedule.value = false;
-};
-
-// 이전 월로 이동
-const previousMonth = () => {
-  if (month.value === 0) {
-    year.value--;
-    month.value = 11;
-  } else {
-    month.value--;
-  }
-};
-
-// 다음 월로 이동
-const nextMonth = () => {
-  if (month.value === 11) {
-    year.value++;
-    month.value = 0;
-  } else {
-    month.value++;
-  }
-};
-
-// 일정 등록 모달 창에서 스케줄 저장 시 아래 메소드 실행
-// events 배열에 고객명, 피티시간, 남은 PT횟수 저장
-const addEvent = (memberName, ptTime, remainingPT) => {
-  const date = new Date(year.value, month.value, selectedDate.value.getDate());
-  events.value.push({memberName, ptTime, remainingPT, date});
-};
-
-// x 버튼 클릭시 스케줄 삭제
-// Delete 쿼리 작성 필요(*)
-const deleteEvent = (event) => {
-  const index = events.value.indexOf(event);
-  if (index !== -1) {
-    events.value.splice(index, 1);
-  }
-};
-
-// 일정 선택 여부 확인
-const isSelected = day => {
-  const selectedDate = new Date(year.value, month.value, day.date);
-  return events.value.some(event => event.date.toDateString() === selectedDate.toDateString());
-};
-
-// 일정등록 버튼 누르면 모달창 오픈
-// 모달창 내 해당 트레이너의 고객리스트(이름, PT시간, 남은 PT횟수) 선택 및 조회
-const openModal = (day) => {
-  axios.get(`/api/responsibleUserList/${props.trainerId}`, {})
-      .then((response) => {
-        list.value = response.data;
-        console.log(list.value)
-
-      })
-      .catch((error) => {
-        if (error.response) {
-          alert(error.response.data.message);
-        }
-      })
-  selectedDate.value = new Date(year.value, month.value, day.date);
-  showSchedule.value = true;
-};
-
-// 일정 등록 모달창에서 고객, PT시간 선택하면 선택한 값들이 POST 방식으로 controller->service->mapper->DB 저장
-const saveModal = () => {
-  // 선택된 날짜에 일정 추가
-
-  let time = new Date(selectedDate.value)
-  time.setHours(timeSelect.value);
-
-  console.log(time)
-  console.log(userSelect.value.id)
-
-  axios.post("/api/schedule/list", {
-    memberId: userSelect.value.id,
-    ptTime: time
-  })
-      .then((response) => {
-        // const newEvent = {
-        //   memberName: userSelect.value.name,
-        //   ptTime: time,
-        //   remainingPT: userSelect.value.remainingPT,
-        // };
-        closeModal();
-      })
-      .catch((error) => {
-        alert(error.response.data.message);
-      });
-};
-
-// 모달창 닫기
-const closeModal = () => {
-  showSchedule.value = false;
-}
-
-// vue에서 쿼리 파라미터 넘기는 방법
 const props = defineProps({
-  trainerId: {
+  trainerId : {
     type: [Number, String],
-    required: true
+    required:true
   },
 });
 
-// 현재 월 계산
-const currentMonth = computed(() => {
-  const date = new Date(year.value, month.value);
-  return `${date.getFullYear()}년 ${date.getMonth() + 1}월`;
-});
-
-// 달력 생성
-const calendar = computed(() => {
-  const firstDayOfMonth = new Date(year.value, month.value, 1).getDay();
-  const daysInMonth = new Date(year.value, month.value + 1, 0).getDate();
-  const days = [];
-  let day = 1;
-  for (let i = 0; i < 6; i++) {
-    const week = [];
-    for (let j = 0; j < 7; j++) {
-      if (i === 0 && j < firstDayOfMonth) {
-        week.push({date: '', isToday: false, events: []});
-      } else if (day <= daysInMonth) {
-        const currentDate = new Date(year.value, month.value, day);
-        const isToday = currentDate.toDateString() === new Date().toDateString();
-        const eventsOnDay = events.value.filter(event => event.date.toDateString() === currentDate.toDateString());
-        week.push({date: day, isToday, events: eventsOnDay});
-        day++;
-      } else {
-        week.push({date: '', isToday: false, events: []});
-      }
-    }
-    days.push(week);
-    if (day > daysInMonth) break;
-  }
-  return days;
-});
-
-// 페이지가 onMounted되면 달력에 일자별 일정이 등록된 리스트가 출력되도록 하고 싶음...(실행 안됨)
 onMounted(() => {
-  axios.get("/api/schedule/list")
+  axios.get(`/api/trainer/get/${props.trainerId}`, {
+
+  })
       .then((response) => {
-        const responseData = response.data;
-
-        // Convert the Map object from the response to a JavaScript Map
-        schedule.value = new Map(Object.entries(responseData));
-
-        console.log(schedule.value);
+        console.log(response)
+        trainer.value = response.data;
       })
       .catch((error) => {
-        if (error.response) {
-          alert(error.response.data.message);
+        if(error.response) {
+          alert(error.response.data.message)
         }
-      });
-});
+      })
+})
 
 </script>
 
 <style scoped>
-.calendar {
-  width: auto;
-  margin: 0 auto;
-}
 
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 10px;
-}
-
-button {
-  margin: 0 5px;
-  cursor: pointer;
-}
-
-.button-group {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 15px;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
+h1, div {
   color : white;
 }
 
-th,
-td {
-  text-align: center;
-  padding: 10px;
-  border: 1px solid #ccc;
-}
-
-th {
-  font-weight: bold;
-}
-
-.today {
-  background-color: #e8f0fe;
-  font-weight: bold;
-}
-
-.selected {
-  background-color: #d9e6fc;
-}
-
-.event {
-  margin-top: 5px;
-}
-
-input[type='text'] {
-  width: 100%;
-  padding: 5px;
-}
-
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-}
-
-.modal-content {
-  width: 600px;
-  max-height: 400px;
-  background-color: #fff;
-  border-radius: 12px;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-}
-
-.modal-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 20px;
-}
-
-.modal-title {
-  font-size: 20px;
-  font-weight: bold;
-}
-
-.modal-body {
-  flex-grow: 1;
-}
-
-.modal-footer {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 20px;
-  gap: 10px;
-}
-
-.modal-footer button {
-  padding: 8px 16px;
-  border-radius: 4px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.modal-footer button.btn-secondary {
-  background-color: #ccc;
-  color: #fff;
-  border: none;
-}
-
-.modal-footer button.btn-primary {
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-}
-
-a {
-  color: #007bff;
-  text-decoration: none;
-}
-
-a:hover {
-  text-decoration: underline;
-}
 </style>

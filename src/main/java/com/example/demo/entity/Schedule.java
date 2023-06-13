@@ -1,4 +1,4 @@
-package com.example.demo.response;
+package com.example.demo.entity;
 
 import lombok.Builder;
 import lombok.Data;
@@ -6,30 +6,31 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-public class ScheduleResponse {
+public class Schedule {
     private Integer id;
     private Integer memberId;
     private String memberName; //
+    private LocalDateTime ptTime; //
     private Integer remainingPT; //
-    private String pt;
 
 
     @Builder
-    public ScheduleResponse(Integer id, Integer memberId, String memberName, Integer remainingPT, String pt) {
+    public Schedule(Integer id, Integer memberId, String memberName, LocalDateTime ptTime, Integer remainingPT) {
         this.id = id;
         this.memberId = memberId;
         this.memberName = memberName;
+        this.ptTime = ptTime;
         this.remainingPT = remainingPT;
-        this.pt = pt;
     }
 
 
 
 
 
-    public ScheduleResponse() {
+    public Schedule() {
 
     }
+
 
 }
 

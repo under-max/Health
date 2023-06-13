@@ -87,18 +87,30 @@ public interface UserMapper {
     List<UserListResponse> selectById();
 
     @Select("""
-            SELECT m.id, m.name, m.email, 
-            	   m.isInCenter, t.name as TrainerName, c.name as CenterName, ms.startDate, ms.endDate, ms.remainingPT
+            SELECT
+                m.id
+                , m.name
+                , m.birthDate
+                , c.id as centerId
+                , c.name as centerName
+                , c.address as centerAddress
+                , t.memberId as trainerId
+                , t.name as trainerName
+                , ms.startDate
+                , ms.endDate
+                , ms.remainingPT
+                , m.isInCenter
+                , m.authority
             FROM MEMBER m
-            LEFT JOIN
-            	TRAINER t ON m.trainerId = t.id
             LEFT JOIN
             	CENTER c ON m.centerId = c.id
             LEFT JOIN
-            	MEMBERSHIP ms ON ms.memberId = m.id
-            WHERE m.id = #{id}
+            	TRAINER t ON m.trainerId = t.id
+            LEFT JOIN
+            	MEMBERSHIP ms ON m.id = ms.memberId
+            WHERE m.id = #{id};
             """)
-    UserDetailResponse findByIdTest(Long id);
+    UserDetailResponse getUserDetail(Long id);
 
     @Insert("""
             UPDATE MEMBER SET
@@ -114,15 +126,27 @@ public interface UserMapper {
 
 
     @Select("""
-            SELECT m.id, m.name, m.birthDate, t.name as trainerName,
-                   ms.startDate, ms.endDate, ms.remainingPT, 
-                   m.isInCenter
+            SELECT
+                m.id
+                , m.name
+                , m.birthDate
+                , c.id as centerId
+                , c.name as centerName
+                , c.address as centerAddress
+                , t.name as trainerName
+                , ms.startDate
+                , ms.endDate
+                , ms.remainingPT
+                , m.isInCenter
+                , m.authority
             FROM MEMBER m
+            LEFT JOIN
+            	CENTER c ON m.centerId = c.id
             LEFT JOIN
             	TRAINER t ON m.trainerId = t.id
             LEFT JOIN
             	MEMBERSHIP ms ON m.id = ms.memberId
-            WHERE m.id = #{id};
+            WHERE m.id = #{id};       
             """)
     UserListResponse findByAuthUserId(Long id);
 
@@ -134,7 +158,7 @@ public interface UserMapper {
 
     @Select("""
             SELECT m.id, m.name, m.birthDate, t.name as trainerName,
-                   ms.startDate, ms.endDate, ms.remainingPT, 
+                   ms.startDate, ms.endDate, ms.remainingPT, m.authority,
                    m.isInCenter
             FROM MEMBER m
             LEFT JOIN
@@ -146,4 +170,9 @@ public interface UserMapper {
     List<UserListResponse> findByAllAuthUserId(Integer trainerId);
 
 
+    @Select("""
+            SELECT authority FROM MEMBER
+            WHERE id = #{id}
+            """)
+    Integer getAuthority(Long id);
 }

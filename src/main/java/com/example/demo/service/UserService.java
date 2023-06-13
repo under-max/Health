@@ -19,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,7 +71,6 @@ public class UserService {
         return userMapper.findById(user.getId()).orElseThrow(UserNotFound::new);
     }
 
-
     public List<User> getUsers(int page) {
         return userMapper.findAll(page);
     }
@@ -83,19 +83,6 @@ public class UserService {
                 .name(user.getName())
                 .dateTime(user.getDateTime())
                 .build();
-    }
-
-    // 로그인된 유저 정보 조회
-    public List<UserListResponse> getAuthedUser(Long id) {
-        if (userMapper.findById(id).orElseThrow(UserNotFound::new).getAuthority()==1){
-            List<UserListResponse> user = new ArrayList<>();
-            System.out.println("아이디" + id);
-            user.add(userMapper.findByAuthUserId(id));
-            return user;
-        } else {
-            Trainer trainer = userMapper.getTrainerId(id);
-            return userMapper.findByAllAuthUserId(trainer.getId());
-        }
     }
 
     public void edit(UserEdit userEdit) {
@@ -133,14 +120,6 @@ public class UserService {
         userMapper.delete(user.getId());
     }
 
-//    public List<UserListResponse> listAuthUserInfo() {
-//        return userMapper.selectById();
-//    }
-
-    public UserDetailResponse getUserTest(Long id) {
-        return userMapper.findByIdTest(id);
-    }
-
     public AuthUserResponse kakaoEmailCheck(KakaoLoginService.KakaoAccount kakaoAccount) {
         if (userMapper.findByEmail(kakaoAccount.getEmail()).isEmpty()) {
             //없으면 가입 시키고 true 반환
@@ -154,14 +133,27 @@ public class UserService {
         User user = userMapper.findByEmail(kakaoAccount.getEmail()).orElseThrow();
         return AuthUserResponse.builder().userId(user.getId()).build();
     }
+    public UserDetailResponse getUserDetail(Long id) {
+        return userMapper.getUserDetail(id);
+    }
 
-//    public UserListResponse getUserTest2(AuthUser authUser) {
-//        UserListResponse res = new UserListResponse();
-//        if(res.getId().equals(authUser.getId())) {
-//            return userMapper.
-//        } else {
-//
-//        }
-//    }
+    public Integer getAuthority(Long id) {
+        return userMapper.getAuthority(id);
+    }
+
+    // 로그인된 유저가 손님인지 트레이너인지 확인 후 정보 조회
+    public List<UserListResponse> getAuthedUser(Long id) {
+        if (userMapper.findById(id).orElseThrow(UserNotFound::new).getAuthority()==1){
+            List<UserListResponse> user = new ArrayList<>();
+            System.out.println("아이디" + id);
+            user.add(userMapper.findByAuthUserId(id));
+            return user;
+        } else {
+            Trainer trainer = userMapper.getTrainerId(id);
+            return userMapper.findByAllAuthUserId(trainer.getId());
+        }
+    }
+
+
 }
 

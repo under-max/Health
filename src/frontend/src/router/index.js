@@ -14,6 +14,7 @@ import AddInfo from "@/views/AddInfo.vue";
 import TrainerDetail from "@/views/TrainerDetail.vue";
 import SuccessPage from "@/views/payment/SuccessPage.vue";
 import CancelPage from "@/views/payment/CancelPage.vue";
+import TrainerCalendar from "../views/TrainerCalendar.vue";
 
 
 const router = createRouter({
@@ -58,6 +59,12 @@ const router = createRouter({
             path: '/userDetail/:userId',
             name: 'userDetail',
             component: UserDetail,
+            props: true
+        },
+        {
+            path: '/trainerCalendar/:trainerId',
+            name: 'trainerCalendar',
+            component: TrainerCalendar,
             props: true
         },
         {

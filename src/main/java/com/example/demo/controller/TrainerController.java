@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.AuthUser;
+import com.example.demo.entity.Trainer;
 import com.example.demo.request.ScheduleRequest;
 import com.example.demo.response.ScheduleResponse;
 import com.example.demo.response.TrainerDetailResponse;
@@ -33,20 +34,35 @@ public class TrainerController {
 //        return trainerDetailRes;
 //    }
 
-    @GetMapping("/responsibleUserList/{id}")
+    @PostMapping("/responsibleUserList/{id}")
     public List<UserListResponse> responsibleUserList(@PathVariable Integer id) {
         List<UserListResponse> responsibleUser = trainerService.responsibleUserList(id);
         return responsibleUser;
     }
 
-    @PostMapping("/schedule/list")
+    @PostMapping("/schedule/saveSchedule")
     public void schedulePostList(@RequestBody ScheduleRequest scheduleRequest) {
+//        System.out.println("scheduleRequest = " + scheduleRequest);
         trainerService.schedulePostList(scheduleRequest);
     }
 
-    @GetMapping("/schedule/list")
-    public Map<Integer, List<ScheduleResponse>> scheduleGetList() {
-        Map<Integer, List<ScheduleResponse>> lists = trainerService.scheduleGetList();
+    @PostMapping("/schedule/getList")
+    public Map<Integer, List<ScheduleResponse>> scheduleGetList(AuthUser authUser) {
+        Map<Integer, List<ScheduleResponse>> lists = trainerService.scheduleGetList(authUser.getUserId());
+        System.out.println(lists);
         return lists;
     }
+
+    @PostMapping("/schedule/deleteSchedule")
+    public void scheduleDelete(@RequestBody ScheduleRequest scheduleRequest) {
+//        System.out.println("scheduleRequest = " + scheduleRequest);
+        trainerService.scheduleDelete(scheduleRequest);
+    }
+
+    // 트레이너 상세 페이지 (***작성중***)
+    @GetMapping("/trainer/get/{id}")
+    public TrainerDetailResponse getTrainerDetail(@PathVariable Integer id) {
+        return trainerService.getTrainerDetail(id);
+    }
+
 }

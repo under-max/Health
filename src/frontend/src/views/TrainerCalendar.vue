@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div/>
     <h1>일정 관리</h1>
     <div class="calendar">
       <div class="header">
@@ -19,28 +19,24 @@
             <div>{{ day.date }}</div>
             <div class="event" v-if="day.events.length >= 0 ">
               <div v-if="day.events.length > 0">
-                <!--                <div v-for="item in schedule" :key="item.memberId">-->
-                <!--                  <input type="hidden" name="item.memberId">-->
-                <!--                  이름: {{ item.memberName }}-->
-                <!--                  시간: {{ item.ptTime }}-->
-                <!--                  남은 PT: {{ item.remainingPT }}-->
 
-                <!--                </div>-->
               </div>
             </div>
             <div class="event" v-if="day.date > 0">
               <!-- Button trigger modal -->
-              <!--              <div v-for="date in day.date" :key="day.date">-->
-              <div v-for="item in schedule" :key="item.memberId">
-                <div v-if="day.date === 1">
-                  이름: {{ item.memberName }}
-                  시간: {{ item.ptTime }}
-                  남은 PT: {{ item.remainingPT }}
-                  <i @click="deleteEvent()" class="fa-solid fa-xmark"></i>
+              <!-- <div v-for="date in day.date" :key="day.date">-->
+              <div>
+                <div v-for="(w, key) in schedule" :key="key">
+                  <div v-if="day.date === key + 1">
+                    <div v-for="(obj, idx) in w.pop()" :key="idx">
+                      {{ obj.memberName }}, {{ obj.pt }}
+                      <button type="button" @click="deleteEvent(obj.id, obj.memberId)" class="fa-solid fa-xmark"></button>
+                      <br/>
+                    </div>
+                  </div>
                 </div>
-
               </div>
-              <!--              </div>-->
+
               <button @click="openModal(day)" type="button" class="btn btn-primary" data-bs-toggle="modal">
                 일정 등록
               </button>
@@ -91,17 +87,13 @@
     </div>
 
 
-    <div v-for="user in list">
-      <p>{{ user.id }} {{ user.name }} {{ user.remainingPT }}</p>
-    </div>
-  </div>
-
 
 </template>
 
 <script setup>
 import {ref, computed, onMounted, defineProps} from 'vue';
 import axios from "axios";
+import Cookies from "vue-cookies";
 
 const count = ref(1);
 // 일정 추가
@@ -115,22 +107,17 @@ const showSchedule = ref(false);
 const userSelect = ref({});
 const timeSelect = ref()
 
-const schedule = ref({
-  trainerId: '',
-  memberId: '',
-  memberName: '',
-  ptTime: '',
-  remainingPT: ''
-});
+const schedule = ref(new Map());
+
 
 // 일정 데이터 초기화
 const events = ref([]);
 const realEvents = ref({})
 const selectedDate = ref(null);
-
 const scheduleList = ref({
-  memberId: '',
-  ptTime: ''
+  memberName: '',
+  ptTime: '',
+  remainingPT: ''
 });
 
 // 해당 트레이너의 고객리스트 저장
@@ -144,6 +131,7 @@ const list = ref({
 const deleteSchedule = () => {
   schedule.value = false;
 };
+
 
 // 이전 월로 이동
 const previousMonth = () => {
@@ -174,11 +162,22 @@ const addEvent = (memberName, ptTime, remainingPT) => {
 
 // x 버튼 클릭시 스케줄 삭제
 // Delete 쿼리 작성 필요(*)
-const deleteEvent = (event) => {
-  const index = events.value.indexOf(event);
-  if (index !== -1) {
-    events.value.splice(index, 1);
-  }
+const deleteEvent = (id, memberId) => {
+  axios.post("/api/schedule/deleteSchedule", {
+    id : id,
+    memberId : memberId
+  })
+      .then((response) => {
+        console.log(memberId)
+        console.log("스케줄이 삭제되었습니다.")
+        alert("스케줄이 삭제되었습니다.")
+        location.reload();
+      })
+      .catch((error) => {
+        if (error.response) {
+          alert(error.response.data.message);
+        }
+      })
 };
 
 // 일정 선택 여부 확인
@@ -190,7 +189,7 @@ const isSelected = day => {
 // 일정등록 버튼 누르면 모달창 오픈
 // 모달창 내 해당 트레이너의 고객리스트(이름, PT시간, 남은 PT횟수) 선택 및 조회
 const openModal = (day) => {
-  axios.get(`/api/responsibleUserList/${props.trainerId}`, {})
+  axios.post(`/api/responsibleUserList/${props.trainerId}`, {})
       .then((response) => {
         list.value = response.data;
         console.log(list.value)
@@ -215,17 +214,20 @@ const saveModal = () => {
   console.log(time)
   console.log(userSelect.value.id)
 
-  axios.post("/api/schedule/list", {
+  axios.post("/api/schedule/saveSchedule", {
     memberId: userSelect.value.id,
     ptTime: time
   })
-      .then((response) => {
-        const newEvent = {
-          memberName: userSelect.value.name,
-          ptTime: time,
-          remainingPT: userSelect.value.remainingPT,
-        };
+      .then(() => {
+        alert("등록 되었습니다.")
+
+        // const newEvent = {
+        //   memberName: userSelect.value.name,
+        //   ptTime: time,
+        //   remainingPT: userSelect.value.remainingPT,
+        // };
         closeModal();
+        location.reload();
       })
       .catch((error) => {
         alert(error.response.data.message);
@@ -279,11 +281,24 @@ const calendar = computed(() => {
 });
 
 // 페이지가 onMounted되면 달력에 일자별 일정이 등록된 리스트가 출력되도록 하고 싶음...(실행 안됨)
+// 리스트는 잘 출력됨. 리스트를 한줄에 한개씩 출력하고 싶은데 어떻게 하는지 모르겠음
 onMounted(() => {
-  axios.get("/api/schedule/list")
+  const token = Cookies.get("accessToken")
+  axios.post("/api/schedule/getList", {  }, {
+    headers : {
+      Authorization: token
+    }
+  })
       .then((response) => {
-        schedule.value = response.data;
-        console.log(schedule.value)
+
+        const responseData = response.data;
+        console.log("@@@@@@", responseData)
+        schedule.value = new Map(Object.entries(responseData));
+        // schedule.value = responseData;
+
+
+        // console.log(schedule.value);
+        console.log(schedule)
       })
       .catch((error) => {
         if (error.response) {
@@ -295,6 +310,10 @@ onMounted(() => {
 </script>
 
 <style scoped>
+li {
+  color: white;
+}
+
 .calendar {
   width: auto;
   margin: 0 auto;
@@ -322,6 +341,7 @@ button {
 table {
   width: 100%;
   border-collapse: collapse;
+  color: white;
 }
 
 th,

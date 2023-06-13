@@ -1,3 +1,41 @@
+<template>
+  <hr>
+  <hr>
+  <div class="row justify-content-left">
+    <div class="col-12 col-md-8 col-lg-4">
+      <h1>{{ user.name }}님의 프로필</h1>
+      <div class="mb-3">
+        <div class="mb-3">
+          <label for="" class="form-label">이름</label>
+          <input type="text" class="form-control" :value="user.name" id="inputUserName" readonly >
+        </div>
+        <div class="mb-3">
+          <label for="" class="form-label">센터 이름</label>
+          <input type="text" class="form-control" :value="user.centerName" id="inputCenterName" readonly >
+        </div>
+        <div class="mb-3">
+          <label for="" class="form-label">센터 주소</label>
+          <input type="text" class="form-control" :value="user.centerAddress" id="inputCenterAddress" readonly >
+        </div>
+        <div class="mb-3">
+          <label for="" class="form-label">담당 트레이너</label>
+          <input type="text" class="form-control" :value="user.trainerName" id="inputTrainerName" readonly >
+        </div>
+        <div class="mb-3">
+          <label for="" class="form-label">이용권 기간</label>
+          <input type="text" class="form-control" :value="periodMembership" id="inputPeriodMembership" readonly >
+        </div>
+        <div class="mb-3">
+          <label for="" class="form-label">남은 PT 횟수</label>
+          <input type="text" class="form-control" :value="user.remainingPT" id="inputRemainingPT" readonly >
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</template>
+
 <script setup>
 import {defineProps, onMounted, ref} from "vue";
 import axios from "axios";
@@ -9,6 +47,9 @@ const props = defineProps({
     required: true
   },
 });
+
+const periodMembership = ref();
+
 
 const user = ref({
   id: '',
@@ -27,14 +68,15 @@ const user = ref({
 onMounted(() => {
   const token = Cookies.get("accessToken")
   console.log(props.userId)
-  axios.get(`/api/test/user/${props.userId}`, {
+  axios.get(`/api/user/get/${props.userId}`, {
     headers: {
       Authorization: token
     }
   })
       .then((response) => {
-        console.log(response)
+        console.log(response.data)
         user.value = response.data;
+        periodMembership.value = `${user.value.startDate} ~ ${user.value.endDate}`
         console.log(response.data.startDate)
         console.log(response.data.endDate)
       }).catch((error) => {
@@ -46,40 +88,10 @@ onMounted(() => {
 
 </script>
 
-<template>
-  <hr>
-  <h1>{{ user.name }}님의 프로필</h1>
-  <div class="detail">
-    <el-input type="hidden" class="detailId" :value="user.id" readonly/>
-    이름: <label for="detailName">
-    <el-input class="detailName" :value="user.name" readonly/>
-  </label><br>
-    이메일: <label for="detailEmail">
-    <el-input class="detailEmail" :value="user.email" readonly/>
-  </label><br>
-    센터 출입 확인: <label for="detailIsInCenter">
-    <el-input class="detailIsInCenter" :value="user.isInCenter" readonly/>
-  </label><br>
-    <el-input type="hidden" class="detailTrainerId" :value="user.trainerID" readonly/>
-    트레이너 이름: <label for="detailTrainerName">
-    <el-input class="detailTrainerName" :value="user.trainerName" readonly/>
-  </label><br>
-    센터 이름: <label for="detailCenter">
-    <el-input class="detailCenter" :value="user.centerName" readonly/>
-  </label><br>
-    이용 기간: <label for="detailDate">
-    <el-input type="text" class="detailStartDate" :value="user.startDate" readonly/>
-    <el-input type="text" class="detailEndDate" :value="user.endDate" readonly/>
-  </label><br>
-    남은 PT 횟수: <label for="detailRemainingPT">
-    <el-input class="detailRemainingPT" :value="user.remainingPT" readonly/>
-  </label>
-  </div>
 
-</template>
 
 <style scoped>
-.detail {
+h1 {
   color: white;
 }
 

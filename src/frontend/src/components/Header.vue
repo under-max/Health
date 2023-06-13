@@ -12,9 +12,11 @@
           </li>
 
           <li>
-            <button>
-              <RouterLink to="/exercise">운동관리</RouterLink>
-            </button>
+            <template v-if="isLoggedIn">
+                <button>
+                  <RouterLink to="/exercise">운동관리</RouterLink>
+                </button>
+            </template>
           </li>
 
           <li>

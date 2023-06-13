@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.entity.AuthUser;
 import com.example.demo.entity.User;
 import com.example.demo.exception.DuplicateSchedule;
 import com.example.demo.exception.UserNotFound;
@@ -12,6 +13,7 @@ import com.example.demo.response.UserListResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Month;
 import java.time.YearMonth;
@@ -19,9 +21,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@Transactional
 public class TrainerService {
 
     @Autowired
@@ -49,43 +53,58 @@ public class TrainerService {
 
     public List<UserListResponse> responsibleUserList(Integer id) {
         List<UserListResponse> test = trainerMapper.selectResponsibleUserList(id);
-        System.out.println(test);
+        System.out.println("test" + test);
         return test;
     }
 
-    public ScheduleResponse schedulePostList(ScheduleRequest scheduleRequest)  {
+    public void schedulePostList(ScheduleRequest scheduleRequest)  {
         scheduleRequest.setPtTime(scheduleRequest.getPtTime().plusHours(9));
 //        if(trainerMapper.insertSchedule(scheduleResponse) == 1) {
 //            return trainerMapper.findByMemberId(scheduleResponse.getMemberId(), scheduleResponse.getPtTime());
 //        } else {
 //            throw new RuntimeException();
 //        }
-        // Optional 클래스 사용
         try {
             trainerMapper.insertSchedule(scheduleRequest);
+            trainerMapper.updateMembershipPT(scheduleRequest);
         } catch (Exception e) {
             throw new DuplicateSchedule(e);
         }
-        ScheduleResponse byMemberId = trainerMapper.findByMemberId(scheduleRequest.getMemberId(), scheduleRequest.getPtTime())
-                .orElseThrow(DuplicateSchedule::new);
-//              .orElseThrow(() -> new DuplicateSchedule());
-
-        return byMemberId;
+//        ScheduleResponse byMemberId = trainerMapper.findByMemberId(scheduleRequest.getMemberId(), scheduleRequest.getPtTime())
+////                .orElseThrow(DuplicateSchedule::new);
+//              .orElseThrow(() -> new RuntimeException());
+//        System.out.println("byMemberId = " + byMemberId);
+//        System.out.println("scheduleRequest = " + scheduleRequest);
+//        return byMemberId;
     }
 
-    public Map<Integer, List<ScheduleResponse>> scheduleGetList() {
+    public Map<Integer, List<ScheduleResponse>> scheduleGetList(Long id) {
 
 //         ptTime의 년,월 계산
 //        ScheduleResponse scheduleResponse = trainerMapper.getPtTime();
-//        int month = Integer.parseInt(String.valueOf(scheduleResponse.getPtTime().getMonth()));
+//        int month = (scheduleResponse.getPtTime().getMonthValue());
 //        int year = scheduleResponse.getPtTime().getYear();
 //        System.out.println("month : " + month + ", year : " + year );
 //        int lastDay = calculateLastDayOfMonth(year, month);
 //        System.out.println("Last day of the month: " + lastDay);
 
+
+//        for(int i = 1; i <= 31; i++) {
+//            List<ScheduleResponse> byIdWithRes = trainerMapper.findByIdWithRes(i);
+//            System.out.println("byIdWithRes = " + byIdWithRes);
+//        }
+
+//        List<Schedule>
         Map<Integer, List<ScheduleResponse>> getLists = new HashMap<>();
         for(int i = 1; i <= 31; i++) {
-            getLists.put(i, trainerMapper.findByIdWithRes(i));
+            getLists.put(i, trainerMapper.findByIdWithRes(i, id).stream()
+                    .map(s -> ScheduleResponse.builder()
+                            .id(s.getId())
+                            .memberName(s.getMemberName())
+                            .memberId(s.getMemberId())
+                            .remainingPT(s.getRemainingPT())
+                            .pt(s.getPtTime().toLocalTime().toString())
+                            .build()).collect(Collectors.toList()));
         }
 
         return getLists;
@@ -94,5 +113,15 @@ public class TrainerService {
     public static int calculateLastDayOfMonth(int year, int month) {
         YearMonth yearMonth = YearMonth.of(year, month);
         return yearMonth.lengthOfMonth();
+    }
+
+    public void scheduleDelete(ScheduleRequest scheduleRequest) {
+        trainerMapper.deleteById(scheduleRequest);
+        System.out.println("$$#$@!@#!@#" + scheduleRequest);
+        trainerMapper.deleteMembershipPT(scheduleRequest);
+    }
+
+    public TrainerDetailResponse getTrainerDetail(Integer id) {
+        return trainerMapper.getTrainerDetail(id);
     }
 }
