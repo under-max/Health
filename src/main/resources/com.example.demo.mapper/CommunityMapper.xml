@@ -13,8 +13,47 @@
         where id = #{boardId}
     </select>
 
-    <select id="findAll" resultType="Community">
-        select * from COMMUNITY
+    <select id="countAll" resultType="Integer">
+        select
+            count(*)
+        from COMMUNITY
+
+        <where>
+            <if test="(type eq 'all') or (type eq 'title')">
+                title like concat ('%', #{keyword} ,'%')
+            </if>
+
+            <if test="(type eq 'all') or (type eq 'content')">
+                or content like concat ('%', #{keyword} ,'%')
+            </if>
+
+            <if test="(type eq 'all') or (type eq 'writer')">
+                or writer like concat ('%', #{keyword} ,'%')
+            </if>
+        </where>
+
+    </select>
+
+    <select id="findAll" resultType="com.example.demo.response.board.CommunityResponseDto">
+        select
+                 *
+                ,(select count(*) from COMMENT where boardId = c.id) as commentCount
+        from COMMUNITY c
+
+        <where>
+            <if test="(type eq 'all') or (type eq 'title')">
+                title like concat ('%', #{keyword} ,'%')
+            </if>
+
+            <if test="(type eq 'all') or (type eq 'content')">
+                or content like concat ('%', #{keyword} ,'%')
+            </if>
+
+            <if test="(type eq 'all') or (type eq 'writer')">
+                or writer like concat ('%', #{keyword} ,'%')
+            </if>
+        </where>
+
         <if test="sort eq 'id'">
             order by id desc
         </if>
@@ -31,6 +70,7 @@
             order by viewCount desc
         </if>
 
+        limit #{startIndex}, #{rowPage}
 
     </select>
 

@@ -6,22 +6,14 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class CommunityResponse {
+public class CommunityResponse<T> {
 
-    private Integer id;
-    private String title;
-    private String writer;
-    private Integer viewCount;
-    private Integer likeCount;
-    private String inserted;
+    private BoardPageInfo pageInfo;
+    private T list;
 
     @Builder
-    public CommunityResponse(Integer id, String title, String writer, Integer viewCount, Integer likeCount, String inserted) {
-        this.id = id;
-        this.title = title;
-        this.writer = writer;
-        this.viewCount = viewCount;
-        this.likeCount = likeCount;
-        this.inserted = inserted;
+    public CommunityResponse(BoardPageInfo pageInfo, T list) {
+        this.pageInfo = pageInfo;
+        this.list = list;
     }
 }

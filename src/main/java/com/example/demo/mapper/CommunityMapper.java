@@ -1,7 +1,8 @@
 package com.example.demo.mapper;
 
-import com.example.demo.controller.CommunityController;
 import com.example.demo.entity.Community;
+import com.example.demo.response.board.CommunityResponse;
+import com.example.demo.response.board.CommunityResponseDto;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -15,7 +16,9 @@ public interface CommunityMapper {
 
     Optional<Community> findById(Integer boardId);
 
-    List<Community> findAll(String sort);
+    Integer countAll(String type, String keyword);
+
+    List<CommunityResponseDto> findAll(String type, String keyword, String sort, Integer startIndex, Integer rowPage);
 
     List<Community> findAllSortByLike();
 

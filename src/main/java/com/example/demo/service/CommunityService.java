@@ -13,8 +13,10 @@ import com.example.demo.request.comment.CommentRequest;
 import com.example.demo.request.comment.CreateCommentDto;
 import com.example.demo.request.comment.DeleteCommentDto;
 import com.example.demo.request.comment.UpdateCommentDto;
-import com.example.demo.response.board.CommunityResponse;
+import com.example.demo.response.board.BoardPageInfo;
 import com.example.demo.response.board.BoardResponse;
+import com.example.demo.response.board.CommunityResponse;
+import com.example.demo.response.board.CommunityResponseDto;
 import com.example.demo.response.comment.CommentResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -48,13 +50,17 @@ public class CommunityService {
         return (communityMapper.createBoard(community) == 1);
     }
 
-    public List<CommunityResponse> getBoardList(String type, String keyword, String sort) {
+    public CommunityResponse getBoardList(Integer page, String type, String keyword, String sort) {
 
-        List<CommunityResponse> collect = getSortList(type, keyword, sort);
+        try {
+            CommunityResponse response = getSortList(page, type, keyword, sort);
+            log.info("getBoardList() response={}", response);
+            return response;
 
-        log.info("collect={}", collect);
-
-        return collect;
+        } catch (Exception e) {
+            log.error("getBoardList() error", e);
+            throw new RuntimeException("오류 해결 중입니다.");
+        }
     }
 
     public BoardResponse getBoard(Integer boardId) {
@@ -78,7 +84,7 @@ public class CommunityService {
     }
 
     public String getWriter(Long userId) {
-        User user = userMapper.findById(userId).get();
+        User user = findUser(userId);
         return user.getNickName();
     }
 
@@ -122,19 +128,41 @@ public class CommunityService {
         return cnt == 1;
     }
 
-    private List<CommunityResponse> getSortList(String type, String keyword, String sort) {
+    private CommunityResponse getSortList(Integer page, String type, String keyword, String sort) {
 
-        List<CommunityResponse> collect = communityMapper.findAll(sort).stream()
-                .map(community -> CommunityResponse.builder()
-                        .id(community.getId())
-                        .title(community.getTitle())
-                        .writer(community.getWriter())
-                        .viewCount(community.getViewCount())
-                        .likeCount(community.getLikeCount())
-                        .inserted(getFormatted(community))
-                        .build()).collect(Collectors.toList());
+        // 한 페이지 당 row 개수
+        Integer rowPage = 10;
 
-        return collect;
+        // sql query limit 절에 사용할 시작 인덱스
+        Integer startIndex = (page - 1) * rowPage;
+
+        // 전체 records 개수
+        Integer records = communityMapper.countAll(type, keyword);
+        log.info("list records=[{}]", records);
+
+        // 마지막 페이지 번호
+        Integer lastPageNumber = (records - 1) / rowPage + 1;
+
+        // 왼쪽 페이지 번호
+        Integer leftPageNum = Math.max(page - 5, 1);
+
+        // 오른쪽 페이지 번호
+        Integer rightPageNum = Math.min(leftPageNum + 9, lastPageNumber);
+
+        BoardPageInfo pageInfo = BoardPageInfo.builder()
+                .leftPageNumber(leftPageNum)
+                .rightPageNumber(rightPageNum)
+                .page(page)
+                .lastPageNumber(lastPageNumber)
+                .records(records)
+                .build();
+
+        List<CommunityResponseDto> list = communityMapper.findAll(type, keyword, sort, startIndex, rowPage);
+
+        return CommunityResponse.builder()
+                .pageInfo(pageInfo)
+                .list(list)
+                .build();
     }
 
     private User findUser(Long userId) {
@@ -148,52 +176,6 @@ public class CommunityService {
 
     private String getFormatted(Community findBoard) {
         return findBoard.getInserted().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-    }
-
-    private List<CommunityResponse> getSortList1(String type, String keyword, String sort) {
-        List<CommunityResponse> collect = null;
-
-        if (sort.equals("id")) {
-            collect = communityMapper.findAll(sort).stream()
-                    .map(community -> CommunityResponse.builder()
-                            .id(community.getId())
-                            .title(community.getTitle())
-                            .writer(community.getWriter())
-                            .viewCount(community.getViewCount())
-                            .likeCount(community.getLikeCount())
-                            .inserted(getFormatted(community))
-                            .build()).collect(Collectors.toList());
-        } else if (sort.equals("like")) {
-            collect = communityMapper.findAllSortByLike().stream()
-                    .map(community -> CommunityResponse.builder()
-                            .id(community.getId())
-                            .title(community.getTitle())
-                            .writer(community.getWriter())
-                            .likeCount(community.getLikeCount())
-                            .inserted(getFormatted(community))
-                            .build()).collect(Collectors.toList());
-        } else if (sort.equals("comment")) {
-            collect = communityMapper.findAllSortByComment().stream()
-                    .map(community -> CommunityResponse.builder()
-                            .id(community.getId())
-                            .title(community.getTitle())
-                            .writer(community.getWriter())
-                            .likeCount(community.getLikeCount())
-                            .inserted(getFormatted(community))
-                            .build()).collect(Collectors.toList());
-        } else if (sort.equals("view")) {
-            collect = communityMapper.findAllSortByView().stream()
-                    .map(community -> CommunityResponse.builder()
-                            .id(community.getId())
-                            .title(community.getTitle())
-                            .writer(community.getWriter())
-                            .likeCount(community.getLikeCount())
-                            .inserted(getFormatted(community))
-                            .build()).collect(Collectors.toList());
-        } else {
-            throw new IllegalArgumentException("원하시는 정렬을 할 수 없습니다.");
-        }
-        return collect;
     }
 
     /**

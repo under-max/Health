@@ -80,7 +80,7 @@
             <div>{{ comment.writer }} /&nbsp;</div>
             <div>{{ comment.inserted }} &nbsp;</div>
             <div v-if="currentUser === comment.writer">
-              <button type="button" @click="assignCommentId(comment.id, comment.content)"
+              <button type="button" @click="assignComment(comment.id, comment.content)"
                       class="badge btn btn-secondary"
                       data-bs-toggle="modal" data-bs-target="#myModal">수정
               </button>
@@ -162,7 +162,7 @@ const currentUser = ref('guest');
 const boardWriter = ref('');
 
 // 할당 변수
-const assignCommentId = (id, content) => {
+const assignComment = (id, content) => {
   commentId.value = id;
   modifyCommentContent.value = content;
 };

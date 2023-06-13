@@ -58,7 +58,7 @@
           <form class="d-flex" role="search">
             <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"
                    v-model="searchKeyword">
-            <button class="btn btn-success" type="button" @click="searchConditionBtn">search</button>
+            <button class="btn btn-success" type="button" style="width: 100px;" @click="searchConditionBtn">검색</button>
           </form>
         </div>
       </nav>
@@ -71,6 +71,7 @@
         <th>제목</th>
         <th>작성자</th>
         <th><i class="fa-solid fa-binoculars"></i></th>
+        <th><i class="fa-regular fa-comment-dots"></i></th>
         <th><i class="fa-solid fa-bolt"></i></th>
         <th>작성일시</th>
       </tr>
@@ -83,18 +84,18 @@
         </td>
         <td>{{ board.writer }}</td>
         <td>{{ board.viewCount }}</td>
+        <td>{{ board.commentCount }}</td>
         <td>{{ board.likeCount }}</td>
         <td>{{ board.inserted }}</td>
       </tr>
       </tbody>
     </table>
   </div>
+  
 
 </template>
 
 <script setup>
-
-
 import {computed, onMounted, ref, watch} from "vue";
 import axios from "axios";
 import {RouterLink, useRoute, useRouter} from "vue-router";
@@ -102,6 +103,15 @@ import Cookies from "vue-cookies";
 
 const router = useRouter();
 const route = useRoute();
+
+// 페이지 관련 정보
+const pageInfo = ref({
+  leftPageNumber: '',
+  rightPageNumber: '',
+  page: '',
+  lastPageNumber: '',
+  records: ''
+});
 
 // 검색 키워드 관련
 const searchType = ref('all');
@@ -132,7 +142,8 @@ const selectedSortLabel = computed(() => {
   }
 });
 
-const loginCheck = () => {
+// 작성하기 버튼
+const createBtn = () => {
   if (Cookies.get('accessToken')) {
     router.push('/community/new');
   } else {
@@ -145,11 +156,6 @@ const loginCheck = () => {
   }
 };
 
-// 작성하기 버튼
-const createBtn = () => {
-  loginCheck();
-};
-
 // dropdown 버튼
 const dropDownBtn = () => {
   isExpanded.value = !isExpanded.value;
@@ -157,13 +163,15 @@ const dropDownBtn = () => {
 
 // 센터 검색 버튼
 const searchConditionBtn = () => {
+  const query = {
+    type: searchType.value,
+    keyword: searchKeyword.value,
+    sort: selectedSortLabel.value
+  };
+
   axios
-      .get("/api/community", {
-        params: {
-          type: searchType.value,
-          keyword: searchKeyword.value,
-          sort: selectedSortLabel.value
-        }
+      .get(`/api/community`, {
+        params: query
       })
       .then((response) => {
         console.log(response.data);
@@ -212,10 +220,13 @@ const getBoardList = () => {
         params: route.query // 현재 URL의 쿼리 파라미터를 사용하여 요청
       })
       .then((response) => {
-        boardList.value = response.data;
+        console.log(response.data);
+        boardList.value = response.data.list;
+        pageInfo.value = response.data.pageInfo;
       })
       .catch((error) => {
         console.log(error);
+        alert(error.response.data.message);
       });
 };
 

@@ -41,14 +41,14 @@ public class CommunityController {
     }
 
     @GetMapping
-    public List<CommunityResponse> getBoardList(@RequestParam(defaultValue = "all") String type,
-                                                @RequestParam(defaultValue = "") String keyword,
-                                                @RequestParam(defaultValue = "id") String sort) {
+    public CommunityResponse getBoardList(@RequestParam(value = "page", defaultValue = "1") Integer page,
+                                          @RequestParam(value = "type", defaultValue = "all") String type,
+                                          @RequestParam(value = "keyword", defaultValue = "") String keyword,
+                                          @RequestParam(value = "sort", defaultValue = "id") String sort) {
 
-        log.info("boardList -> type={}, keyword={}, sort={}", type, keyword, sort);
+        log.info("boardList -> page={}, type={}, keyword={}, sort={}", page, type, keyword, sort);
 
-        List<CommunityResponse> communityList = communityService.getBoardList(type, keyword, sort);
-        return communityList;
+        return communityService.getBoardList(page, type, keyword, sort);
     }
 
     @GetMapping("/getWriter")
@@ -141,5 +141,26 @@ public class CommunityController {
             return new ResponseEntity<>("댓글 삭제에 실패하였습니다.", HttpStatus.BAD_REQUEST);
         }
     }
+
+//    @PostMapping
+//    public void createBoar1(@RequestBody CreateBoardRequest request, AuthUser authUser) {
+//        log.info("request={}", request);
+//
+//        communityService.createBoard1(authUser.getUserId());
+//    }
+
+//        public void createBoard1(Long userId) {
+//
+//        User user = findUser(userId);
+//
+//        for (int i = 0; i < 3000; i++) {
+//            Community community = Community.builder()
+//                    .title("제목" + i)
+//                    .content("내용" + i)
+//                    .writer(user.getNickName())
+//                    .build();
+//            communityMapper.createBoard(community);
+//        }
+//    }
 
 }
