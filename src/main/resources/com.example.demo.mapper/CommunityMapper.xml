@@ -36,8 +36,8 @@
 
     <select id="findAll" resultType="com.example.demo.response.board.CommunityResponseDto">
         select
-                 *
-                ,(select count(*) from COMMENT where boardId = c.id) as commentCount
+                  *
+                , (select count(*) from COMMENT where boardId = c.id) as commentCount
         from COMMUNITY c
 
         <where>

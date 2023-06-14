@@ -18,4 +18,6 @@ public interface CommentMapper {
     Integer updateComment(UpdateCommentDto updateCommentDto);
 
     Integer deleteComment(DeleteCommentDto deleteCommentDto);
+
+    void deleteBoardInComment(Integer boardId);
 }

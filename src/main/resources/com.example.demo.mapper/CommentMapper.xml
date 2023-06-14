@@ -36,5 +36,11 @@
             id = #{commentId}
     </delete>
 
+    <delete id="deleteBoardInComment">
+        delete from COMMENT
+        where
+            boardId = #{boardId}
+    </delete>
+
 </mapper>
 

@@ -128,6 +128,7 @@ import {defineProps, onMounted, ref} from "vue";
 import axios from "axios";
 import Cookies from "vue-cookies";
 import router from "@/router";
+import {showCustomAlert} from "@/main";
 
 const props = defineProps({
   boardId: {
@@ -181,8 +182,9 @@ const addCommentBtn = () => {
           }
         })
         .then((response) => {
-          alert(response.data);
-          viewComment();
+          showCustomAlert(response.data);
+          // alert(response.data);
+          reloadComment();
           addCommentContent.value = "";
         })
         .catch((error) => {
@@ -214,8 +216,9 @@ const modifyCommentBtn = () => {
           }
         })
         .then((response) => {
-          alert(response.data);
-          viewComment();
+          showCustomAlert(response.data);
+          // alert(response.data);
+          reloadComment();
         })
         .catch((error) => {
           console.error(error);
@@ -247,7 +250,7 @@ const deleteCommentBtn = (commentId) => {
         })
         .then((response) => {
           alert(response.data);
-          viewComment();
+          reloadComment();
         })
         .catch((error) => {
           alert(error.response.data);
@@ -360,7 +363,7 @@ const deleteBtn = () => {
 };
 
 // 댓글 등록,수정,삭제 시 결과가 바로 반응되게 하려고 함수로 만듦.
-const viewComment = () => {
+const reloadComment = () => {
   axios
       .get(`/api/community/board/${props.boardId}/comment`, {})
       .then((response) => {

@@ -43,7 +43,7 @@ const createBtn = () => {
   const token = Cookies.get('accessToken');
 
   axios
-      .post("/api/community", {
+      .post("/api/community/board", {
         title: title.value,
         content: content.value
       }, {
@@ -70,7 +70,7 @@ onMounted(() => {
   const token = Cookies.get('accessToken');
 
   axios
-      .get("/api/community/getWriter", {
+      .get("/api/community/board/getWriter", {
         headers: {
           Authorization: token
         }

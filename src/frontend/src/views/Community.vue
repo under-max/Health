@@ -46,7 +46,12 @@
 
     </div>
 
-    <div class="d-flex justify-content-center">
+    <div class="pt-2 pb-2 d-flex justify-content-between">
+
+      <div>
+        123
+      </div>
+
       <nav class="navbar bg-body-tertiary">
         <div class="container-fluid">
           <select class="form-select flex-grow-0" style="width: 100px;" name="type" v-model="searchType">
@@ -62,7 +67,13 @@
           </form>
         </div>
       </nav>
+
+      <div>
+        {{ pageInfo.currentPageNumber }} / {{ pageInfo.lastPageNumber }}
+      </div>
+
     </div>
+
 
     <table class="table table-hover">
       <thead>
@@ -93,24 +104,30 @@
   </div>
 
   <!-- pagination -->
-  <nav aria-label="Page navigation example">
-    <ul class="pagination justify-content-center">
-      <li class="page-item">
-        <button class="page-link" aria-label="Previous" @click="navigateToPage(1)">
-          <span aria-hidden="true">&laquo;</span>
-        </button>
-      </li>
-      <li v-for="pageNum in computedPageRange" :key="pageNum" class="page-item">
-<!--      <li v-for="pageNum in computedPageRange" :key="pageNum" :class="['page-item', { 'active': pageNum === pageInfo.currentPageNumber }]">-->
-        <button class="page-link" @click="navigateToPage(pageNum)">{{ pageNum }}</button>
-      </li>
-      <li class="page-item">
-        <button class="page-link" aria-label="Next" @click="navigateToPage(pageInfo.lastPageNumber)">
-          <span aria-hidden="true">&raquo;</span>
-        </button>
-      </li>
-    </ul>
-  </nav>
+  <div class="container-lg">
+    <div class="row">
+      <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+          <li class="page-item">
+            <button class="page-link" aria-label="Previous" @click="navigateToPage(1)"
+                    v-if="pageInfo.currentPageNumber !== 1">
+              <span aria-hidden="true">&laquo;</span>
+            </button>
+          </li>
+          <li v-for="pageNum in computedPageRange" :key="pageNum" class="page-item">
+            <!--      <li v-for="pageNum in computedPageRange" :key="pageNum" :class="['page-item', { 'active': pageNum === pageInfo.currentPageNumber }]">-->
+            <button class="page-link" @click="navigateToPage(pageNum)">{{ pageNum }}</button>
+          </li>
+          <li class="page-item">
+            <button class="page-link" aria-label="Next" @click="navigateToPage(pageInfo.lastPageNumber)"
+                    v-if="pageInfo.currentPageNumber !== pageInfo.lastPageNumber">
+              <span aria-hidden="true">&raquo;</span>
+            </button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
 
 </template>
 
@@ -123,12 +140,6 @@ import Cookies from "vue-cookies";
 const router = useRouter();
 const route = useRoute();
 
-const computedPageRange = computed(() => {
-  const rangeStart = pageInfo.value.leftPageNumber;
-  const rangeEnd = pageInfo.value.rightPageNumber;
-  return Array.from({ length: rangeEnd - rangeStart + 1 }, (_, index) => rangeStart + index);
-});
-
 // 페이지 관련 정보
 const pageInfo = ref({
   leftPageNumber: '',
@@ -136,6 +147,13 @@ const pageInfo = ref({
   currentPageNumber: '',
   lastPageNumber: '',
   records: ''
+});
+
+// 페이지 번호 재할당
+const computedPageRange = computed(() => {
+  const rangeStart = pageInfo.value.leftPageNumber;
+  const rangeEnd = pageInfo.value.rightPageNumber;
+  return Array.from({length: rangeEnd - rangeStart + 1}, (_, index) => rangeStart + index);
 });
 
 // 검색 키워드 관련
@@ -188,22 +206,18 @@ const dropDownBtn = () => {
 
 // 센터 검색 버튼
 const searchConditionBtn = () => {
-  axios
-      .get(`/api/community/board`, {
-        params: {
-          page: pageInfo.value.currentPageNumber,
-          type: searchType.value,
-          keyword: searchKeyword.value,
-          sort: selectedSortLabel.value
-        }
-      })
-      .then((response) => {
-        console.log(response.data);
-        boardList.value = response.data;
-      })
-      .catch((error) => {
-        console.log(error)
-      });
+  // 게시글 순서선택
+  const query = {
+    type: searchType.value,
+    keyword: searchKeyword.value,
+    sort: selectedSortLabel.value
+  };
+
+  // 현재 URL에 쿼리 파라미터 추가 또는 변경
+  router.push({query}).then(() => {
+    // 목록 요청
+    getBoardList();
+  });
 }
 
 const selectSort = (sortValue) => {
@@ -233,22 +247,19 @@ watch([selectedSort, searchType, searchKeyword], () => {
 
 // 페이지 버튼
 const navigateToPage = (page) => {
-  console.log(page);
-  axios
-      .get("/api/community/board", {
-        params: {
-          page: page
-        }
-      })
-      .then((response) => {
-        console.log(response.data);
-        boardList.value = response.data.list;
-        pageInfo.value = response.data.pageInfo;
-      })
-      .catch((error) => {
-        console.log(error);
-        alert(error.response.data.message);
-      });
+  // 게시글 순서선택
+  const query = {
+    page: page,
+    type: searchType.value,
+    keyword: searchKeyword.value,
+    sort: selectedSortLabel.value
+  };
+
+  // 현재 URL에 쿼리 파라미터 추가 또는 변경
+  router.push({query}).then(() => {
+    // 목록 요청
+    getBoardList();
+  });
 };
 
 const getBoardList = () => {

@@ -122,6 +122,7 @@ public class CommunityService {
         Community findBoard = findBoard(boardId);
 
         if (findBoard.getWriter().equals(writer)) {
+            commentMapper.deleteBoardInComment(boardId);
             cnt = communityMapper.deleteBoard(boardId, writer);
         }
 
@@ -131,7 +132,7 @@ public class CommunityService {
     private CommunityResponse getSortList(Integer page, String type, String keyword, String sort) {
 
         // 한 페이지 당 row 개수
-        Integer rowPage = 20;
+        Integer rowPage = 10;
 
         // sql query limit 절에 사용할 시작 인덱스
         Integer startIndex = (page - 1) * rowPage;
