@@ -1,135 +1,137 @@
 <template>
-  <div class="container-lg">
-    <h1>게시물 목록 - 작업중!!</h1>
-
-    <div class="d-flex justify-content-between">
+  <div class="d-flex justify-content-center">
+    <div class="boardList">
 
       <div>
-        <button class="btn btn-info" @click="createBtn">
-          <i class="fa-solid fa-pen"></i>
-          작성하기
-        </button>
-      </div>
 
-      <ul class="nav justify-content-center">
-        <li class="nav-item">
-          <router-link class="nav-link active" aria-current="page" to="/community">게시판</router-link>
-        </li>
-        <li class="nav-item">
-          <router-link class="nav-link" to="/community/notice">공지사항</router-link>
-        </li>
-        <li class="nav-item">
-          <router-link class="nav-link" to="/community/qna">1:1문의</router-link>
-        </li>
-      </ul>
+        <div>
 
-      <!-- 게시글 order by -->
-      <div class="dropdown">
-        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                :aria-expanded="isExpanded" @click="dropDownBtn">{{ selectedSort }}
-        </button>
-        <ul class="dropdown-menu" :class="{show: isExpanded}">
-          <li>
-            <button class="dropdown-item" type="button" @click="selectSort('최신순')">최신순</button>
-          </li>
-          <li>
-            <button class="dropdown-item" type="button" @click="selectSort('추천순')">추천순</button>
-          </li>
-          <li>
-            <button class="dropdown-item" type="button" @click="selectSort('댓글순')">댓글순</button>
-          </li>
-          <li>
-            <button class="dropdown-item" type="button" @click="selectSort('조회순')">조회순</button>
-          </li>
-        </ul>
-      </div>
+          <!-- 작성하기 버튼 -->
+          <div>
+            <button class="btn btn-info" @click="createBtn">
+              <i class="fa-solid fa-pen"></i>
+              작성하기
+            </button>
+          </div>
 
-    </div>
+<!--          <Link/>-->
 
-    <div class="pt-2 pb-2 d-flex justify-content-between">
+          <!-- 게시글 order by -->
+          <div class="d-flex justify-content-between">
+            <!-- dropdown -->
+            <div class="dropdown">
+              <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                      :aria-expanded="isExpanded" @click="dropDownBtn">{{ selectedSort }}
+              </button>
+              <ul class="dropdown-menu" :class="{show: isExpanded}">
+                <li>
+                  <button class="dropdown-item" type="button" @click="selectSort('최신순')">최신순</button>
+                </li>
+                <li>
+                  <button class="dropdown-item" type="button" @click="selectSort('추천순')">추천순</button>
+                </li>
+                <li>
+                  <button class="dropdown-item" type="button" @click="selectSort('댓글순')">댓글순</button>
+                </li>
+                <li>
+                  <button class="dropdown-item" type="button" @click="selectSort('조회순')">조회순</button>
+                </li>
+              </ul>
+            </div>
+            <!-- 검색 -->
+            <div class="pt-2 pb-2">
+              <nav class="navbar bg-body-tertiary">
+                <div class="container-fluid">
+                  <select class="form-select flex-grow-0" style="width: 100px;" name="type" v-model="searchType">
+                    <option value="all">전체</option>
+                    <option value="title">제목</option>
+                    <option value="content">본문</option>
+                    <option value="writer">작성자</option>
+                  </select>
+                  <div class="d-flex" role="search">
+                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"
+                           v-model="searchKeyword">
+                    <button class="btn btn-success" type="button" style="width: 100px;" @click="searchConditionBtn">검색
+                    </button>
+                  </div>
+                </div>
+              </nav>
+            </div>
+            <!-- page -->
+            <div>
+              <div>
+                {{ pageInfo.currentPageNumber }} / {{ pageInfo.lastPageNumber }} 페이지
+                <button class="btn btn-link" @click="prevPageBtn"><i class="fa-solid fa-arrow-left fa-xl"></i></button>
+                <button class="btn btn-link" @click="nextPageBtn"><i class="fa-solid fa-arrow-right fa-xl"></i></button>
+              </div>
+            </div>
+          </div>
 
-      <div>
-        <router-link to="/community/"><i class="fa-solid fa-rotate fa-xl"></i></router-link>
-      </div>
+          <!-- 게시글 -->
+          <div>
+            <table class="table table-hover">
+              <thead>
+              <tr>
+                <th>번호</th>
+                <th>제목</th>
+                <th>작성자</th>
+                <th><i class="fa-solid fa-binoculars"></i></th>
+                <th><i class="fa-regular fa-comment-dots"></i></th>
+                <th><i class="fa-solid fa-bolt"></i></th>
+                <th>작성일시</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr v-for="board in boardList">
+                <td>{{ board.id }}</td>
+                <td v-if="board.grade === 'NOTICE'">
+                  <router-link :to="{ name: 'getBoard', params: {boardId: board.id}}">[공지사항] {{ board.title }}</router-link>
+                </td>
+                <td v-else>
+                  <router-link :to="{ name: 'getBoard', params: {boardId: board.id}}">{{ board.title }}</router-link>
+                </td>
+                <td>{{ board.writer }}</td>
+                <td>{{ board.viewCount }}</td>
+                <td>{{ board.commentCount }}</td>
+                <td>{{ board.likeCount }}</td>
+                <td>{{ board.inserted }}</td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
 
-      <nav class="navbar bg-body-tertiary">
-        <div class="container-fluid">
-          <select class="form-select flex-grow-0" style="width: 100px;" name="type" v-model="searchType">
-            <option value="all">전체</option>
-            <option value="title">제목</option>
-            <option value="content">본문</option>
-            <option value="writer">작성자</option>
-          </select>
-          <form class="d-flex" role="search">
-            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"
-                   v-model="searchKeyword">
-            <button class="btn btn-success" type="button" style="width: 100px;" @click="searchConditionBtn">검색</button>
-          </form>
+          <!-- pagination -->
+          <div class="container">
+            <div class="row">
+              <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center">
+                  <li class="page-item">
+                    <button class="page-link" aria-label="Previous" @click="navigateToPage(1)"
+                            v-if="pageInfo.currentPageNumber !== 1">
+                      <span aria-hidden="true">&laquo;</span>
+                    </button>
+                  </li>
+                  <li v-for="pageNum in computedPageRange" :key="pageNum" class="page-item">
+                    <button class="page-link" @click="navigateToPage(pageNum)">{{ pageNum }}</button>
+                  </li>
+                  <li class="page-item">
+                    <button class="page-link" aria-label="Next" @click="navigateToPage(pageInfo.lastPageNumber)"
+                            v-if="pageInfo.currentPageNumber !== pageInfo.lastPageNumber">
+                      <span aria-hidden="true">&raquo;</span>
+                    </button>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+
+          </div>
+
         </div>
-      </nav>
 
-      <div>
-        {{ pageInfo.currentPageNumber }} / {{ pageInfo.lastPageNumber }} 페이지
-        <button @click="prevPageBtn"><i class="fa-solid fa-arrow-left fa-xl"></i></button>
-        <button @click="nextPageBtn"><i class="fa-solid fa-arrow-right fa-xl"></i></button>
       </div>
 
     </div>
-
-
-    <table class="table table-hover">
-      <thead>
-      <tr>
-        <th>번호</th>
-        <th>제목</th>
-        <th>작성자</th>
-        <th><i class="fa-solid fa-binoculars"></i></th>
-        <th><i class="fa-regular fa-comment-dots"></i></th>
-        <th><i class="fa-solid fa-bolt"></i></th>
-        <th>작성일시</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr v-for="board in boardList">
-        <td>{{ board.id }}</td>
-        <td>
-          <router-link :to="{ name: 'getBoard', params: {boardId: board.id}}">{{ board.title }}</router-link>
-        </td>
-        <td>{{ board.writer }}</td>
-        <td>{{ board.viewCount }}</td>
-        <td>{{ board.commentCount }}</td>
-        <td>{{ board.likeCount }}</td>
-        <td>{{ board.inserted }}</td>
-      </tr>
-      </tbody>
-    </table>
   </div>
-
-  <!-- pagination -->
-  <div class="container-lg">
-    <div class="row">
-      <nav aria-label="Page navigation example">
-        <ul class="pagination justify-content-center">
-          <li class="page-item">
-            <button class="page-link" aria-label="Previous" @click="navigateToPage(1)"
-                    v-if="pageInfo.currentPageNumber !== 1">
-              <span aria-hidden="true">&laquo;</span>
-            </button>
-          </li>
-          <li v-for="pageNum in computedPageRange" :key="pageNum" class="page-item">
-            <button class="page-link" @click="navigateToPage(pageNum)">{{ pageNum }}</button>
-          </li>
-          <li class="page-item">
-            <button class="page-link" aria-label="Next" @click="navigateToPage(pageInfo.lastPageNumber)"
-                    v-if="pageInfo.currentPageNumber !== pageInfo.lastPageNumber">
-              <span aria-hidden="true">&raquo;</span>
-            </button>
-          </li>
-        </ul>
-      </nav>
-    </div>
-  </div>
-
 </template>
 
 <script setup>
@@ -137,6 +139,7 @@ import {computed, onMounted, ref, watch} from "vue";
 import axios from "axios";
 import {RouterLink, useRoute, useRouter} from "vue-router";
 import Cookies from "vue-cookies";
+import Link from "@/components/community/container/Link.vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -310,4 +313,14 @@ onMounted(() => {
 
 <style scoped>
 
+.boardList {
+  width: 1600px;
+  margin-top: 50px;
+  background-color: white;
+  border: 5px solid #ccc;
+}
+
+.active {
+  font-weight: bold;
+}
 </style>

@@ -16,9 +16,7 @@ import SuccessPage from "@/views/payment/SuccessPage.vue";
 import CancelPage from "@/views/payment/CancelPage.vue";
 import CreateBoard from "@/views/board/CreateBoard.vue";
 import GetBoard from "@/views/board/GetBoard.vue";
-import Notice from "@/views/board/Notice.vue";
 import ModifyBoard from "@/views/board/ModifyBoard.vue";
-
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -111,11 +109,6 @@ const router = createRouter({
             name: 'modifyBoard',
             component: ModifyBoard,
             props: true
-        },
-        {
-            path: '/community/notice',
-            name: 'notice',
-            component: Notice,
         }
     ]
 })

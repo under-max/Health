@@ -3,9 +3,9 @@
 <mapper namespace="com.example.demo.mapper.CommunityMapper">
 
     <insert id="createBoard" useGeneratedKeys="true" keyProperty="id">
-        insert into COMMUNITY (title, content, writer)
+        insert into COMMUNITY (title, grade, content, writer)
         values
-            (#{title}, #{content}, #{writer})
+            (#{title}, #{grade}, #{content}, #{writer})
     </insert>
 
     <select id="findById" resultType="Community">
@@ -36,7 +36,7 @@
 
     <select id="findAll" resultType="com.example.demo.response.board.CommunityResponseDto">
         select
-                  *
+                *
                 , (select count(*) from COMMENT where boardId = c.id) as commentCount
         from COMMUNITY c
 
@@ -55,38 +55,23 @@
         </where>
 
         <if test="sort eq 'id'">
-            order by id desc
+            order by grade desc, id desc
         </if>
 
         <if test="sort eq 'like'">
-            order by likeCount desc
+            order by likeCount desc, id desc
         </if>
 
         <if test="sort eq 'comment'">
-            order by commentCount desc
+            order by commentCount desc, id desc
         </if>
 
         <if test="sort eq 'view'">
-            order by viewCount desc
+            order by viewCount desc, id desc
         </if>
 
         limit #{startIndex}, #{rowPage}
 
-    </select>
-
-    <select id="findAllSortByLike" resultType="Community">
-        select * from COMMUNITY
-        order by likeCount desc
-    </select>
-
-    <select id="findAllSortByComment" resultType="Community">
-        select * from COMMUNITY
-        order by commentCount desc
-    </select>
-
-    <select id="findAllSortByView" resultType="Community">
-        select * from COMMUNITY
-        order by viewCount desc
     </select>
 
     <update id="updateLikeUp">

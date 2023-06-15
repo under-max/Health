@@ -41,13 +41,25 @@ public class CommunityService {
 
         User user = findUser(userId);
 
-        Community community = Community.builder()
-                .title(request.getTitle())
-                .content(request.getContent())
-                .writer(user.getNickName())
-                .build();
+        if (user.getAuthority() == 3) {
+            Community community = Community.builder()
+                    .title(request.getTitle())
+                    .grade("NOTICE")
+                    .content(request.getContent())
+                    .writer(user.getNickName())
+                    .build();
+            return (communityMapper.createBoard(community) == 1);
 
-        return (communityMapper.createBoard(community) == 1);
+        } else {
+            Community community = Community.builder()
+                    .title(request.getTitle())
+                    .grade("BOARD")
+                    .content(request.getContent())
+                    .writer(user.getNickName())
+                    .build();
+
+            return (communityMapper.createBoard(community) == 1);
+        }
     }
 
     public CommunityResponse getBoardList(Integer page, String type, String keyword, String sort) {
@@ -62,6 +74,33 @@ public class CommunityService {
             throw new RuntimeException("오류 해결 중입니다.");
         }
     }
+
+
+    public BoardResponse getBoard(Long userId, Integer boardId) {
+
+        if (checkAuthority(userId, boardId)) {
+            Community findBoard = findBoard(boardId);
+
+            BoardResponse response = BoardResponse.builder()
+                    .title(findBoard.getTitle())
+                    .content(findBoard.getContent())
+                    .writer(findBoard.getWriter())
+                    .viewCount(findBoard.getViewCount())
+                    .likeCount(findBoard.getLikeCount())
+                    .inserted(getFormatted(findBoard))
+                    .build();
+
+            log.info("getBoard() response={}", response);
+
+            communityMapper.viewCount(boardId);
+
+            return response;
+        } else {
+            throw new IllegalArgumentException("접근 권한이 없습니다.");
+        }
+
+    }
+
 
     public BoardResponse getBoard(Integer boardId) {
 
@@ -132,7 +171,7 @@ public class CommunityService {
     private CommunityResponse getSortList(Integer page, String type, String keyword, String sort) {
 
         // 한 페이지 당 row 개수
-        Integer rowPage = 10;
+        Integer rowPage = 15;
 
         // sql query limit 절에 사용할 시작 인덱스
         Integer startIndex = (page - 1) * rowPage;
@@ -177,6 +216,13 @@ public class CommunityService {
 
     private String getFormatted(Community findBoard) {
         return findBoard.getInserted().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+    }
+
+    private Boolean checkAuthority(Long userId, Integer boardId) {
+        String currentUserName = findUser(userId).getNickName();
+        String writer = findBoard(boardId).getWriter();
+
+        return currentUserName.equals(writer);
     }
 
     /**
@@ -239,4 +285,5 @@ public class CommunityService {
 
         return (commentMapper.deleteComment(deleteCommentDto) == 1);
     }
+
 }

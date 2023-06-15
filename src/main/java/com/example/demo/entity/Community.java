@@ -1,7 +1,6 @@
 package com.example.demo.entity;
 
 import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -13,7 +12,7 @@ import java.util.List;
 public class Community {
 
     private Integer id;
-    private Grade grade;
+    private String grade;
     private String title;
     private String content;
     private String writer;
@@ -26,14 +25,11 @@ public class Community {
     }
 
     @Builder
-    public Community(String title, String content, String writer) {
+    public Community(String title, String grade, String content, String writer) {
         this.title = title;
+        this.grade = grade;
         this.content = content;
         this.writer = writer;
-    }
-
-    public enum Grade {
-        NOTICE, FREE
     }
 
 }

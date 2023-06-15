@@ -19,21 +19,6 @@ import java.lang.reflect.Field;
 @ControllerAdvice
 public class ExceptionController {
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    @ResponseBody
-    public ResponseEntity<ErrorResponse> illegalArgumentExHandler(IllegalArgumentException e) {
-
-        log.info("exception handler 호출");
-        ErrorResponse errorResponse = ErrorResponse.builder()
-                .code("BAD")
-                .message(e.getMessage())
-                .build();
-
-        log.info("errorResponse={}", errorResponse);
-
-        return ResponseEntity.badRequest().body(errorResponse);
-    }
-
     @ResponseBody
     @ExceptionHandler(JJinBBangException.class)
     public ResponseEntity<ErrorResponse> JJinBBangExceptionHandler(JJinBBangException e) {
@@ -60,5 +45,20 @@ public class ExceptionController {
                 .build();
         return  ResponseEntity.status(statusCode)
                 .body(response);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseBody
+    public ResponseEntity<ErrorResponse> illegalArgumentExHandler(IllegalArgumentException e) {
+
+        log.info("exception handler 호출");
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .code("BAD")
+                .message(e.getMessage())
+                .build();
+
+        log.info("errorResponse={}", errorResponse);
+
+        return ResponseEntity.badRequest().body(errorResponse);
     }
 }

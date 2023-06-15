@@ -4,14 +4,19 @@ import com.example.demo.entity.AuthUser;
 import com.example.demo.request.board.CreateBoardRequest;
 import com.example.demo.request.board.UpdateBoardRequest;
 import com.example.demo.request.comment.CommentRequest;
+import com.example.demo.response.ErrorResponse;
 import com.example.demo.response.board.BoardResponse;
 import com.example.demo.response.board.CommunityResponse;
 import com.example.demo.response.comment.CommentResponse;
 import com.example.demo.service.CommunityService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,11 +29,37 @@ public class CommunityController {
 
     private final CommunityService communityService;
 
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseBody
+    public ResponseEntity<ErrorResponse> methodArgumentExHandler(MethodArgumentNotValidException e) {
+        log.info("methodArgumentExHandler 호출");
+
+        BindingResult bindingResult = e.getBindingResult();
+        log.info("result={}", bindingResult);
+
+        FieldError content = bindingResult.getFieldError("content");
+        log.info("content={}", content);
+
+        String defaultMessage = content.getDefaultMessage();
+        log.info("defaultMessage={}", defaultMessage);
+
+        log.info("===================");
+
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .code("BAD")
+                .message(defaultMessage)
+                .build();
+
+        log.info("errorResponse={}", errorResponse);
+
+        return ResponseEntity.badRequest().body(errorResponse);
+    }
+
     /**
      * 게시글 기능
      */
     @PostMapping
-    public ResponseEntity<String> createBoard(@RequestBody CreateBoardRequest request, AuthUser authUser) {
+    public ResponseEntity<String> createBoard(@Valid @RequestBody CreateBoardRequest request, AuthUser authUser) {
         log.info("request={}", request);
 
         Boolean ok = communityService.createBoard(authUser.getUserId(), request);
@@ -46,7 +77,7 @@ public class CommunityController {
                                           @RequestParam(value = "keyword", defaultValue = "") String keyword,
                                           @RequestParam(value = "sort", defaultValue = "id") String sort) {
 
-        log.info("boardList -> page={}, type={}, keyword={}, sort={}", page, type, keyword, sort);
+        log.info("getCommunityList -> page={}, type={}, keyword={}, sort={}", page, type, keyword, sort);
 
         return communityService.getBoardList(page, type, keyword, sort);
     }
@@ -56,9 +87,14 @@ public class CommunityController {
         return communityService.getWriter(authUser.getUserId());
     }
 
-    @GetMapping("/{boardId}")
+    @GetMapping("/{boardId}/get")
     public BoardResponse getBoard(@PathVariable Integer boardId) {
         return communityService.getBoard(boardId);
+    }
+
+    @GetMapping("/{boardId}")
+    public BoardResponse getBoard(@PathVariable Integer boardId, AuthUser authUser) {
+        return communityService.getBoard(authUser.getUserId(), boardId);
     }
 
     @PatchMapping("/{boardId}")

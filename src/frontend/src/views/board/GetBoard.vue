@@ -96,18 +96,15 @@
       <div class="modal-dialog">
         <div class="modal-content">
 
-          <!-- Modal Header -->
           <div class="modal-header">
             <h4 class="modal-title">댓글 수정</h4>
             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
           </div>
 
-          <!-- Modal body -->
           <div class="modal-body">
             <textarea v-model="modifyCommentContent" class="comment-textarea"></textarea>
           </div>
 
-          <!-- Modal footer -->
           <div class="modal-footer">
             <button type="button" class="btn btn-danger" data-bs-dismiss="modal">취소</button>
             <button type="button" @click="modifyCommentBtn" class="btn btn-secondary" data-bs-dismiss="modal">수정
@@ -183,7 +180,6 @@ const addCommentBtn = () => {
         })
         .then((response) => {
           showCustomAlert(response.data);
-          // alert(response.data);
           reloadComment();
           addCommentContent.value = "";
         })
@@ -217,7 +213,6 @@ const modifyCommentBtn = () => {
         })
         .then((response) => {
           showCustomAlert(response.data);
-          // alert(response.data);
           reloadComment();
         })
         .catch((error) => {
@@ -249,7 +244,7 @@ const deleteCommentBtn = (commentId) => {
           }
         })
         .then((response) => {
-          alert(response.data);
+          showCustomAlert(response.data);
           reloadComment();
         })
         .catch((error) => {
@@ -327,12 +322,22 @@ const likeDownBtn = () => {
 
 // 목록으로 가기
 const goListBtn = () => {
-  router.push('/community')
+  console.log(currentUser.value);
+  console.log(boardWriter.value);
+  router.push('/community');
 }
 
 // 게시글 수정
 const modifyBtn = () => {
-  router.push(`/community/board/${props.boardId}/modify`);
+  const token = Cookies.get('accessToken');
+
+  const ok = confirm("게시글을 수정하시겠습니까?");
+
+  if (ok && token && (currentUser.value === boardWriter.value)) {
+    router.push(`/community/board/${props.boardId}/modify`);
+  } else {
+    alert("접근 권한이 없습니다.");
+  }
 };
 
 // 게시글 삭제
@@ -412,7 +417,7 @@ onMounted(() => {
 // 게시글 내용
 onMounted(() => {
   axios
-      .get(`/api/community/board/${props.boardId}`, {})
+      .get(`/api/community/board/${props.boardId}/get`, {})
       .then((response) => {
         board.value = response.data;
         boardWriter.value = response.data.writer;

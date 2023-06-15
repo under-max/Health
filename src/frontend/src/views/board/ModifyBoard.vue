@@ -40,6 +40,7 @@ import {defineProps, onMounted, ref} from "vue";
 import router from "@/router";
 import axios from "axios";
 import Cookies from "vue-cookies";
+import {showCustomAlert} from "@/main";
 
 const props = defineProps({
   boardId: {
@@ -69,7 +70,7 @@ const modifyBtn = () => {
       })
       .then((response) => {
         if (response.data) {
-          alert(response.data);
+          showCustomAlert(response.data);
           router.replace(`/community/board/${props.boardId}`);
         }
       })
@@ -88,16 +89,27 @@ const cancelBtn = () => {
 };
 
 onMounted(() => {
+  const token = Cookies.get('accessToken');
+
   axios
-      .get(`/api/community/board/${props.boardId}`, {})
+      .get(`/api/community/board/${props.boardId}`, {
+        headers: {
+          Authorization: token
+        }
+      })
       .then((response) => {
+        console.log("접근성공!");
         console.log(response.data);
         board.value = response.data;
       })
       .catch((error) => {
-        console.log(error)
+        console.log(error);
+        if (error.response.data) {
+          alert(error.response.data.message);
+        } else {
+          alert(error.response.data);
+        }
         router.replace("/community")
-        alert(error.response.data.message);
       });
 });
 

@@ -59,8 +59,10 @@ const createBtn = () => {
         }
       })
       .catch((error) => {
+        console.log(error.response.data);
+          console.log(error.response.data.errors[0].defaultMessage);
         if (error.response.data) {
-          alert(error.response.data);
+          alert(error.response.data.errors[0].defaultMessage + error.response.data.errors[1].defaultMessage);
           router.push('/community/new');
         }
       });

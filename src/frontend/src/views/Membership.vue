@@ -5,28 +5,27 @@
     <div class="d-flex justify-content-center">
       <div class="row top-padding">
 
-        <div class="col-md-6">
+        <!-- 검색 기능 -->
+        <div>
+          <h4>
+            <span class="text-light">센터 검색</span>
+          </h4>
 
-          <!-- 검색 기능 -->
           <div>
-            <h4>
-              <span class="text-light">센터 검색</span>
-            </h4>
+            <select v-model="searchType" style="width: 100px; height: 30px; padding: 0px">
+              <option value="address">지역</option>
+              <option value="center">센터</option>
+            </select>
+            <input id="search" type="text" v-model="searchKeyword"/>
 
-            <div>
-              <select v-model="searchType" style="width: 100px; height: 30px; padding: 0px">
-                <option value="address">지역</option>
-                <option value="center">센터</option>
-              </select>
-              <input id="search" type="text" v-model="searchKeyword"/>
-
-              <button class="btn btn-secondary" @click="searchConditionBtn">
-                검색
-              </button>
-            </div>
+            <button class="btn btn-secondary" @click="searchConditionBtn">
+              검색
+            </button>
           </div>
+        </div>
 
-          <div>
+        <div class="d-flex">
+          <div style="padding-right: 200px">
             <h4>
               <span class="text-light">이용권 선택</span>
             </h4>
@@ -70,55 +69,57 @@
             </div>
           </div>
 
-        </div>
-
-        <div class="col-md-6">
-          <div class="row col-lg-8">
+          <div>
             <h4>
-              <span class="text-light">선택 사항</span>
+              <span class="text-light membershipSelected">선택 사항</span>
             </h4>
-            <ul class="list-group mb-4">
-              <li class="list-group-item">
-                <div>
-                  <small class="text-body-secondary">센터 / 트레이너</small>
-                  <h5 class="my-0">{{ selectedCenter.centerName }} / {{ selectedTrainer.trainerName }}</h5>
-                </div>
-              </li>
-              <li class="list-group-item">
-                <div>
-                  <small class="text-body-secondary">이용 기간</small>
-                  <h5 class="my-0">{{ selectedMonth }}개월</h5>
-                </div>
-              </li>
-              <li class="list-group-item">
-                <div>
-                  <small class="text-body-secondary">PT 횟수</small>
-                  <h5 class="my-0">{{ selectedPT }}회</h5>
-                </div>
-              </li>
-              <li class="list-group-item d-flex justify-content-between">
-                <div>
-                  <h5 class="my-0">결제 금액</h5>
-                </div>
-                <strong>
-                  {{ formattedTotalPrice }}원
-                </strong>
-              </li>
-            </ul>
+
+            <div>
+              <ul class="list-group mb-4">
+                <li class="list-group-item">
+                  <div>
+                    <small class="text-body-secondary">센터 / 트레이너</small>
+                    <h5 class="my-0">{{ selectedCenter.centerName }} / {{ selectedTrainer.trainerName }}</h5>
+                  </div>
+                </li>
+                <li class="list-group-item">
+                  <div>
+                    <small class="text-body-secondary">이용 기간</small>
+                    <h5 class="my-0">{{ selectedMonth }}개월</h5>
+                  </div>
+                </li>
+                <li class="list-group-item">
+                  <div>
+                    <small class="text-body-secondary">PT 횟수</small>
+                    <h5 class="my-0">{{ selectedPT }}회</h5>
+                  </div>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                  <div>
+                    <h5 class="my-0">결제 금액</h5>
+                  </div>
+                  <strong>
+                    {{ formattedTotalPrice }}원
+                  </strong>
+                </li>
+              </ul>
+            </div>
 
             <div>
               <button class="btn btn-primary" type="submit" data-bs-toggle="modal" data-bs-target="#showPaymentModal"
                       :disabled="isButtonDisabled">카카오페이 결제
                 <i class="fa-solid fa-barcode"></i></button>
             </div>
-
           </div>
+
         </div>
 
-      </div>
-    </div>
 
+      </div>
+
+    </div>
   </div>
+
 
   <div class="modal fade" id="showPaymentModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -135,7 +136,8 @@
           <p>결제 금액 : {{ formattedTotalPrice }}원 </p>
         </div>
         <div class="modal-footer d-flex justify-content-center">
-          <button type="button" class="btn btn-link fs-6 text-decoration-none m-0 border-end" @click="confirmPayment"><strong>구매</strong></button>
+          <button type="button" class="btn btn-link fs-6 text-decoration-none m-0 border-end" @click="confirmPayment">
+            <strong>구매</strong></button>
           <button type="button" class="btn btn-link fs-6 text-decoration-none m-0" data-bs-dismiss="modal">취소</button>
         </div>
       </div>
@@ -326,7 +328,11 @@ select {
   padding: 2vh;
   margin-bottom: 0.1vh;
   border-radius: 5px;
-  width: 400px;
+  width: 500px;
+}
+
+.list-group-item {
+  width: 500px;
 }
 
 select:focus {
