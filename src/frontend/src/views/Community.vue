@@ -49,7 +49,7 @@
     <div class="pt-2 pb-2 d-flex justify-content-between">
 
       <div>
-        123
+        <router-link to="/community/"><i class="fa-solid fa-rotate fa-xl"></i></router-link>
       </div>
 
       <nav class="navbar bg-body-tertiary">
@@ -69,7 +69,9 @@
       </nav>
 
       <div>
-        {{ pageInfo.currentPageNumber }} / {{ pageInfo.lastPageNumber }}
+        {{ pageInfo.currentPageNumber }} / {{ pageInfo.lastPageNumber }} 페이지
+        <button @click="prevPageBtn"><i class="fa-solid fa-arrow-left fa-xl"></i></button>
+        <button @click="nextPageBtn"><i class="fa-solid fa-arrow-right fa-xl"></i></button>
       </div>
 
     </div>
@@ -115,7 +117,6 @@
             </button>
           </li>
           <li v-for="pageNum in computedPageRange" :key="pageNum" class="page-item">
-            <!--      <li v-for="pageNum in computedPageRange" :key="pageNum" :class="['page-item', { 'active': pageNum === pageInfo.currentPageNumber }]">-->
             <button class="page-link" @click="navigateToPage(pageNum)">{{ pageNum }}</button>
           </li>
           <li class="page-item">
@@ -244,6 +245,18 @@ watch([selectedSort, searchType, searchKeyword], () => {
   sessionStorage.setItem("searchType", searchType.value);
   sessionStorage.setItem("searchKeyword", searchKeyword.value);
 });
+
+// 이전 페이지
+const prevPageBtn = () => {
+  const page = pageInfo.value.currentPageNumber - 1;
+  navigateToPage(page);
+};
+
+// 다음 페이지
+const nextPageBtn = () => {
+  const page = pageInfo.value.currentPageNumber + 1;
+  navigateToPage(page);
+};
 
 // 페이지 버튼
 const navigateToPage = (page) => {

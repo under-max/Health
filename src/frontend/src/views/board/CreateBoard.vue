@@ -20,6 +20,7 @@
       <button class="btn btn-primary" type="button" @click="createBtn">등록</button>
       <button class="btn btn-warning" type="button" @click="goListBtn">목록</button>
     </div>
+
   </div>
 </template>
 

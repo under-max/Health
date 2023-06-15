@@ -4,106 +4,72 @@
 
     <div class="d-flex justify-content-center">
       <div class="row top-padding">
+
         <div class="col-md-6">
+
+          <!-- 검색 기능 -->
           <div>
+            <h4>
+              <span class="text-light">센터 검색</span>
+            </h4>
+
             <div>
+              <select v-model="searchType" style="width: 100px; height: 30px; padding: 0px">
+                <option value="address">지역</option>
+                <option value="center">센터</option>
+              </select>
+              <input id="search" type="text" v-model="searchKeyword"/>
 
-              <!-- 검색 기능 -->
-              <h4>
-                <span class="text-light">센터 검색</span>
-              </h4>
-
-              <div>
-                <select v-model="searchType" style="width: 100px; height: 30px; padding: 0px">
-                  <option value="address">지역</option>
-                  <option value="center">센터</option>
-                </select>
-                <input id="search" type="text" v-model="searchKeyword"/>
-
-                <button class="btn btn-secondary" @click="searchConditionBtn">
-                  검색
-                </button>
-              </div>
-
-              <h4>
-                <span class="text-light">이용권 선택</span>
-              </h4>
-
-              <div>
-
-                <div>
-                  <select v-model="selectedCenter" @change="getTrainers">
-                    <option value="">센터를 선택해주세요.</option>
-                    <option v-for="center in centerList" :value="center">
-                      {{ center.centerName }}
-                    </option>
-                  </select>
-                </div>
-
-                <div>
-                  <select v-model="selectedTrainer" v-if="trainerList.length !== 0">
-                    <option value="">트레이너를 선택해주세요.</option>
-                    <option v-for="trainer in trainerList" :value="trainer">
-                      {{ trainer.trainerName }}
-                    </option>
-                  </select>
-                  <select v-else>
-                    <option value="">등록되어 있는 트레이너가 없습니다.</option>
-                  </select>
-                </div>
-
-                <div>
-                  <select v-model="selectedMonth" :disabled="isMonthDisabled">
-                    <option value="">이용 기간을 선택해주세요.</option>
-                    <option v-for="month in monthSelectList" :value="month.value"
-                            :disabled="isMonthOptionDisabled(month)">
-                      {{ month.name }}
-                    </option>
-                  </select>
-                </div>
-
-                <div>
-                  <select v-model="selectedPT" @change="selectPTChange">
-                    <option value="">PT 횟수를 선택해주세요</option>
-                    <option v-for="pt in ptSelectList" :value="pt.value">{{ pt.name }}</option>
-                  </select>
-                </div>
-
-              </div>
-
-              <div v-if="showPaymentModal" class="modal-overlay">
-                <div class="modal modal-sheet position-static d-block bg-body-secondary p-4 py-md-5"
-                     tabindex="-1" role="dialog" id="modalChoice">
-                  <div class="modal-dialog" role="document">
-                    <div class="modal-content rounded-3 shadow">
-                      <div class="modal-body p-4 text-center">
-                        <p class="mb-0">결제 정보</p>
-                        <p class="mb-0">지점 : {{ selectedCenter.centerName }}</p>
-                        <p class="mb-0">담당 트레이너: {{ selectedTrainer.trainerName }}</p>
-                        <p class="mb-0">이용 기간 : {{ selectedMonth }}개월</p>
-                        <p class="mb-0">PT 횟수 : {{ selectedPT === '' ? 0 : selectedPT }}회</p>
-                        <p class="mb-0">결제 금액 : {{ formattedTotalPrice }}원 </p>
-                      </div>
-                      <div class="modal-footer flex-nowrap p-0">
-                        <button type="button"
-                                class="btn btn-lg btn-link fs-6 text-decoration-none col-6 py-3 m-0 rounded-0 border-end"
-                                @click="confirmPayment"><strong>구매</strong></button>
-                        <button type="button"
-                                class="btn btn-lg btn-link fs-6 text-decoration-none col-6 py-3 m-0 rounded-0"
-                                data-bs-dismiss="modal" @click="cancelPayment">취소
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div v-if="payReadyUrl">
-                <p>결제 링크:</p>
-                <a :href="payReadyUrl" target="_blank"> {{ payReadyUrl }}</a>
-              </div>
+              <button class="btn btn-secondary" @click="searchConditionBtn">
+                검색
+              </button>
             </div>
           </div>
+
+          <div>
+            <h4>
+              <span class="text-light">이용권 선택</span>
+            </h4>
+
+            <div>
+              <select v-model="selectedCenter" @change="getTrainers">
+                <option value="">센터를 선택해주세요.</option>
+                <option v-for="center in centerList" :value="center">
+                  {{ center.centerName }}
+                </option>
+              </select>
+            </div>
+
+            <div>
+              <select v-model="selectedTrainer" v-if="trainerList.length !== 0">
+                <option value="">트레이너를 선택해주세요.</option>
+                <option v-for="trainer in trainerList" :value="trainer">
+                  {{ trainer.trainerName }}
+                </option>
+              </select>
+              <select v-else>
+                <option value="">등록되어 있는 트레이너가 없습니다.</option>
+              </select>
+            </div>
+
+            <div>
+              <select v-model="selectedMonth" :disabled="isMonthDisabled">
+                <option value="">이용 기간을 선택해주세요.</option>
+                <option v-for="month in monthSelectList" :value="month.value"
+                        :disabled="isMonthOptionDisabled(month)">
+                  {{ month.name }}
+                </option>
+              </select>
+            </div>
+
+            <div>
+              <select v-model="selectedPT" @change="selectPTChange">
+                <option value="">PT 횟수를 선택해주세요</option>
+                <option v-for="pt in ptSelectList" :value="pt.value">{{ pt.name }}</option>
+              </select>
+            </div>
+          </div>
+
         </div>
 
         <div class="col-md-6">
@@ -111,7 +77,7 @@
             <h4>
               <span class="text-light">선택 사항</span>
             </h4>
-            <ul class="list-group mb-3">
+            <ul class="list-group mb-4">
               <li class="list-group-item">
                 <div>
                   <small class="text-body-secondary">센터 / 트레이너</small>
@@ -141,16 +107,44 @@
             </ul>
 
             <div>
-              <form @submit.prevent="submitPayment">
-                <button class="btn btn-primary" type="submit" :disabled="isButtonDisabled">카카오페이 결제 <i
-                    class="fa-solid fa-barcode"></i></button>
-              </form>
+              <button class="btn btn-primary" type="submit" data-bs-toggle="modal" data-bs-target="#showPaymentModal"
+                      :disabled="isButtonDisabled">카카오페이 결제
+                <i class="fa-solid fa-barcode"></i></button>
             </div>
+
           </div>
         </div>
+
       </div>
     </div>
 
+  </div>
+
+  <div class="modal fade" id="showPaymentModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-3" id="exampleModalLabel">결제 정보</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>지점 : {{ selectedCenter.centerName }}</p>
+          <p>담당 트레이너: {{ selectedTrainer.trainerName }}</p>
+          <p>이용 기간 : {{ selectedMonth }}개월</p>
+          <p>PT 횟수 : {{ selectedPT === '' ? 0 : selectedPT }}회</p>
+          <p>결제 금액 : {{ formattedTotalPrice }}원 </p>
+        </div>
+        <div class="modal-footer d-flex justify-content-center">
+          <button type="button" class="btn btn-link fs-6 text-decoration-none m-0 border-end" @click="confirmPayment"><strong>구매</strong></button>
+          <button type="button" class="btn btn-link fs-6 text-decoration-none m-0" data-bs-dismiss="modal">취소</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div v-if="payReadyUrl">
+    <p>결제 링크:</p>
+    <a :href="payReadyUrl" target="_blank"> {{ payReadyUrl }}</a>
   </div>
 
 </template>
@@ -159,10 +153,6 @@
 import {computed, onMounted, ref, watchEffect} from "vue";
 import axios from "axios";
 import Cookies from "vue-cookies";
-import {RouterLink} from "vue-router";
-
-// 에러 관련
-const errorMessage = ref('');
 
 // 선택한 센터
 const selectedCenter = ref('');
@@ -270,20 +260,6 @@ watchEffect(() => {
   checkCondition();
 });
 
-// 결제버튼 눌렀을 경우 modal 창 보여주기 초기값
-const showPaymentModal = ref(false);
-
-// 결제버튼 눌렀을 시 modal 창 실행되는 메서드
-const submitPayment = () => {
-  console.log(selectedPT.value)
-  showPaymentModal.value = true;
-}
-
-// modal 창에서 취소버튼
-const cancelPayment = () => {
-  showPaymentModal.value = false;
-}
-
 // modal 창에서 구매버튼
 const confirmPayment = () => {
   const {centerId, centerName} = selectedCenter.value;
@@ -347,21 +323,16 @@ onMounted(() => {
 <style scoped>
 
 select {
-  padding: 1rem;
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  width: 430px;
+  padding: 2vh;
+  margin-bottom: 0.1vh;
+  border-radius: 5px;
+  width: 400px;
 }
 
 select:focus {
   outline: none;
   border-color: #007bff;
   box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
-}
-
-select option[disabled] {
-  color: #999;
 }
 
 button.btn-primary {
@@ -374,43 +345,17 @@ button.btn-primary {
   cursor: pointer;
 }
 
-button.btn-primary:hover {
-  background-color: #0069d9;
-  border-color: #0062cc;
-}
-
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-}
 
 .modal-content {
   width: 400px;
 }
 
 .modal {
-  border-radius: 12px;
-  padding: 2rem;
-  height: 500px;
-  width: 600px;
+  padding: 8rem;
 }
 
-.modal-overlay,
-.modal {
-  overflow: auto;
-}
 
 .modal-footer {
-  display: flex;
-  justify-content: center;
   gap: 1rem;
 }
 
