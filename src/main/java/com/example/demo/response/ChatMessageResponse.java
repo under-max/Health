@@ -10,17 +10,19 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class ChatMessageResponse {
     private Integer chatId;
-    private Integer memberId;
-    private LocalDateTime timestamp;
+    private Integer from;
+    private Integer to;
+    private String timestamp;
     private String memberName;
     private String message;
     private String trainerName;
     private Integer authority;
 
     @Builder
-    public ChatMessageResponse(Integer chatId, Integer memberId, LocalDateTime timestamp, String memberName, String message, String trainerName, Integer authority) {
+    public ChatMessageResponse(Integer chatId, Integer from, Integer to, String timestamp, String memberName, String message, String trainerName, Integer authority) {
         this.chatId = chatId;
-        this.memberId = memberId;
+        this.from = from;
+        this.to = to;
         this.timestamp = timestamp;
         this.memberName = memberName;
         this.message = message;

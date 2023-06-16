@@ -1,5 +1,6 @@
 package com.example.demo.request;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,6 +24,7 @@ public class UserEdit {
     private String nickName;
     private String name;
     private String address;
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date birthDate;
     @Builder
 
