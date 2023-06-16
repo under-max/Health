@@ -74,8 +74,8 @@ const messageList = ref({
   message: ''
 });
 const chat = ref({
-  from: '',
-  to: '',
+  messageFrom: '',
+  messageTo: '',
   timestamp: '',
   message: ''
 });
@@ -84,8 +84,8 @@ const sendMessage = () => {
   if (newMessage.value) {
     const token = Cookies.get("accessToken");
     axios.post("/api/chat/saveMessage", {
-      from: user.value.id,
-      to: user.value.trainerId,
+      messageFrom: user.value.id,
+      messageTo: user.value.trainerId,
       message: newMessage.value
     }, {
       headers : {
@@ -94,9 +94,8 @@ const sendMessage = () => {
     })
         .then((response) => {
           // chats.value.push(chat);
-          console.log("memberId", user.value.id)
-          console.log("trainerId", user.value.trainerId)
-          console.log("timestamp", timestamp)
+          console.log("messageFrom", user.value.id)
+          console.log("messageTo", user.value.trainerId)
           console.log("message", newMessage.value)
           newMessage.value = '';
           location.reload();
