@@ -74,21 +74,24 @@ const messageList = ref({
   message: ''
 });
 const chat = ref({
-  memberId: '',
-  trainerId: '',
+  from: '',
+  to: '',
   timestamp: '',
   message: ''
 });
 
 const sendMessage = () => {
   if (newMessage.value) {
-    const timestamp = new Date().toISOString();
+    const token = Cookies.get("accessToken");
     axios.post("/api/chat/saveMessage", {
-      memberId: user.value.id,
-      trainerId: user.value.trainerId,
-      timestamp: timestamp,
+      from: user.value.id,
+      to: user.value.trainerId,
       message: newMessage.value
-    }, {})
+    }, {
+      headers : {
+        Authorization : token
+      }
+    })
         .then((response) => {
           // chats.value.push(chat);
           console.log("memberId", user.value.id)
