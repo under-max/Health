@@ -2,7 +2,9 @@ package com.example.demo.mapper;
 
 import com.example.demo.entity.Schedule;
 import com.example.demo.entity.User;
+import com.example.demo.request.DateRequest;
 import com.example.demo.request.ScheduleRequest;
+import com.example.demo.request.ScheduleUpdateRequest;
 import com.example.demo.response.ScheduleResponse;
 import com.example.demo.response.TrainerDetailResponse;
 import com.example.demo.response.UserListResponse;
@@ -87,19 +89,31 @@ public interface TrainerMapper {
     @Select("""
             SELECT 
                 s.id
-                , m.name as memberName
                 , s.ptTime
                 , ms.remainingPT
-                , m.id as memberId
-                , t.memberId
-            FROM SCHEDULE s
-            LEFT JOIN MEMBER m ON m.id = s.memberId
-            LEFT join TRAINER t on t.id = m.trainerId
-            LEFT JOIN MEMBERSHIP ms ON m.id = ms.memberId
-            WHERE DAY(s.ptTime) = #{dayOfMonth} && t.memberId = #{id}
-            ORDER BY s.ptTime ASC;
+                , t.memberId            AS trainerId
+                , m.id                  AS memberId
+                , m.name                AS memberName
+            FROM 
+                SCHEDULE s
+            LEFT JOIN 
+                MEMBER m ON m.id = s.memberId
+            LEFT JOIN 
+                TRAINER t ON t.id = m.trainerId
+            LEFT JOIN 
+                MEMBERSHIP ms ON m.id = ms.memberId
+            WHERE 
+                DAY(s.ptTime) = #{day}
+            AND
+                MONTH(s.ptTime) = #{month}
+            AND
+                YEAR(s.ptTIme) = #{year}
+            AND
+                t.memberId = #{id}
+            ORDER BY 
+                s.ptTime ASC;
             """)
-    List<Schedule> findByIdWithRes(int dayOfMonth, Long id);
+    List<Schedule> findByIdWithRes(int day, int year, int month, Long id);
 
     @Select("""
             SELECT ptTime
@@ -129,24 +143,44 @@ public interface TrainerMapper {
     Integer deleteMembershipPT(ScheduleRequest scheduleRequest);
 
     @Select("""
-            SELECT 
+            SELECT
                 m.id
                 , m.name
                 , t.centerId
                 , t.memberId
-                , t.info as trainerInfo
+                , t.info 		AS trainerInfo
                 , t.infoDetail
-                , c.name as centerName
-                , c.info as centerInfo
-                , c.address as centerAddress
+                , c.name 		AS centerName
+                , c.info 		AS centerInfo
+                , c.address 	AS centerAddress
                 , m.authority
-            FROM `MEMBER` m
-            LEFT JOIN TRAINER t ON m.id = t.memberId
-            LEFT JOIN CENTER c ON t.centerId = c.id
+                , tf.id			AS trainerFileId
+                , tf.trainerId
+                , tf.fileName
+            FROM
+                `MEMBER` m
+            LEFT JOIN
+                TRAINER t ON m.id = t.memberId
+            LEFT JOIN
+                CENTER c ON t.centerId = c.id
+            LEFT JOIN
+            	TRAINERFILE tf ON tf.trainerId = t.id
             WHERE m.id = #{id};
             """)
     TrainerDetailResponse getTrainerDetail(Integer id);
 
+    @Update("""
+            UPDATE 
+                SCHEDULE
+            SET ptTime = #{ptHour}
+            WHERE id = #{id} AND memberId = #{memberId}
+            """)
+    Integer scheduleUpdate(ScheduleUpdateRequest scheduleUpdateRequest);
+
+
+//    UPDATE SCHEDULE
+//    SET ptTime = '2023-06-01 03:00:00.000'
+//    WHERE id = '165';
 //    @Update("""
 //            UPDATE MEMBERSHIP
 //            SET remainingPT = remainingPT + 1

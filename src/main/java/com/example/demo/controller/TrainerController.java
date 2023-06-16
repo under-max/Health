@@ -1,8 +1,11 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.AuthUser;
+import com.example.demo.entity.Schedule;
 import com.example.demo.entity.Trainer;
+import com.example.demo.request.DateRequest;
 import com.example.demo.request.ScheduleRequest;
+import com.example.demo.request.ScheduleUpdateRequest;
 import com.example.demo.response.ScheduleResponse;
 import com.example.demo.response.TrainerDetailResponse;
 import com.example.demo.response.UserListResponse;
@@ -28,11 +31,6 @@ public class TrainerController {
         return trainerService.getAuthTrainer(authUser.getUserId());
     }
 
-//    @GetMapping("/test/trainer/{id}")
-//    public TrainerDetailResponse trainerDetail(@PathVariable Integer id) {
-//        TrainerDetailResponse trainerDetailRes = trainerService.getTrainerTest();
-//        return trainerDetailRes;
-//    }
 
     @PostMapping("/responsibleUserList/{id}")
     public List<UserListResponse> responsibleUserList(@PathVariable Integer id) {
@@ -46,10 +44,11 @@ public class TrainerController {
         trainerService.schedulePostList(scheduleRequest);
     }
 
-    @PostMapping("/schedule/getList")
-    public Map<Integer, List<ScheduleResponse>> scheduleGetList(AuthUser authUser) {
-        Map<Integer, List<ScheduleResponse>> lists = trainerService.scheduleGetList(authUser.getUserId());
+    @GetMapping("/schedule/getList")
+    public Map<Integer, List<ScheduleResponse>> scheduleGetList(AuthUser authUser, @ModelAttribute DateRequest dateRequest) {
+        Map<Integer, List<ScheduleResponse>> lists = trainerService.scheduleGetList(authUser.getUserId(), dateRequest);
         System.out.println(lists);
+        System.out.println("dateRequest = " + dateRequest);
         return lists;
     }
 
@@ -59,10 +58,17 @@ public class TrainerController {
         trainerService.scheduleDelete(scheduleRequest);
     }
 
-    // 트레이너 상세 페이지 (***작성중***)
+    // 고객으로 로그인했을때 트레이너 상세 정보 확인
     @GetMapping("/trainer/get/{id}")
     public TrainerDetailResponse getTrainerDetail(@PathVariable Integer id) {
         return trainerService.getTrainerDetail(id);
     }
+
+    @PostMapping("/schedule/updateSchedule")
+    public void scheduleUpdate(@RequestBody ScheduleUpdateRequest scheduleUpdateRequest) {
+        System.out.println("scheduleUpdateRequest = " + scheduleUpdateRequest);
+        trainerService.scheduleUpdate(scheduleUpdateRequest);
+    }
+
 
 }

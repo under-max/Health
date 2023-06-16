@@ -14,5 +14,8 @@ public class TrainerDetailResponse {
     private String centerInfo;
     private String trainerInfo;
     private String infoDetail;
+    private String fileName;
+    private Integer trainerId;
+    private Integer trainerFileId;
     private Integer authority;
 }

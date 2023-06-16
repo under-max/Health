@@ -12,20 +12,20 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class UserDetailResponse {
 
-    private String id;
+    private Integer id;
     private String name;
     private Integer isInCenter;
-    private String trainerId;
+    private Integer trainerId;
     private String trainerName;
-    private String centerId;
+    private Integer centerId;
     private String centerName;
     private String centerAddress;
     private String startDate;
     private String endDate;
     private Integer remainingPT;
+    private Integer authority;
 
-    @Builder
-    public UserDetailResponse(String id, String name, Integer isInCenter, String trainerId, String trainerName, String centerId, String centerName, String centerAddress, String startDate, String endDate, Integer remainingPT) {
+    public UserDetailResponse(Integer id, String name, Integer isInCenter, Integer trainerId, String trainerName, Integer centerId, String centerName, String centerAddress, String startDate, String endDate, Integer remainingPT, Integer authority) {
         this.id = id;
         this.name = name;
         this.isInCenter = isInCenter;
@@ -37,5 +37,6 @@ public class UserDetailResponse {
         this.startDate = startDate;
         this.endDate = endDate;
         this.remainingPT = remainingPT;
+        this.authority = authority;
     }
 }

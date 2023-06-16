@@ -5,6 +5,13 @@
       <h1>트레이너 상세 페이지</h1>
 
       <div class="mb-3">
+        <label for="" class="form-label">트레이너 이미지</label>
+        <img
+            :src="`https://bucket0503-1000011011001.s3.ap-northeast-2.amazonaws.com/health/${trainer.centerId}/${trainer.trainerId}/${trainer.fileName}`"
+            alt=""
+        />
+      </div>
+      <div class="mb-3">
         <label for="" class="form-label">트레이너 이름</label>
         <input type="text" class="form-control" :value="trainer.name" id="inputTrainerName" readonly>
       </div>
@@ -56,7 +63,6 @@ onMounted(() => {
 
   })
       .then((response) => {
-        console.log(response)
         trainer.value = response.data;
       })
       .catch((error) => {
@@ -73,5 +79,6 @@ onMounted(() => {
 h1, div {
   color : white;
 }
+
 
 </style>

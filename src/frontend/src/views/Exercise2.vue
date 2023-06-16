@@ -4,9 +4,9 @@
   <hr>
 
     <h1>고객리스트</h1>
-    <table class="card">
+    <table class="table card">
       <thead class="card-header">
-      <tr>
+      <tr class="list-group">
         <th>#</th>
         <th>이름</th>
         <th>생년월일</th>
