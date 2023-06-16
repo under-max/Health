@@ -9,11 +9,14 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 public class ChatSaveMsgRequest {
-    private Integer from;
-    private Integer to;
+    private Integer messageFrom;
+    private Integer messageTo;
     private String message;
 
-
-
-
+    @Builder
+    public ChatSaveMsgRequest(Integer messageFrom, Integer messageTo, String message) {
+        this.messageFrom = messageFrom;
+        this.messageTo = messageTo;
+        this.message = message;
+    }
 }

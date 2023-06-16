@@ -20,7 +20,7 @@ public class ChatController {
     @PostMapping("/chat/saveMessage")
     public void saveMessage(@RequestBody ChatSaveMsgRequest chatSaveMsgRequest, AuthUser authUser) {
         System.out.println("chatSaveMsgRequest = " + chatSaveMsgRequest);
-        chatSaveMsgRequest.setFrom(authUser.getUserId().intValue());
+        chatSaveMsgRequest.setMessageFrom(authUser.getUserId().intValue());
         chatService.saveMessage(chatSaveMsgRequest);
     }
 

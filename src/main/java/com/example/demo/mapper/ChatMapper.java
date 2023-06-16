@@ -14,20 +14,19 @@ public interface ChatMapper {
 
 
     @Insert("""
-            INSERT INTO 
+            INSERT INTO
                 CHAT 
-                    (from, to, message)
+                    (messageFrom, messageTo, message)
                 VALUES 
-                    (#{from}, #{to}, #{message})
+                    (#{messageFrom}, #{messageTo}, #{message})
             """)
-    @Options(useGeneratedKeys = true, keyProperty = "chatId")
     void saveMessage(ChatSaveMsgRequest chatSaveMsgRequest);
 
     @Select("""
             SELECT
             	c.chatId
-            	, c.from
-            	, c.to
+            	, c.messageFrom
+            	, c.messageTo
             	, c.timestamp
             	, m.name		AS memberName
             	, c.message
@@ -35,10 +34,10 @@ public interface ChatMapper {
             	, t.name 		AS trainerName
             FROM CHAT c
             LEFT JOIN
-            	`MEMBER` m ON c.from = m.id
+            	`MEMBER` m ON c.messageFrom = m.id
             LEFT JOIN
             	TRAINER t ON t.id = m.trainerId
-            WHERE c.from = #{from};
+            WHERE c.messageFrom = #{messageFrom};
             """)
-    List<ChatMessageResponse> getMessageList(Integer memberId);
+    List<ChatMessageResponse> getMessageList(Integer messageFrom);
 }

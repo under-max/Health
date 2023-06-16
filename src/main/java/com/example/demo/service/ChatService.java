@@ -19,9 +19,9 @@ public class ChatService {
         chatMapper.saveMessage(chatSaveMsgRequest);
     }
 
-    public List<ChatMessageResponse> getMessageList(Integer memberId) {
-        List<ChatMessageResponse> list = chatMapper.getMessageList(memberId);
-        System.out.println("memberId " + memberId);
+    public List<ChatMessageResponse> getMessageList(Integer messageFrom) {
+        List<ChatMessageResponse> list = chatMapper.getMessageList(messageFrom);
+        System.out.println("messageFrom " + messageFrom);
         return list;
     }
 }
