@@ -37,10 +37,10 @@ public class AuthResolver implements HandlerMethodArgumentResolver {
         String refreshJws = webRequest.getHeader("RefreshToken");
         String jws = "";
         //refreshToken 검증 및 처리"Bearer"+
-        if(refreshJws != null && !refreshJws.equals("")){
-           jws = refreshJws;
-           try{
-               Jws<Claims> claims = Jwts.parserBuilder()
+        if (refreshJws != null && !refreshJws.equals("")) {
+            jws = refreshJws;
+            try {
+                Jws<Claims> claims = Jwts.parserBuilder()
                         .setSigningKey(Keys.hmacShaKeyFor(Base64.getDecoder().decode(appConfig.key)))
 //                        .setAllowedClockSkewSeconds(60) // 1분까지는 시간차이를 허용
                         .build()
@@ -49,9 +49,9 @@ public class AuthResolver implements HandlerMethodArgumentResolver {
                 return AuthUser.builder()
                         .userId(Long.valueOf(userId))
                         .build();
-           } catch (ExpiredJwtException e){
-               throw new Unauthorized("로그인 인증이 만료되었습니다.");
-           }
+            } catch (ExpiredJwtException e) {
+                throw new Unauthorized("로그인 인증이 만료되었습니다.");
+            }
         } else if (accessJws == null || accessJws.equals("")) {
             throw new Unauthorized("로그인이 필요합니다.");
         } else {
@@ -60,15 +60,15 @@ public class AuthResolver implements HandlerMethodArgumentResolver {
 
         // 일반 accessToken 검증 및 처리
         try {
-        Jws<Claims> claims = Jwts.parserBuilder()
-                .setSigningKey(Keys.hmacShaKeyFor(Base64.getDecoder().decode(appConfig.key)))
+            Jws<Claims> claims = Jwts.parserBuilder()
+                    .setSigningKey(Keys.hmacShaKeyFor(Base64.getDecoder().decode(appConfig.key)))
 //                .setAllowedClockSkewSeconds(60) // 1분까지는 시간차이를 허용
-                .build()
-                .parseClaimsJws(jws);
-        String userId = claims.getBody().getSubject();
-        return AuthUser.builder()
-                .userId(Long.valueOf(userId))
-                .build();
+                    .build()
+                    .parseClaimsJws(jws);
+            String userId = claims.getBody().getSubject();
+            return AuthUser.builder()
+                    .userId(Long.valueOf(userId))
+                    .build();
 
         } catch (ExpiredJwtException e) {
             throw new Unauthorized("로그인 인증이 만료되었습니다.");

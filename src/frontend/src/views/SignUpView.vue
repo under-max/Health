@@ -212,6 +212,9 @@ const submitForm = () => {
                     if (error.response) {
                         const errorMessage = error.response.data.errors[0].defaultMessage;
                         showCustomAlert(`${errorMessage}`)
+                        if(error.response.data.message){
+                            showCustomAlert(error.response.data.message)
+                        }
                     }
                 });
         }
@@ -254,7 +257,7 @@ function sample6_execDaumPostcode() {
                 document.getElementById("sample6_extraAddress").value = extraAddr;
 
             } else {
-                document.getElementById("sample6_extraAddress").value = '';
+                document.getElementById("sample6_extraAddress").value = '( )';
             }
 
             // 우편번호와 주소 정보를 해당 필드에 넣는다.
@@ -264,7 +267,7 @@ function sample6_execDaumPostcode() {
             document.getElementById("sample6_detailAddress").focus();
             form.value.add1 = data.zonecode;
             form.value.add2 = addr;
-            form.value.add3 = extraAddr;
+            form.value.add3 = document.getElementById("sample6_extraAddress").value;
         }
     }).open();
 
