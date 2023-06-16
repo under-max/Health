@@ -4,12 +4,14 @@ package com.example.demo.response;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.Map;
 
 
 //@JsonInclude(value = JsonInclude.Include.NON_EMPTY)//값이없으면 전송하지 않음
 @Setter
+@ToString
 public class ErrorResponse {
     private final String code;
     private final String message;

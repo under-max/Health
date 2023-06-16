@@ -15,6 +15,9 @@ import TrainerDetail from "@/views/TrainerDetail.vue";
 import SuccessPage from "@/views/payment/SuccessPage.vue";
 import CancelPage from "@/views/payment/CancelPage.vue";
 import TrainerCalendar from "../views/TrainerCalendar.vue";
+import CreateBoard from "@/views/board/CreateBoard.vue";
+import GetBoard from "@/views/board/GetBoard.vue";
+import ModifyBoard from "@/views/board/ModifyBoard.vue";
 
 
 const router = createRouter({
@@ -79,14 +82,14 @@ const router = createRouter({
             component: SignUpView
         },
         {
-          path: '/kakaologin',
-          name: 'kakaologin',
-          component: KakaoLogin
+            path: '/kakaologin',
+            name: 'kakaologin',
+            component: KakaoLogin
         },
         {
-          path: '/addinfo',
-          name: 'addinfo',
-          component: AddInfo
+            path: '/addinfo',
+            name: 'addinfo',
+            component: AddInfo
         },
         {
             path: '/payment/success',
@@ -97,6 +100,23 @@ const router = createRouter({
             path: '/payment/cancel',
             name: 'cancelPage',
             component: CancelPage
+        },
+        {
+            path: '/community/new',
+            name: 'createBoard',
+            component: CreateBoard
+        },
+        {
+            path: '/community/board/:boardId',
+            name: 'getBoard',
+            component: GetBoard,
+            props: true
+        },
+        {
+            path: '/community/board/:boardId/modify',
+            name: 'modifyBoard',
+            component: ModifyBoard,
+            props: true
         }
     ]
 })

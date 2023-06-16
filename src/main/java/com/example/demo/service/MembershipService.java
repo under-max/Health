@@ -7,7 +7,7 @@ import com.example.demo.request.membership.SimpleCenter;
 import com.example.demo.request.membership.SimpleTrainer;
 import com.example.demo.request.membership.UpdateMemberDto;
 import com.example.demo.response.membership.MembershipResponse;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,14 +40,16 @@ public class MembershipService {
         return getMembershipByMembershipId(membershipId);
     }
 
-    public List<SimpleCenter> getCenters() {
-        return membershipMapper.findCenters().stream()
+    /**
+     * 검색 기능
+     */
+    public List<SimpleCenter> getCenters(String type, String keyword) {
+        return membershipMapper.findCenters(type, keyword).stream()
                 .map(center -> SimpleCenter.builder()
                         .centerId(center.getId())
                         .centerName(center.getName())
                         .build())
                 .collect(Collectors.toList());
-
     }
 
     public List<SimpleTrainer> getTrainers(Integer centerId) {
@@ -98,7 +100,6 @@ public class MembershipService {
 
         Membership findMembership = getMembershipByMemberId(request.getMemberId());
 
-        //TODO 만약 선택하지 않았다면 조회하는 기능이 필요한가
         LocalDate start = findMembership.getEndDate();
         LocalDate addDate = start.plusMonths(request.getPaymentMonths());
 
@@ -117,7 +118,7 @@ public class MembershipService {
     }
 
     private void updateMember(CreateMembershipRequest request) {
-        
+
         UpdateMemberDto dto = UpdateMemberDto.builder()
                 .memberId(request.getMemberId())
                 .centerId(request.getCenterId())
@@ -125,5 +126,15 @@ public class MembershipService {
                 .build();
 
         membershipMapper.updateMember(dto);
+    }
+
+
+    public Integer getRemainingPT(Long userId) {
+        Membership membership = membershipMapper.findByMemberId(userId.intValue());
+
+        if (membership == null) {
+            return -1;
+        }
+        return membership.getRemainingPT();
     }
 }

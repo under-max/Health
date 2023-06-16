@@ -5,6 +5,7 @@ import com.example.demo.entity.Membership;
 import com.example.demo.entity.Trainer;
 import com.example.demo.request.membership.UpdateMemberDto;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,7 +13,7 @@ import java.util.Optional;
 @Mapper
 public interface MembershipMapper {
 
-    Integer createMembership(Membership membership);
+    void createMembership(Membership membership);
 
     Optional<Membership> findByMembershipId(Integer membershipId);
 
@@ -22,7 +23,8 @@ public interface MembershipMapper {
 
     Integer updateMember(UpdateMemberDto dto);
 
-    List<Center> findCenters();
+    List<Center> findCenters(@Param("type") String type, @Param("keyword") String keyword);
 
     List<Trainer> findTrainers(Integer centerId);
+
 }

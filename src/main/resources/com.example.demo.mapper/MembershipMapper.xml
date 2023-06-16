@@ -39,7 +39,17 @@
     </update>
 
     <select id="findCenters" resultType="Center">
-        select id, name from CENTER
+        select
+            id, name
+        from CENTER
+        <where>
+            <if test="type eq 'address'">
+                or address like concat ('%', #{keyword}, '%')
+            </if>
+            <if test="type eq 'center'">
+                or name like concat ('%', #{keyword}, '%')
+            </if>
+        </where>
     </select>
 
     <select id="findTrainers" resultType="Trainer">

@@ -2,14 +2,13 @@ package com.example.demo.request.membership;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class SimpleCenter {
     private Integer centerId;
     private String centerName;
-
-    public SimpleCenter() {
-    }
 
     @Builder
     public SimpleCenter(Integer centerId, String centerName) {

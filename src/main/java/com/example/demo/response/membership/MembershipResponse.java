@@ -2,10 +2,12 @@ package com.example.demo.response.membership;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
 @Data
+@NoArgsConstructor
 public class MembershipResponse {
     private LocalDate startDate;
     private LocalDate endDate;
