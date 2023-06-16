@@ -17,7 +17,14 @@ public class CenterResponse {
 
     private String phoneNumber;
 
+
+    private Double star;
+
+    private List<Long> trainerId;
+
     private List<String> fileName;
+
+    private List<String> trainerName;
 
     public CenterResponse(Center center) {
         this.id = center.getId();
@@ -26,6 +33,9 @@ public class CenterResponse {
         this.info = center.getInfo();
         this.phoneNumber = center.getPhoneNumber();
         this.fileName = center.getFileName();
+        this.trainerName = center.getTrainerName();
+        this.trainerId = center.getTrainerId();
+        this.star = center.getStar();
     }
 
 
@@ -35,12 +45,14 @@ public class CenterResponse {
     }
 
     @Builder
-    public CenterResponse(Integer id, String name, String address, String info, String phoneNumber, List<String> fileName){
+    public CenterResponse(Integer id, String name, String address, String info, String phoneNumber,List<Long> trainerId, List<String> fileName, List<String> trainerName){
         this.id = id;
         this.name = name;
         this.address = address;
         this.info = info;
         this.phoneNumber = phoneNumber;
         this.fileName = fileName;
+        this.trainerName = trainerName;
+        this.trainerId = trainerId;
     }
 }

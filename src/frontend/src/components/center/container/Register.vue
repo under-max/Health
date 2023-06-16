@@ -44,7 +44,7 @@
 <script setup>
 import {ref, defineProps, defineEmits} from 'vue';
 import axios from 'axios';
-import Toast from '../ui/Toast.vue';
+
 
 //url
 const url = "http://localhost:8090/";
@@ -128,6 +128,9 @@ const centerTotalSubmit = async (e) => {
   background: white;
   border-radius: 30px;
   padding: 20px;
+
+  max-height: 70%;
+  overflow-y: auto;
 }
 
 

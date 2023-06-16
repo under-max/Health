@@ -17,7 +17,8 @@ body{
   background-color: #112470;
   background-image: linear-gradient(176deg, #112470 35%, #fff);
   background-repeat: no-repeat;
-  height: 100vh;
+  min-height: 100vh;
+  height: auto;
 }
 .custom-alert {
     position: fixed;

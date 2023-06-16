@@ -1,5 +1,5 @@
 <template>
-  <header class="navBars">
+<header class="navBars">
     <nav class="navBar">
       <div class="desktop">
         <ul class="no_dot">
@@ -45,17 +45,17 @@
             </template>
             <template v-else>
               <button @click="logout()">
-                <RouterLink to="/">로그아웃</RouterLink>
+                  <RouterLink to="/">로그아웃</RouterLink>
               </button>
               <button>
-                <RouterLink to="/info">개인정보수정</RouterLink>
+                  <RouterLink to="/info">개인정보수정</RouterLink>
               </button>
             </template>
           </li>
 
         </ul>
       </div>
-    </nav>
+    </nav>   
   </header>
 </template>
 
@@ -75,52 +75,57 @@ const logout = function () {
   Cookies.remove('refreshToken'); // 쿠키에서 refresh token 값 삭제
   router.replace("/")
 }
-
 </script>
 
 <style scoped>
-.navBars {
-  height: 50px;
+.navBars{
+  /* height: auto;
   width: 100%;
-  margin-bottom: 0px;
+  margin-bottom: 0px; */
 
+  height: auto;
+  width: 100%;
+  margin-bottom: 0;
+  display: flex;
+  justify-content: center;
+  
 }
-
 .navBar {
-  position: fixed;
-  z-index: 99;
-  top: 0;
+
   width: 100%;
-  border: 2px, solid, black;
+  max-width: auto;
+  padding: 0 20px;
+  background-color: #112470;
 }
 
 .no_dot {
   list-style-type: none;
-  display: flex;
+  display: flex;  
   justify-content: space-around;
-
+  
   margin: 0px;
 }
 
-.no_dot a {
+.no_dot a{
   text-decoration: none;
-  color: white;
+  color: white;   
   font-size: 21px;
-
 }
 
 .no_dot button {
   background-color: #112470;
   border: none;
   border-radius: 50px;
+  padding: 10px 30px;
+  transition: background-color 0.3s ease;
 }
 
-.no_dot button:hover {
+.no_dot button:hover{
   background-color: rgba(255, 255, 255, 0.3);
   padding: 10px 30px;
 }
 
-.no_dot li:not(:first-of-type) {
+.no_dot li:not(:first-of-type){
   margin-top: 15px;
   margin-bottom: 15px;
 
@@ -130,4 +135,15 @@ const logout = function () {
   margin-top: 10px;
 }
 
+
+.logo img{
+  padding-top: 1vh;
+}
+
+</style>
+
+<style>
+.navBar{
+  background-color: #112470;
+}
 </style>

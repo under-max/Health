@@ -218,8 +218,7 @@ const trainer_img = (e) => {
 // Controller 송신
 const trainerInfoSubmitBtn = async(e) => {
   e.preventDefault();
-  console.log(trainer_pic.value[0]);
-  console.log(trainerData.value);
+  
 
   const trainerTotalData = new FormData();
   for (let i = 0; i < trainer_pic.value.length; i++) {

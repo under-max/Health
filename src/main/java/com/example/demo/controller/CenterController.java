@@ -1,8 +1,7 @@
 package com.example.demo.controller;
 
-import com.example.demo.entity.Center;
-import com.example.demo.entity.CenterMember;
-import com.example.demo.entity.CenterTrainer;
+import com.example.demo.config.AuthResolver;
+import com.example.demo.entity.*;
 import com.example.demo.request.CenterRequest;
 import com.example.demo.response.CenterResponse;
 import com.example.demo.service.CenterService;
@@ -12,7 +11,9 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -131,5 +132,101 @@ public class CenterController {
 
     }
 
+    //트레이너 정보수정 진행 검색창
+    @GetMapping("/center/searchCenterName")
+    public List<CenterResponse> centerSearchCenterNameOrTrainerName(@RequestParam("searchName") String searchName){               ;
 
+        List<CenterResponse> centerResponses = centerService.searchCenterNameOrTrainerName(searchName);
+
+        return centerResponses;
+    }
+
+    //트레이너 정보수정 join 테이블 처리
+    @GetMapping("/center/modifyTrainerSearch")
+    public List<CenterTrainer> centerTrainerModifyResult(@RequestParam("centerName") String centerName){
+
+        List<CenterTrainer> list = centerService.searchJoinTrainerCenterName(centerName);
+
+        return list;
+    }
+
+    //트레이너 삭제
+    @DeleteMapping("/center/deleteTrainer")
+    public void centerDeleteTrainer(@RequestBody CenterTrainer data){
+        centerService.deleteTrainer(data);
+        System.out.println(data);
+    }
+
+    //트레이너 정보 수정
+    @PutMapping("/center/trainerModify")
+    public void centerTrainerModify(@RequestParam(value = "trainerImg", required = false) MultipartFile[] trainerImg,
+                                    @RequestParam("trainerId") Long trainerId,
+                                    @RequestParam("centerId") Long centerId,
+                                    @RequestParam(value = "removeImg", required = false) String removeImg,
+                                    @RequestParam("modifyInfo") String modifyInfo) throws Exception{
+
+
+        centerService.modifyTrainer(trainerImg, trainerId, removeImg, modifyInfo, centerId);
+
+    }
+
+
+    @GetMapping("/center/allCenterList")
+    public Map<String, Object> allCenterList(@RequestParam("limit") Long limit, @RequestParam("offset") Long offset){
+
+        Map<String, Object> responses = centerService.getAllCenterList(limit,offset);
+
+        return responses;
+    }
+
+
+    @GetMapping("/center/{id}")
+    public CenterResponse centerDetail(@RequestParam("centerId") Long centerId){
+        return centerService.getCenterDetailByCenterId(centerId);
+    }
+
+
+    @GetMapping("center/getTrainerDetail")
+    public CenterTrainer getTrainerDetailByMemberId(@RequestParam("trainerId") Long trainerId){
+        return centerService.getTrainerDetailByMemberId(trainerId);
+    }
+
+   @GetMapping("center/checkToken")
+    public CenterMember checkToken(AuthUser authUser){
+
+        return centerService.getMemberInfoByMemberId(authUser.getUserId());
+    }
+
+
+    @PostMapping("center/insertCenterComment")
+    public void insertCenterComment(@RequestBody CenterComment centerComment){
+        centerService.insertCenterComment(centerComment);
+    }
+
+    @GetMapping("center/getCenterComment")
+    public Map<String, Object> getCenterComment(@RequestParam("centerId") Long centerId,
+                                                @RequestParam("offset") Long offset){
+        Map<String,Object> list = centerService.getCenterComment(centerId, offset);
+        return list;
+    }
+
+    @DeleteMapping("/center/deleteCenterComment")
+    public void deleteCenterComment(@RequestParam("id") Long id){
+        System.out.println(id);
+        centerService.deleteCenterCommentById(id);
+    }
+
+    @PutMapping("/center/modifyCenterComment")
+    public void modifyCenterComment(@RequestBody CenterComment centerComment){
+        System.out.println(centerComment);
+        centerService.modifyCenterCommentById(centerComment);
+    }
+
+    @GetMapping("/center/centerSearchByType")
+    public Map<String, Object> centerSearchByType(@RequestParam("searchType") String searchType,
+                                   @RequestParam("searchValue") String searchValue,
+                                   @RequestParam("offset") Long offset){
+        Map<String, Object> responses = centerService.centerSearchByType(searchType, searchValue, offset);
+        return responses;
+    }
 }

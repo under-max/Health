@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.entity.Center;
+import com.example.demo.entity.CenterComment;
 import com.example.demo.entity.CenterMember;
 import com.example.demo.entity.CenterTrainer;
 import com.example.demo.mapper.CenterMapper;
@@ -10,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -19,9 +19,9 @@ import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -177,9 +177,6 @@ public class CenterService {
 
     public List<CenterResponse> getCenterNameForTrainer(String centerName) {
         List<Center> nameAndId = centerMapper.getCenterNameForTrainer(centerName);
-        for(Center na: nameAndId){
-            System.out.println(na.getId());
-        }
 
         List<CenterResponse> response = new ArrayList<>();
         for(Center naId: nameAndId){
@@ -230,6 +227,183 @@ public class CenterService {
         centerMapper.updateMemberAuthority(centerMember.getCenterId(),centerMember.getAuthority(),centerMember.getId());
 
     }
+
+
+    public List<CenterResponse> searchCenterNameOrTrainerName(String searchName) {
+
+            //검색요청이 centerName 기준일떄 (join을 위해서 일단 centerId필요 Center테이블 검색, 전체 테이블 CENTER, CENTERFILE, TRAINER, MEMBER)
+            List<Center> centers = centerMapper.searchByCenterName(searchName);
+
+            List<CenterResponse> centerResponse = new ArrayList<>();
+            for (Center center: centers){
+                centerResponse.add(new CenterResponse(center));
+            }
+
+            return centerResponse;
+    }
+
+    //Join 통한 필요테이블 소환
+    public List<CenterTrainer> searchJoinTrainerCenterName(String centerName) {
+
+        List<CenterTrainer> list = centerMapper.searchJoinTrainerCenterName(centerName);
+
+        return list;
+    }
+
+    //Trainer 정보 삭제 (aws삭제, db삭제(1. trainerFile테이블 삭제, 2. trainer테이블 삭제, 3. member테이블(centerId = null, authority = 1) ))
+    public void deleteTrainer(CenterTrainer data) {
+
+        // aws 삭제
+        String objectKey = "health/" + data.getCenterId() + "/"+ data.getId() +"/" + data.getFileName();
+        DeleteObjectRequest dor = DeleteObjectRequest.builder()
+                .bucket(bucketName)
+                .key(objectKey)
+                .build();
+        s3.deleteObject(dor);
+
+        //db삭제
+        //1.TrainerFile 테이블 삭제
+        centerMapper.deleteTrainerFileByTrainerId(data.getId());
+
+        //2.Trainer 테이블 삭제
+        centerMapper.deleteTrainerByTrainerId(data.getId());
+
+        // 3.member 테이블에서 centerId = null, authority = 1 로 업데이트, WHERE 조건 memberID 필요
+        Long authority = 1L;
+        String centerId = null;
+        centerMapper.updateMemberCenterIdAndAuthority(centerId, authority, data.getMemberId());
+    }
+
+    public void modifyTrainer(MultipartFile[] trainerImg, Long trainerId, String removeImg, String modifyInfo, Long centerId) throws Exception{
+
+        //트레이너 이미지는 하나만 등록해야함 remove가 있다는건 등록할 trainerImg 도 있다는 뜻
+        // 삭제할 파일명 있을수도 없을수도 있음
+        if(removeImg != null && !removeImg.equals("")){
+            System.out.println("파일명 있으니까 지움");
+            //aws 삭제로직
+            String objectKey = "health/" + centerId + "/"+ trainerId +"/" + removeImg;
+            DeleteObjectRequest dor = DeleteObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(objectKey)
+                    .build();
+            s3.deleteObject(dor);
+            //db TrainerFIle 삭제 로직
+
+            centerMapper.deleteTrainerFileByTrainerId(trainerId);
+        }
+        // 추가할 파일명 있을수도 없을 수도 있음
+
+        if(trainerImg != null){
+            for (MultipartFile file : trainerImg){
+                if(file.getSize() > 0){
+                    String objectKey = "health/" + centerId + "/" + trainerId + "/" + file.getOriginalFilename();
+                    PutObjectRequest por = PutObjectRequest.builder()
+                            .bucket(bucketName)
+                            .key(objectKey)
+                            .acl(ObjectCannedACL.PUBLIC_READ)
+                            .build();
+
+                    RequestBody rb = RequestBody.fromInputStream(file.getInputStream(), file.getSize());
+                    s3.putObject(por,rb);
+
+                    //db TrainerFile 추가 로직
+                    centerMapper.inputTrainerFile(trainerId, centerId, file.getOriginalFilename());
+                }
+            }
+       }
+
+        //trainer info 업데이트 로직(trainerId로 검색, 바꿀 내용 modifyInfo)
+        centerMapper.modifyTrainerByTrainerId(modifyInfo, trainerId);
+    }
+
+
+    public Map<String, Object> getAllCenterList(Long limit, Long offset) {
+        List<Center> centers = centerMapper.getAllCenterList(limit, offset);
+        List<CenterResponse> response = new ArrayList<>();
+
+        Long centerCount = centerMapper.getAllCenterCount();
+
+        for (Center center: centers){
+            response.add(new CenterResponse(center));
+        }
+
+        Map<String, Object> responses = new HashMap<>();
+        responses.put("center", response);
+        responses.put("centerCount", centerCount);
+        return responses;
+    }
+
+
+
+    public CenterResponse getCenterDetailByCenterId(Long centerId) {
+
+        CenterResponse responses = new CenterResponse(centerMapper.getCenterDetailByCenterId(centerId));
+        return responses;
+    }
+
+
+    public CenterTrainer getTrainerDetailByMemberId(Long trainerId) {
+
+        return centerMapper.getTrainerDetailByMemberId(trainerId);
+    }
+
+
+
+    public CenterMember getMemberInfoByMemberId(Long userId) {
+        CenterMember centerMember = centerMapper.getMemberInfoByMemberId(userId);
+        return centerMember;
+    }
+
+
+    public void insertCenterComment(CenterComment centerComment) {
+        centerMapper.insertCenterComment(centerComment);
+    }
+
+
+    public Map<String, Object> getCenterComment(Long centerId, Long offset) {
+        Map<String, Object> commentList = new HashMap<>();
+        List<CenterComment> centerList = centerMapper.getCenterComment(centerId, offset);
+        commentList.put("centerCommentData", centerList);
+
+        Long count = centerMapper.getCenterCommentCount();
+        commentList.put("centerCommentCount",count);
+
+        return commentList;
+    }
+
+
+    public void deleteCenterCommentById(Long id) {
+        centerMapper.deleteCenterCommentById(id);
+    }
+
+
+
+    public void modifyCenterCommentById(CenterComment centerComment) {
+        centerMapper.modifyCenterCommentById(centerComment);
+    }
+
+
+
+    public Map<String, Object> centerSearchByType(String searchType, String searchValue, Long offset) {
+
+        List<Center> centers = centerMapper.centerSearchByType(searchType, searchValue, offset);
+        Long searchCount = centerMapper.centerSearchByTypeCount(searchType, searchValue);
+        List<CenterResponse> centerResponse = new ArrayList<>();
+
+        for(Center center: centers){
+            centerResponse.add(new CenterResponse(center));
+
+        }
+
+        Map<String, Object> responses = new HashMap<>();
+
+        responses.put("centerSearchList", centerResponse);
+        responses.put("searchCount", searchCount);
+
+        return responses;
+    }
+
+
 }
 
 
