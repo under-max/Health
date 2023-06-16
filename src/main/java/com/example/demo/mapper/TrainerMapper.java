@@ -84,7 +84,7 @@ public interface TrainerMapper {
             SELECT * FROM SCHEDULE
             WHERE memberId = #{memberId} && ptTime = #{pt}
             """)
-    Optional<ScheduleResponse> findByMemberId(Integer memberId, LocalDateTime pt);
+    Optional<ScheduleResponse> findByMemberId(@Param("memberId") Integer memberId, @Param("pt") LocalDateTime pt);
 
     @Select("""
             SELECT 
@@ -113,7 +113,7 @@ public interface TrainerMapper {
             ORDER BY 
                 s.ptTime ASC;
             """)
-    List<Schedule> findByIdWithRes(int day, int year, int month, Long id);
+    List<Schedule> findByIdWithRes(@Param("day") int day, @Param("year") int year, @Param("month") int month, @Param("id") Long id);
 
     @Select("""
             SELECT ptTime
@@ -177,15 +177,5 @@ public interface TrainerMapper {
             """)
     Integer scheduleUpdate(ScheduleUpdateRequest scheduleUpdateRequest);
 
-
-//    UPDATE SCHEDULE
-//    SET ptTime = '2023-06-01 03:00:00.000'
-//    WHERE id = '165';
-//    @Update("""
-//            UPDATE MEMBERSHIP
-//            SET remainingPT = remainingPT + 1
-//            WHERE memberId = #{memberId};
-//            """)
-//    Integer deleteMembershipPT(Integer memberId);
 }
 
