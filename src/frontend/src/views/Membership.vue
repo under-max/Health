@@ -21,6 +21,10 @@
             <button class="btn btn-secondary" @click="searchConditionBtn">
               검색
             </button>
+
+            <button class="btn btn-secondary" style="margin-left: 60px" @click="centerAndTrainerInfo">
+              정보 보기
+            </button>
           </div>
         </div>
 
@@ -40,14 +44,11 @@
             </div>
 
             <div>
-              <select v-model="selectedTrainer" v-if="trainerList.length !== 0">
+              <select v-model="selectedTrainer">
                 <option value="">트레이너를 선택해주세요.</option>
                 <option v-for="trainer in trainerList" :value="trainer">
                   {{ trainer.trainerName }}
                 </option>
-              </select>
-              <select v-else>
-                <option value="">등록되어 있는 트레이너가 없습니다.</option>
               </select>
             </div>
 
@@ -193,10 +194,10 @@ const monthSelectList = ref([
 // PT 횟수 리스트
 const ptSelectList = ref([
   {name: "선택안함", value: 0, price: 0},
-  {name: "10회 / 1개월", value: 10, price: 300000},
-  {name: "20회 / 2개월", value: 20, price: 600000},
-  {name: "30회 / 3개월", value: 30, price: 800000},
-  {name: "60회 / 6개월", value: 60, price: 1000000}
+  {name: "10회", value: 10, price: 300000},
+  {name: "20회", value: 20, price: 600000},
+  {name: "30회", value: 30, price: 800000},
+  {name: "60회", value: 60, price: 1000000}
 ]);
 
 // 이용 기간, PT 횟수 가격 합계

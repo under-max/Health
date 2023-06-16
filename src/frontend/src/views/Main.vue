@@ -7,7 +7,11 @@
       </div>
       <div class="btn_wrap">
         <!-- Don't watch today --->
-        <button class="btn_today_close" @click="hidePopupToday"><span>Do not close today</span></button>
+        <button class="btn_today_close" @click="hidePopupToday">
+          <span>
+            <input type="checkbox">오늘 하루 안보기
+          </span>
+        </button>
         <!-- just close --->
         <button class="btn_close" @click="hidePopup">close</button>
       </div>
@@ -16,18 +20,20 @@
 
   <div v-if="isRemainingPT()">
     <div class="position-fixed top-0 end-0 p-3">
-      <hr>
-      <div class="toast show" style="width: 180px" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="1000">
-          <div class="toast-header">
-            <strong class="me-auto text-danger">알림</strong>
-            <small></small>
-            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-          </div>
-          <div class="toast-body">
-            PT {{ remainingPT }}회 남았습니다.
-          </div>
+      <br>
+      <br>
+      <div class="toast show" style="width: 180px" role="alert" aria-live="assertive" aria-atomic="true"
+           data-bs-delay="1000">
+        <div class="toast-header">
+          <strong class="me-auto text-danger">알림</strong>
+          <small></small>
+          <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+          PT {{ remainingPT }}회 남았습니다.
         </div>
       </div>
+    </div>
   </div>
 
   <main class="hero">
@@ -55,15 +61,15 @@ import Cookies from "vue-cookies";
 import {onMounted, ref} from "vue";
 import axios from "axios";
 
-const showPopup = ref(false);
+const showPopup = ref(true);
 
-// Define storage control functions
 const handleStorage = {
   // write data to storage (name, expiration date)
   setStorage: function (name, exp) {
     // Get the expiration time (change exp to ms)
     var date = new Date();
-    date = date.setTime(date.getTime() + exp * 24 * 60 * 60 * 1000);
+    // date = date.setTime(date.getTime() + exp * 24 * 60 * 60 * 1000);
+    date = date.setTime(date.getTime() + exp);
 
     // save to local storage
     // (store the expiration time without storing the value separately)
@@ -72,7 +78,7 @@ const handleStorage = {
   // read storage
   getStorage: function (name) {
     var now = new Date();
-    now = now.setTime(now.getTime());
+    // now = now.setTime(now.getTime());
     // Compare the current time with the time stored in the storage
     // returns true if time is left, false otherwise
     return parseInt(localStorage.getItem(name)) > now;
@@ -126,6 +132,7 @@ onMounted(() => {
         });
   }
 });
+
 </script>
 
 <style scoped>
@@ -206,17 +213,30 @@ button {
   left: 50px;
   display: none;
 }
+
+.main_popup2 {
+  position: fixed;
+  z-index: 1005;
+  -webkit-box-shadow: 0px 13px 40px -6px #061626;
+  box-shadow: 0px 13px 40px -6px #061626;
+  top: 50px;
+  left: 50px;
+  display: none;
+}
+
 .main_popup.on {
   display: block;
   background-color: #fff;
 }
+
 .main_popup .img_wrap {
-  width: 200px;
-  height: 200px;
+  width: 400px;
+  height: 400px;
   display: flex;
   justify-content: center;
   align-items: center;
 }
+
 .main_popup .btn_close {
   width: 32px;
   height: 32px;
@@ -227,6 +247,7 @@ button {
   border: 0;
   background: none;
 }
+
 .main_popup .btn_close::before {
   content: "";
   width: 2px;
@@ -237,6 +258,7 @@ button {
   left: 15px;
   transform: rotate(45deg);
 }
+
 .main_popup .btn_close::after {
   content: "";
   width: 32px;
@@ -247,6 +269,7 @@ button {
   left: 0;
   transform: rotate(45deg);
 }
+
 .main_popup .btn_today_close {
   width: 100%;
   height: 45px;
@@ -256,6 +279,7 @@ button {
   font-size: 14px;
   display: block;
 }
+
 .main_popup .btn_today_close span {
   display: block;
   line-height: 40px;
