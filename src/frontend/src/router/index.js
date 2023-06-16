@@ -1,5 +1,6 @@
 import {createRouter, createWebHistory} from 'vue-router'
 import Center from "@/views/Center.vue";
+import CenterDetail from "../components/center/container/CenterDetail.vue";
 
 import Exercise from "@/views/Exercise.vue";
 import Membership from "@/views/Membership.vue";
@@ -19,6 +20,8 @@ import CreateBoard from "@/views/board/CreateBoard.vue";
 import GetBoard from "@/views/board/GetBoard.vue";
 import ModifyBoard from "@/views/board/ModifyBoard.vue";
 
+import CenterRegister from "@/views/AdminCenterRegister.vue"
+import TrainerRegister from "@/views/AdminTrainerRegister.vue"
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -32,6 +35,21 @@ const router = createRouter({
             path: '/center',
             name: 'center',
             component: Center,
+        },
+        {
+            path: '/center/:id',
+            name: 'centerDetail',
+            component: CenterDetail,
+        },
+        {
+            path: '/center/centerRegister',
+            name: 'centerRegister',
+            component: CenterRegister
+        },
+        {
+            path: '/center/trainerRegister',
+            name: 'trainerRegister',
+            component: TrainerRegister
         },
         {
             path: '/membership',

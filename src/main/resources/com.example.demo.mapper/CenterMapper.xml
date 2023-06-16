@@ -22,4 +22,48 @@
         </collection>
     </resultMap>
 
+
+    <resultMap id="getAllCenterList" type="Center">
+        <id property="id" column="id" />
+        <result property="name" column="name" />
+        <result property="address" column="address" />
+        <result property="info" column="info" />
+        <result property="phoneNumber" column="phoneNumber" />
+        <result property="star" column="star"/>
+        <collection property="fileName" ofType="string">
+            <result column="fileName"></result>
+        </collection>
+    </resultMap>
+
+    <resultMap id="getCenterDetailByCenterId" type="Center">
+        <id property="id" column="id" />
+        <result property="name" column="name" />
+        <result property="address" column="address" />
+        <result property="info" column="info" />
+        <result property="phoneNumber" column="phoneNumber" />
+
+        <collection property="fileName" ofType="string">
+            <result column="fileName"></result>
+        </collection>
+        <collection property="trainerName" ofType="string">
+            <result column="trainerName"></result>
+        </collection>
+        <collection property="trainerId" ofType="long">
+            <result column="trainerId"></result>
+        </collection>
+    </resultMap>
+
+
+    <resultMap id="searchCenterListByType" type="Center">
+        <id property="id" column="id" />
+        <result property="name" column="name" />
+        <result property="address" column="address" />
+        <result property="info" column="info" />
+        <result property="phoneNumber" column="phoneNumber" />
+        <result property="star" column="star"/>
+        <collection property="fileName" ofType="string">
+            <result column="fileName"></result>
+        </collection>
+    </resultMap>
+
 </mapper>
