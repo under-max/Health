@@ -140,7 +140,7 @@ public class CommunityController {
      * 댓글 기능
      */
     @PostMapping("/{boardId}/comment")
-    public ResponseEntity<String> addComment(@PathVariable Integer boardId, @RequestBody CommentRequest request, AuthUser authUser) {
+    public ResponseEntity<String> addComment(@PathVariable Integer boardId, @Valid @RequestBody CommentRequest request, AuthUser authUser) {
         Boolean ok = communityService.addComment(authUser.getUserId(), boardId, request.getContent());
 
         if (ok) {
@@ -156,7 +156,7 @@ public class CommunityController {
     }
 
     @PutMapping("/{boardId}/comment")
-    public ResponseEntity<String> modifyComment(@PathVariable Integer boardId, @RequestBody CommentRequest request, AuthUser authUser) {
+    public ResponseEntity<String> modifyComment(@PathVariable Integer boardId, @Valid @RequestBody CommentRequest request, AuthUser authUser) {
         log.info("comment modify request={}", request);
         Boolean ok = communityService.modifyComment(authUser.getUserId(), boardId, request);
 

@@ -129,6 +129,12 @@ public class MembershipService {
     }
 
 
+    public Integer getRemainingPT(Long userId) {
+        Membership membership = membershipMapper.findByMemberId(userId.intValue());
 
-
+        if (membership == null) {
+            return -1;
+        }
+        return membership.getRemainingPT();
+    }
 }

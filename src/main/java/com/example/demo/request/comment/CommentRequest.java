@@ -1,5 +1,6 @@
 package com.example.demo.request.comment;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 /**
@@ -11,5 +12,7 @@ import lombok.Data;
 @Data
 public class CommentRequest {
     private Integer commentId;
+
+    @NotBlank(message = "댓글 내용을 입력해주세요.")
     private String content;
 }

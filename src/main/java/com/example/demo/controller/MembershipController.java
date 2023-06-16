@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.entity.AuthUser;
 import com.example.demo.request.membership.CreateMembershipRequest;
 import com.example.demo.request.membership.SimpleCenter;
 import com.example.demo.request.membership.SimpleTrainer;
@@ -50,6 +51,14 @@ public class MembershipController {
     @GetMapping("/centers/{centerId}")
     public List<SimpleTrainer> getTrainers(@PathVariable Integer centerId) {
         return membershipService.getTrainers(centerId);
+    }
+
+    /**
+     * 남은 PT 횟수 가져오기
+     */
+    @GetMapping("/remainingPT")
+    public Integer getRemainingPT(AuthUser authUser) {
+        return membershipService.getRemainingPT(authUser.getUserId());
     }
 
 }
