@@ -74,6 +74,10 @@ const login = () => {
             Cookies.set('refreshToken', refreshToken, 60 * 60 * 24 * 31);
             // 31일 동안 유효한 쿠키 설정 // 서버의 token 유효기간보다 1일 길게 설정
         }
+
+      sessionStorage.setItem("loginType", response.data.authority);
+
+
         router.replace("/");
     }).catch((error) => {
         if (error.response) {

@@ -11,6 +11,11 @@ public class TrainerDetailResponse {
     private Integer centerId;
     private String centerName;
     private String centerAddress;
-    private String info;
+    private String centerInfo;
+    private String trainerInfo;
+    private String infoDetail;
+    private String fileName;
+    private Integer trainerId;
+    private Integer trainerFileId;
     private Integer authority;
 }

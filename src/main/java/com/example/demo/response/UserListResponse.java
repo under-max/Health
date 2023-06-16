@@ -10,11 +10,11 @@ public class UserListResponse {
 
     private Integer id;
     private String name;
-    private LocalDate birthDate;
+    private String birthDate;
     private Integer trainerId;
     private String trainerName;
-    private LocalDate startDate;
-    private LocalDate endDate;
+    private String startDate;
+    private String endDate;
     private Integer remainingPT;
     private Integer isCenter;
     private Integer authority;
@@ -23,10 +23,11 @@ public class UserListResponse {
     }
 
     @Builder
-    public UserListResponse(Integer id, String name, LocalDate birthDate, String trainerName, LocalDate startDate, LocalDate endDate, Integer remainingPT, Integer isCenter, Integer authority) {
+    public UserListResponse(Integer id, String name, String birthDate, Integer trainerId, String trainerName, String startDate, String endDate, Integer remainingPT, Integer isCenter, Integer authority) {
         this.id = id;
         this.name = name;
         this.birthDate = birthDate;
+        this.trainerId = trainerId;
         this.trainerName = trainerName;
         this.startDate = startDate;
         this.endDate = endDate;
