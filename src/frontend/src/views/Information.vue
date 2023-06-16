@@ -36,8 +36,8 @@
                 <el-input v-model="form.birthDate" type="date"/>
             </el-form-item>
             <el-form-item label="주소">
-                {{form.address}} <br>
-            <el-button class="mt-0" @click="addressButton">주소변경</el-button>
+                {{ form.address }} <br>
+                <el-button class="mt-0" @click="addressButton">주소변경</el-button>
             </el-form-item>
             <el-form-item v-if="addressEdit" label="주소입력">
                 <el-input type="button" @click="sample6_execDaumPostcode" value="주소검색"/>
@@ -70,11 +70,11 @@ import Cookies from "vue-cookies";
 import store from "@/stores/store";
 
 const addressEdit = ref(false)
-const addressButton = ()=>{
+const addressButton = () => {
     addressEdit.value = !addressEdit.value;
 }
 const passwordEdit = ref(false)
-const passwordButton = ()=>{
+const passwordButton = () => {
     passwordEdit.value = !passwordEdit.value;
 }
 const form = ref({
@@ -91,6 +91,7 @@ const form = ref({
     add4: '',
     oldPassword: ''
 })
+
 
 const rules = {
     oldPassword: [
@@ -136,14 +137,15 @@ function validateConfirmPassword(rule, value, callback) {
         callback();
     }
 }
+
 const checkPasswordAvailability = () => {
     const token = Cookies.get('accessToken');
     axios
         .post('/api/auth/user/password', {
             password: form.value.oldPassword,
-        },{
-            headers:{
-                Authorization : token
+        }, {
+            headers: {
+                Authorization: token
             }
         })
         .then((response) => {
@@ -220,7 +222,7 @@ const submitForm = () => {
     loginFormRef.value.validate((valid) => {
         if (valid) {
             const combinedValue = ref()
-            if(addressEdit.value == true){
+            if (addressEdit.value == true) {
                 combinedValue.value = form.value.add1 + " " + form.value.add2 + form.value.add3 + " " + form.value.add4;
             } else {
                 combinedValue.value = form.value.address;
@@ -273,7 +275,9 @@ const deleteForm = () => {
                     store.commit("setToken", ""); // 로그아웃 시 토큰 초기화
                     Cookies.remove('accessToken'); // 쿠키에서 access token 값 삭제
                     Cookies.remove('refreshToken'); // 쿠키에서 refresh token 값 삭제
-                    router.replace("/").then(()=>{window.location.reload();})
+                    router.replace("/").then(() => {
+                        window.location.reload();
+                    })
                 })
                 .catch((error) => {
                     console.log(error.response.data)
@@ -285,6 +289,7 @@ const deleteForm = () => {
         }
     })
 }
+
 function sample6_execDaumPostcode() {
     new daum.Postcode({
         oncomplete: function (data) {

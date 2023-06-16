@@ -11,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -72,15 +74,16 @@ public class AuthService {
                         .build();
             case "auth":
                 User authedUser = userMapper.findById(authUserResponse.getAuthedUserId()).orElseThrow();
-                log.info("{}",authedUser.getBirthDate());
                 if(authedUser.getBirthDate() != null){
+                    SimpleDateFormat birthDateForm = new SimpleDateFormat("yyyy-MM-dd");
+                    String date = birthDateForm.format(authedUser.getBirthDate());
                     return AuthUserResponse.builder()
                             .userId(authedUser.getId())
                             .email(authedUser.getEmail())
                             .nickName(authedUser.getNickName())
                             .name(authedUser.getName())
                             .address(authedUser.getAddress())
-                            .birthDate(authedUser.getBirthDate().toString())
+                            .birthDate(date)
                             .authResult(true)
                             .build();
                 } else {

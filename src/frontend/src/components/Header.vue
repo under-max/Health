@@ -40,15 +40,15 @@
           <li>
             <template v-if="!isLoggedIn">
               <button>
-                <RouterLink to="/login">로그인</RouterLink>
+                <RouterLink :to="{ path: '/login', replace: true }">로그인</RouterLink>
               </button>
             </template>
             <template v-else>
               <button @click="logout()">
-                  <RouterLink to="/">로그아웃</RouterLink>
+                  <RouterLink :to="{ path: '/', replace: true }">로그아웃</RouterLink>
               </button>
               <button>
-                  <RouterLink to="/info">개인정보수정</RouterLink>
+                  <RouterLink :to="{ path: '/info', replace: true }">개인정보수정</RouterLink>
               </button>
             </template>
           </li>

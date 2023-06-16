@@ -16,13 +16,12 @@
             </div>
             <button  class="btn mt-2" @click.prevent="login()">로그인</button>
             <div>
-                <RouterLink style="color:white" to="/signup">
+                <RouterLink style="color:white" :to="{ path: '/signup', replace: true }">
                     <button class="btn mt-2">
                         회원가입
                     </button>
                 </RouterLink>
             </div>
-
             <div class="wrap">
                 <div class="title" style="color:black">소셜로그인</div>
                 <a class="kakao" :href="URI">

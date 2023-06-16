@@ -18,16 +18,6 @@
             <el-form-item label="이름" prop="name" required>
                 <el-input v-model="form.name" placeholder="이름 입력"></el-input>
             </el-form-item>
-            <!--                <el-form-item label="성별" prop="gender" required>-->
-            <!--                    <el-radio-group v-model="form.gender">-->
-            <!--                        <el-radio label="남">남</el-radio>-->
-            <!--                        <el-radio label="여">여</el-radio>-->
-            <!--                    </el-radio-group>-->
-            <!--                </el-form-item>                -->
-            <!--                <el-form-item label="핸드폰 번호" prop="phoneNumber" required>-->
-            <!--                <el-input v-model="form.phoneNumber" type="tel" placeholder="핸드폰 번호 입력"></el-input>-->
-            <!--                </el-form-item>-->
-
             <el-form-item label="생년월일" prop="birthDate" required>
                 <el-input v-model="form.birthDate" type="date"/>
             </el-form-item>
@@ -218,7 +208,7 @@ function sample6_execDaumPostcode() {
                 document.getElementById("sample6_extraAddress").value = extraAddr;
 
             } else {
-                document.getElementById("sample6_extraAddress").value = '';
+                document.getElementById("sample6_extraAddress").value = '( )';
             }
 
             // 우편번호와 주소 정보를 해당 필드에 넣는다.
@@ -228,7 +218,7 @@ function sample6_execDaumPostcode() {
             document.getElementById("sample6_detailAddress").focus();
             form.value.add1 = data.zonecode;
             form.value.add2 = addr;
-            form.value.add3 = extraAddr;
+            form.value.add3 = document.getElementById("sample6_extraAddress").value;
         }
     }).open();
 }

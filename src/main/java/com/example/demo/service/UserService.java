@@ -95,6 +95,7 @@ public class UserService {
         }
 
         if (userEdit.getNewPassword() != null && !userEdit.getNewPassword().equals("")) {
+
             userMapper.update(UserEdit.builder()
                     .userId(userEdit.getUserId())
                     .password(passwordEncoder.encode(userEdit.getNewPassword()))

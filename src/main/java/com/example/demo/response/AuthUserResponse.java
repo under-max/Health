@@ -1,5 +1,6 @@
 package com.example.demo.response;
 
+import jakarta.validation.constraints.Email;
 import lombok.*;
 
 import java.sql.Date;

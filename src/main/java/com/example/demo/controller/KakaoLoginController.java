@@ -38,10 +38,10 @@ public class KakaoLoginController {
         // 발급받은 토큰으로 사용자정보확인
         ResponseEntity<KakaoLoginService.LoginResultResponse> userInfoResponse = kakaoLoginService.getUserInfo(tokenResponse.getBody().getAccess_token());
 
-        String kakaoEmail = userInfoResponse.getBody().getKakao_account().getEmail();
 
         // email 확인 후 가입 시키는 서비스
         // email 존재할 경우 해당 email로 로그인
+        String kakaoEmail = userInfoResponse.getBody().getKakao_account().getEmail();
         AuthUserResponse authUserResponse = userService.kakaoEmailCheck(userInfoResponse.getBody().getKakao_account());
         
 
