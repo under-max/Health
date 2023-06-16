@@ -2,14 +2,13 @@ package com.example.demo.request.membership;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class SimpleTrainer {
     private Integer trainerId;
     private String trainerName;
-
-    public SimpleTrainer() {
-    }
 
     @Builder
     public SimpleTrainer(Integer trainerId, String trainerName) {

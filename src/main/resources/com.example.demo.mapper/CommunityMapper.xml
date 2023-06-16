@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.CommunityMapper">
+
+    <insert id="createBoard" useGeneratedKeys="true" keyProperty="id">
+        insert into COMMUNITY (title, grade, content, writer)
+        values
+            (#{title}, #{grade}, #{content}, #{writer})
+    </insert>
+
+    <select id="findById" resultType="Community">
+        select * from COMMUNITY
+        where id = #{boardId}
+    </select>
+
+    <select id="countAll" resultType="Integer">
+        select
+            count(*)
+        from COMMUNITY
+
+        <where>
+            <if test="(type eq 'all') or (type eq 'title')">
+                title like concat ('%', #{keyword} ,'%')
+            </if>
+
+            <if test="(type eq 'all') or (type eq 'content')">
+                or content like concat ('%', #{keyword} ,'%')
+            </if>
+
+            <if test="(type eq 'all') or (type eq 'writer')">
+                or writer like concat ('%', #{keyword} ,'%')
+            </if>
+        </where>
+
+    </select>
+
+    <select id="findAll" resultType="com.example.demo.response.board.CommunityResponseDto">
+        select
+                *
+                , (select count(*) from COMMENT where boardId = c.id) as commentCount
+        from COMMUNITY c
+
+        <where>
+            <if test="(type eq 'all') or (type eq 'title')">
+                title like concat ('%', #{keyword} ,'%')
+            </if>
+
+            <if test="(type eq 'all') or (type eq 'content')">
+                or content like concat ('%', #{keyword} ,'%')
+            </if>
+
+            <if test="(type eq 'all') or (type eq 'writer')">
+                or writer like concat ('%', #{keyword} ,'%')
+            </if>
+        </where>
+
+        <if test="sort eq 'id'">
+            order by grade desc, id desc
+        </if>
+
+        <if test="sort eq 'like'">
+            order by likeCount desc, id desc
+        </if>
+
+        <if test="sort eq 'comment'">
+            order by commentCount desc, id desc
+        </if>
+
+        <if test="sort eq 'view'">
+            order by viewCount desc, id desc
+        </if>
+
+        limit #{startIndex}, #{rowPage}
+
+    </select>
+
+    <update id="updateLikeUp">
+        update COMMUNITY
+        set
+            likeCount = likeCount + 1
+        where id = #{boardId}
+    </update>
+
+    <update id="updateLikeDown">
+        update COMMUNITY
+        set
+            likeCount = likeCount - 1
+        where id = #{boardId}
+    </update>
+
+    <update id="viewCount">
+        update COMMUNITY
+        set
+            viewCount = viewCount + 1
+        where id = #{boardId}
+    </update>
+
+    <update id="updateBoard">
+        update COMMUNITY
+        set
+            title = #{title},
+            content = #{content}
+        where
+            id = #{boardId}
+                and
+            writer = #{writer}
+    </update>
+
+    <delete id="deleteBoard">
+        delete from COMMUNITY
+        where
+            id = #{boardId}
+                and
+            writer = #{writer}
+    </delete>
+
+</mapper>
+
