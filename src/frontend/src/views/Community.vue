@@ -14,7 +14,7 @@
             </button>
           </div>
 
-<!--          <Link/>-->
+          <!--          <Link/>-->
 
           <!-- 게시글 order by -->
           <div class="d-flex justify-content-between">
@@ -42,17 +42,19 @@
             <div class="pt-2 pb-2">
               <nav class="navbar bg-body-tertiary">
                 <div class="container-fluid">
-                  <select class="form-select flex-grow-0" style="width: 100px;" name="type" v-model="searchType">
-                    <option value="all">전체</option>
+                  <select class="form-select flex-grow-0" style="width: 130px;" name="type" v-model="searchType">
+                    <option value="all">제목+내용</option>
                     <option value="title">제목</option>
-                    <option value="content">본문</option>
+                    <option value="content">내용</option>
                     <option value="writer">작성자</option>
                   </select>
+
                   <div class="d-flex" role="search">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"
-                           v-model="searchKeyword">
-                    <button class="btn btn-success" type="button" style="width: 100px;" @click="searchConditionBtn">검색
-                    </button>
+                    <input v-if="searchType === 'all'" class="form-control me-2" type="search" placeholder="제목+내용 검색" aria-label="Search" v-model="searchKeyword">
+                    <input v-if="searchType === 'title'" class="form-control me-2" type="search" placeholder="제목 검색" aria-label="Search" v-model="searchKeyword">
+                    <input v-if="searchType === 'content'" class="form-control me-2" type="search" placeholder="내용 검색" aria-label="Search" v-model="searchKeyword">
+                    <input v-if="searchType === 'writer'" class="form-control me-2" type="search" placeholder="작성자 검색" aria-label="Search" v-model="searchKeyword">
+                    <button class="btn btn-success" type="button" style="width: 100px;" @click="searchConditionBtn">검색</button>
                   </div>
                 </div>
               </nav>
@@ -85,7 +87,10 @@
               <tr v-for="board in boardList">
                 <td>{{ board.id }}</td>
                 <td v-if="board.grade === 'NOTICE'">
-                  <router-link :to="{ name: 'getBoard', params: {boardId: board.id}}">[공지사항] {{ board.title }}</router-link>
+                  <router-link :to="{ name: 'getBoard', params: {boardId: board.id}}">[공지사항] {{
+                      board.title
+                    }}
+                  </router-link>
                 </td>
                 <td v-else>
                   <router-link :to="{ name: 'getBoard', params: {boardId: board.id}}">{{ board.title }}</router-link>
@@ -320,7 +325,4 @@ onMounted(() => {
   border: 5px solid #ccc;
 }
 
-.active {
-  font-weight: bold;
-}
 </style>

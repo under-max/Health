@@ -7,7 +7,7 @@
     </div>
 
     <div class="mb-3">
-      <label for="" class="form-label">본문</label>
+      <label for="" class="form-label">내용</label>
       <textarea class="form-control" rows="10" v-model="content"></textarea>
     </div>
     <div class="mb-3">

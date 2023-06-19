@@ -5,37 +5,67 @@
     <div class="d-flex justify-content-center">
       <div class="row top-padding">
 
+        <h4>
+          <span class="text-light">센터 검색</span>
+        </h4>
+
+        <br>
+        <br>
+
         <!-- 검색 기능 -->
-        <div>
-          <h4>
-            <span class="text-light">센터 검색</span>
-          </h4>
+        <div class="d-flex justify-content-start">
+          <nav class="navbar bg-body-tertiary">
+            <div class="container-fluid">
+              <select class="form-select me-2" style="width: 100px;" v-model="searchType">
+                <option value="address">지역</option>
+                <option value="center">센터</option>
+              </select>
 
-          <div>
-            <select v-model="searchType" style="width: 100px; height: 30px; padding: 0px">
-              <option value="address">지역</option>
-              <option value="center">센터</option>
-            </select>
-            <input id="search" type="text" v-model="searchKeyword"/>
+              <div class="d-flex">
+                <input class="form-control me-2" type="search" placeholder="센터 / 지역 검색" aria-label="Search"
+                       v-model="searchKeyword"/>
 
-            <button class="btn btn-secondary" @click="searchConditionBtn">
-              검색
-            </button>
+                <button class="btn btn-success" type="button" style="width: 100px;" @click="searchConditionBtn">
+                  검색
+                </button>
 
-            <button class="btn btn-secondary" style="margin-left: 60px" @click="centerAndTrainerInfo">
-              정보 보기
-            </button>
-          </div>
+              </div>
+            </div>
+          </nav>
         </div>
 
-        <div class="d-flex">
-          <div style="padding-right: 200px">
-            <h4>
-              <span class="text-light">이용권 선택</span>
-            </h4>
+        <br>
+        <br>
+
+        <div class="d-flex justify-content-between">
+
+          <div class="mt-3">
+
+              <div class="d-flex justify-content-between">
+                <h4>
+                  <span class="text-light">이용권 선택</span>
+                </h4>
+
+                <button class="btn btn-secondary" style="margin-left: 60px" @mouseover="handleMouseOver">
+                  선택한 트레이너 정보 보기
+                </button>
+
+                <div class="trainerDetailContentDiv" v-if="showTrainerDetail">
+                  <div class="trainerDetailImageBox">
+                    ...
+                  </div>
+                  <div class="trainerDetailTxt">
+                    <h3 class="trainerName">Name: {{ trainerDetail.name }}</h3>
+                    <h3 class="trainerInfo">Trainer info: {{ trainerDetail.info }}</h3>
+                  </div>
+                </div>
+
+              </div>
+
+            <br>
 
             <div>
-              <select v-model="selectedCenter" @change="getTrainers">
+              <select class="select--" v-model="selectedCenter" @change="getTrainers">
                 <option value="">센터를 선택해주세요.</option>
                 <option v-for="center in centerList" :value="center">
                   {{ center.centerName }}
@@ -44,7 +74,7 @@
             </div>
 
             <div>
-              <select v-model="selectedTrainer">
+              <select class="select--" v-model="selectedTrainer">
                 <option value="">트레이너를 선택해주세요.</option>
                 <option v-for="trainer in trainerList" :value="trainer">
                   {{ trainer.trainerName }}
@@ -53,7 +83,7 @@
             </div>
 
             <div>
-              <select v-model="selectedMonth" :disabled="isMonthDisabled">
+              <select class="select--" v-model="selectedMonth" :disabled="isMonthDisabled">
                 <option value="">이용 기간을 선택해주세요.</option>
                 <option v-for="month in monthSelectList" :value="month.value"
                         :disabled="isMonthOptionDisabled(month)">
@@ -63,36 +93,41 @@
             </div>
 
             <div>
-              <select v-model="selectedPT" @change="selectPTChange">
+              <select class="select--" v-model="selectedPT" @change="selectPTChange">
                 <option value="">PT 횟수를 선택해주세요</option>
                 <option v-for="pt in ptSelectList" :value="pt.value">{{ pt.name }}</option>
               </select>
             </div>
           </div>
 
-          <div>
+          <div class="mt-3">
+
             <h4>
-              <span class="text-light membershipSelected">선택 사항</span>
+              <span class="text-light">선택 사항</span>
             </h4>
+
+            <br>
 
             <div>
               <ul class="list-group mb-4">
                 <li class="list-group-item">
                   <div>
-                    <small class="text-body-secondary">센터 / 트레이너</small>
+                    <small class="text-body-secondary">센터 / 트레이너 (필수선택)</small>
                     <h5 class="my-0">{{ selectedCenter.centerName }} / {{ selectedTrainer.trainerName }}</h5>
                   </div>
                 </li>
                 <li class="list-group-item">
                   <div>
                     <small class="text-body-secondary">이용 기간</small>
-                    <h5 class="my-0">{{ selectedMonth }}개월</h5>
+                    <h5 class="my-0" v-if="selectedMonth === ''">0 개월</h5>
+                    <h5 class="my-0" v-else>{{ selectedMonth }} 개월</h5>
                   </div>
                 </li>
                 <li class="list-group-item">
                   <div>
                     <small class="text-body-secondary">PT 횟수</small>
-                    <h5 class="my-0">{{ selectedPT }}회</h5>
+                    <h5 class="my-0" v-if="selectedPT === ''">0 회</h5>
+                    <h5 class="my-0" v-else>{{ selectedPT }} 회</h5>
                   </div>
                 </li>
                 <li class="list-group-item d-flex justify-content-between">
@@ -108,7 +143,7 @@
 
             <div>
               <button class="btn btn-primary" type="submit" data-bs-toggle="modal" data-bs-target="#showPaymentModal"
-                      :disabled="isButtonDisabled">카카오페이 결제
+                      :disabled="isButtonDisabled">카카오페이 결제하기
                 <i class="fa-solid fa-barcode"></i></button>
             </div>
           </div>
@@ -133,7 +168,7 @@
           <p>지점 : {{ selectedCenter.centerName }}</p>
           <p>담당 트레이너: {{ selectedTrainer.trainerName }}</p>
           <p>이용 기간 : {{ selectedMonth }}개월</p>
-          <p>PT 횟수 : {{ selectedPT === '' ? 0 : selectedPT }}회</p>
+          <p>PT 횟수 : {{ selectedPT === '' ? 0 : selectedPT }} 회</p>
           <p>결제 금액 : {{ formattedTotalPrice }}원 </p>
         </div>
         <div class="modal-footer d-flex justify-content-center">
@@ -156,6 +191,7 @@
 import {computed, onMounted, ref, watchEffect} from "vue";
 import axios from "axios";
 import Cookies from "vue-cookies";
+import {showCustomAlert} from "@/main";
 
 // 선택한 센터
 const selectedCenter = ref('');
@@ -175,7 +211,7 @@ const payReadyUrl = ref('');
 const centerList = ref([]);
 
 // 센터에 소속된 트레이너 리스트
-const trainerList = ref(['']);
+const trainerList = ref([]);
 
 // 검색 키워드 관련
 const searchType = ref('address');
@@ -239,6 +275,9 @@ const searchConditionBtn = () => {
       .get(`/api/membership/centers?type=${searchType.value}&keyword=${searchKeyword.value}`, {})
       .then((response) => {
         console.log(response.data);
+        if (response.data.length === 0) {
+          showCustomAlert("검색 결과가 없습니다.");
+        }
         centerList.value = response.data;
       })
       .catch((error) => {
@@ -246,12 +285,12 @@ const searchConditionBtn = () => {
       });
 }
 
-// 선택 조건 확인하여 결제하기 버튼 활성화
+// 선택 조건 확인하여 결제하기 버튼 활성화 기본값 true
 const isButtonDisabled = ref(true);
 
 const checkCondition = () => {
   // 조건을 확인하고 버튼의 활성화 상태를 업데이트
-  if ((selectedCenter.value && selectedMonth.value) || (selectedCenter.value && selectedTrainer.value && selectedPT.value)) {
+  if ((selectedCenter.value && selectedTrainer.value && selectedMonth.value) || (selectedCenter.value && selectedTrainer.value && selectedPT.value)) {
     isButtonDisabled.value = false; // 버튼 활성화
   } else {
     isButtonDisabled.value = true; // 버튼 비활성화
@@ -309,6 +348,43 @@ const getTrainers = () => {
       });
 };
 
+const showTrainerDetail = ref(false);
+const trainerDetail = ref({
+  name: '',
+  info: ''
+});
+
+
+const handleMouseOver = () => {
+  console.log(selectedTrainer.value.trainerId);
+  const trainerId = selectedTrainer.value.trainerId;
+
+  trainerDetail.value = {
+    name: 'John Doe',
+    info: 'Some information about the trainer'
+  };
+
+  showTrainerDetail.value = true;
+
+  axios
+      .get(`/api/center/getTrainerDetail`, {
+        params: {
+          trainerId: trainerId
+        }
+      })
+      .then((response) => {
+        if (!response.data) {
+          showCustomAlert("트레이너를 선택해주세요!!");
+        }
+        console.log(response.data);
+        trainerDetail.value = response.data;
+        // trainerList.value = response.data;
+      })
+      .catch((error) => {
+        console.log(error)
+      });
+}
+
 // 등록되어있는 센터 가져오기
 onMounted(() => {
   axios
@@ -325,14 +401,10 @@ onMounted(() => {
 
 <style scoped>
 
-select {
+.select-- {
   padding: 2vh;
   margin-bottom: 0.1vh;
   border-radius: 5px;
-  width: 500px;
-}
-
-.list-group-item {
   width: 500px;
 }
 
@@ -340,6 +412,10 @@ select:focus {
   outline: none;
   border-color: #007bff;
   box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+}
+
+.list-group-item {
+  width: 500px;
 }
 
 button.btn-primary {
@@ -352,15 +428,13 @@ button.btn-primary {
   cursor: pointer;
 }
 
-
-.modal-content {
-  width: 400px;
-}
-
 .modal {
   padding: 8rem;
 }
 
+.modal-content {
+  width: 400px;
+}
 
 .modal-footer {
   gap: 1rem;
@@ -371,7 +445,7 @@ button.btn-primary {
 }
 
 .top-padding {
-  padding-top: 20vh;
+  padding-top: 15vh;
 }
 
 </style>

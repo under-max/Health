@@ -27,7 +27,7 @@
                 or content like concat ('%', #{keyword} ,'%')
             </if>
 
-            <if test="(type eq 'all') or (type eq 'writer')">
+            <if test="(type eq 'writer')">
                 or writer like concat ('%', #{keyword} ,'%')
             </if>
         </where>
@@ -49,25 +49,27 @@
                 or content like concat ('%', #{keyword} ,'%')
             </if>
 
-            <if test="(type eq 'all') or (type eq 'writer')">
+            <if test="(type eq 'writer')">
                 or writer like concat ('%', #{keyword} ,'%')
             </if>
         </where>
 
+        order by grade desc
+
         <if test="sort eq 'id'">
-            order by grade desc, id desc
+            , id desc
         </if>
 
         <if test="sort eq 'like'">
-            order by likeCount desc, id desc
+            , likeCount desc, id desc
         </if>
 
         <if test="sort eq 'comment'">
-            order by commentCount desc, id desc
+            , commentCount desc, id desc
         </if>
 
         <if test="sort eq 'view'">
-            order by viewCount desc, id desc
+            , viewCount desc, id desc
         </if>
 
         limit #{startIndex}, #{rowPage}

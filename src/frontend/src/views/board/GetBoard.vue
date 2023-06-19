@@ -26,6 +26,8 @@
         </div>
       </div>
 
+
+
     </div>
 
     <div class="mb-3">
@@ -34,7 +36,7 @@
     </div>
 
     <div class="mb-3">
-      <label for="" class="form-label">본문</label>
+      <label for="" class="form-label">내용</label>
       <textarea class="form-control" rows="10" readonly>{{board.content}}</textarea>
     </div>
 
@@ -52,8 +54,8 @@
     <div>
       <div v-if="Cookies.get('accessToken')">
         <div class="d-flex border-danger">
-          <textarea v-model="addCommentContent" class="comment-textarea" placeholder="댓글을 입력해주세요."></textarea>
-          <button @click="addCommentBtn" class="comment-button">댓글 쓰기</button>
+            <textarea v-model="addCommentContent" class="comment-textarea" placeholder="댓글을 입력해주세요."></textarea>
+            <button @click="addCommentBtn" class="comment-button">댓글 쓰기</button>
         </div>
       </div>
 
@@ -91,9 +93,9 @@
       </ul>
     </div>
 
-    <!-- The Modal -->
-    <div class="modal" id="myModal">
-      <div class="modal-dialog">
+    <!-- 수정 modal -->
+    <div class="modal fade" id="myModal">
+      <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
 
           <div class="modal-header">
@@ -444,13 +446,13 @@ onMounted(() => {
   width: 90%;
   height: 100px;
   padding: 10px;
-  border: 1px solid #ccc;
+  border: 3px solid #ccc;
   background-color: white;
 }
 
 .comment-textarea {
-  width: 90%;
-  height: 100px;
+  width: 100%;
+  height: 150px;
   padding: 10px;
   border: 1px solid #ccc;
 }

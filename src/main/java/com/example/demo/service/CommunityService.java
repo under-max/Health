@@ -68,7 +68,6 @@ public class CommunityService {
             CommunityResponse response = getSortList(page, type, keyword, sort);
             log.info("getBoardList() response={}", response);
             return response;
-
         } catch (Exception e) {
             log.error("getBoardList() error", e);
             throw new RuntimeException("오류 해결 중입니다.");
