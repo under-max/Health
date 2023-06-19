@@ -1,41 +1,5 @@
 <template>
 
-  <div class="main_popup" v-bind:class="{ on: showPopup }">
-    <div class="layer_cont">
-      <div class="img_wrap">
-        popup content
-      </div>
-      <div class="btn_wrap">
-        <!-- Don't watch today --->
-        <button class="btn_today_close" @click="hidePopupToday">
-          <span>
-            <input type="checkbox">오늘 하루 안보기
-          </span>
-        </button>
-        <!-- just close --->
-        <button class="btn_close" @click="hidePopup">close</button>
-      </div>
-    </div>
-  </div>
-
-  <div v-if="isRemainingPT()">
-    <div class="position-fixed top-0 end-0 p-3">
-      <br>
-      <br>
-      <div class="toast show" style="width: 180px" role="alert" aria-live="assertive" aria-atomic="true"
-           data-bs-delay="1000">
-        <div class="toast-header">
-          <strong class="me-auto text-danger">알림</strong>
-          <small></small>
-          <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-        </div>
-        <div class="toast-body">
-          PT {{ remainingPT }}회 남았습니다.
-        </div>
-      </div>
-    </div>
-  </div>
-
   <main class="hero">
     <section class="main_text">
       <h1>당신의 노력을 서포트 <br>합니다</h1>
@@ -52,6 +16,41 @@
       footer는 그냥 주저리 부분이라 시간날떄 채우도록 하겠음
     </p>
   </main>
+
+
+  <div class="main_popup" v-bind:class="{ on: showPopup }">
+    <div class="layer_cont">
+      <div class="img_wrap">
+        광고1
+      </div>
+      <div class="btn_wrap">
+        <!-- Don't watch today --->
+        <button class="btn_today_close" @click="hidePopupToday">
+          <span>
+            <input type="checkbox">오늘 하루 안보기
+          </span>
+        </button>
+        <!-- just close --->
+        <button class="btn_close" @click="hidePopup">close</button>
+      </div>
+    </div>
+  </div>
+
+  <div v-if="isRemainingPT()">
+    <div class="position-fixed bottom-0 end-0">
+      <br>
+      <br>
+      <div class="toast show" style="width: 200px" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+          <strong class="me-auto text-danger">알림</strong>
+          <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"><i class="fa-solid fa-x"></i></button>
+        </div>
+        <div class="toast-body">
+          PT {{ remainingPT }}회 남았습니다.
+        </div>
+      </div>
+    </div>
+  </div>
 
 </template>
 
@@ -111,7 +110,7 @@ onMounted(() => {
 
 const remainingPT = ref();
 const isRemainingPT = () => {
-  return (Cookies.get('accessToken') && (remainingPT.value >= 0 && remainingPT.value <= 5));
+  return (Cookies.get('accessToken') && (0 <= remainingPT.value && remainingPT.value <= 5));
 }
 
 onMounted(() => {
@@ -209,17 +208,7 @@ button {
   z-index: 1005;
   -webkit-box-shadow: 0px 13px 40px -6px #061626;
   box-shadow: 0px 13px 40px -6px #061626;
-  top: 50px;
-  left: 50px;
-  display: none;
-}
-
-.main_popup2 {
-  position: fixed;
-  z-index: 1005;
-  -webkit-box-shadow: 0px 13px 40px -6px #061626;
-  box-shadow: 0px 13px 40px -6px #061626;
-  top: 50px;
+  top: 100px;
   left: 50px;
   display: none;
 }
@@ -230,8 +219,8 @@ button {
 }
 
 .main_popup .img_wrap {
-  width: 400px;
-  height: 400px;
+  width: 300px;
+  height: 300px;
   display: flex;
   justify-content: center;
   align-items: center;

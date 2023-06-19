@@ -250,6 +250,7 @@ import {computed, onMounted, ref, watchEffect} from "vue";
 import axios from "axios";
 import Cookies from "vue-cookies";
 import {showCustomAlert} from "@/main";
+import router from "@/router";
 
 const centerDetail = ref({
   id: '',
@@ -456,32 +457,45 @@ watchEffect(() => {
 // modal 창에서 구매버튼
 const confirmPayment = () => {
   const {centerId, centerName} = selectedCenter.value;
-  const token = Cookies.get('accessToken')
-  axios
-      .post("/api/kakaopay", {
-        // memberId: memberId.value,
-        centerId: centerId,
-        centerName: centerName,
-        month: selectedMonth.value,
-        pt: selectedPT.value,
-        totalPrice: totalPrice.value
-      }, {
-        headers: {
-          Authorization: token
-        }
-      })
-      .then((response) => {
-        console.log(response.data);
-        window.location.href = response.data
-      })
-      .catch((error) => {
-        console.log(error);
-        alert(error.response.data.message);
-      });
-  // SuccessPage.vue에서 사용할 데이터 저장
-  sessionStorage.setItem("centerId", selectedCenter.value.centerId);
-  // 트레이너를 선택하지 않았을 경우 undefined 가 아닌 0이 넘어간다.
-  sessionStorage.setItem("trainerId", (selectedTrainer.value.trainerId ? selectedTrainer.value.trainerId : 0));
+  const token = Cookies.get('accessToken');
+
+  if (token) {
+    axios
+        .post("/api/kakaopay", {
+          // memberId: memberId.value,
+          centerId: centerId,
+          centerName: centerName,
+          month: selectedMonth.value,
+          pt: selectedPT.value,
+          totalPrice: totalPrice.value
+        }, {
+          headers: {
+            Authorization: token
+          }
+        })
+        .then((response) => {
+          console.log(response.data);
+          window.location.href = response.data
+        })
+        .catch((error) => {
+          console.log(error);
+          alert(error.response.data.message);
+        });
+    // SuccessPage.vue에서 사용할 데이터 저장
+    sessionStorage.setItem("centerId", selectedCenter.value.centerId);
+    // 트레이너를 선택하지 않았을 경우 undefined 가 아닌 0이 넘어간다.
+    sessionStorage.setItem("trainerId", (selectedTrainer.value.trainerId ? selectedTrainer.value.trainerId : 0));
+  } else {
+    const ok = confirm("로그인이 필요한 기능입니다. 로그인 페이지로 이동하시겠습니까?");
+    if (ok) {
+      router.push('/login');
+      // TODO 결제 modal화면에서 로그인화면으로 갈 시 화면 먹통 새로고침하면 작동
+      // window.location.reload();
+    } else {
+      // 현재 경로로 유지
+      router.push(router.currentRoute.value.fullPath);
+    }
+  }
 };
 
 // 센터를 선택하면 소속되어 있는 트레이너 불러오는 axios
