@@ -41,26 +41,27 @@
 
           <div class="mt-3">
 
-              <div class="d-flex justify-content-between">
-                <h4>
-                  <span class="text-light">이용권 선택</span>
-                </h4>
+            <div class="d-flex justify-content-between">
 
-                <button class="btn btn-secondary" style="margin-left: 60px" @mouseover="handleMouseOver">
-                  선택한 트레이너 정보 보기
+              <h4>
+                <span class="text-light">이용권 선택</span>
+              </h4>
+
+              <div>
+                <button class="btn btn-primary" type="button" @click="getCenterInfo" data-bs-toggle="modal"
+                        data-bs-target="#showSelectCenterInfoModal" :disabled="isCenterInfoButtonDisabled">
+                  선택한 센터 정보
                 </button>
-
-                <div class="trainerDetailContentDiv" v-if="showTrainerDetail">
-                  <div class="trainerDetailImageBox">
-                    ...
-                  </div>
-                  <div class="trainerDetailTxt">
-                    <h3 class="trainerName">Name: {{ trainerDetail.name }}</h3>
-                    <h3 class="trainerInfo">Trainer info: {{ trainerDetail.info }}</h3>
-                  </div>
-                </div>
-
               </div>
+
+              <div>
+                <button @click="getTrainerInfo" class="btn btn-primary" type="button" data-bs-toggle="modal"
+                        data-bs-target="#showSelectTrainerInfoModal" :disabled="isTrainerInfoButtonDisabled">
+                  선택한 트레이너 정보
+                </button>
+              </div>
+
+            </div>
 
             <br>
 
@@ -142,26 +143,83 @@
             </div>
 
             <div>
-              <button class="btn btn-primary" type="submit" data-bs-toggle="modal" data-bs-target="#showPaymentModal"
+              <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#showPaymentModal"
                       :disabled="isButtonDisabled">카카오페이 결제하기
                 <i class="fa-solid fa-barcode"></i></button>
             </div>
+
           </div>
 
         </div>
 
-
       </div>
+    </div>
 
+  </div>
+
+  <!-- 선택한 센터 정보 modal -->
+  <div class="modal fade" id="showSelectCenterInfoModal" tabindex="-1" aria-labelledby="showSelectCenterInfoModalLabel"
+       aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 100%;">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-3" id="showSelectCenterInfoModalLabel">센터 정보</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" v-if="selectedCenter">
+          <h5>센터를 선택해주세요!</h5>
+        </div>
+        <div class="modal-body" v-if="isCenterInfo && selectedCenter">
+          <h5>센터 이름: {{ centerDetail.name }}</h5>
+          <h5>센터 주소: {{ centerDetail.address }}</h5>
+          <h5>센터 정보: {{ centerDetail.info }}</h5>
+          <div class="d-flex justify-content-between">
+            <span><i class="fas fa-angle-left fa-2x" @click="moveLeftImage"></i></span>
+            <div>
+              <img :src="getImage(slideIndex)" alt="" style="max-width: 100%; max-height: 100%;"/>
+            </div>
+            <span class="btnCheck"><i class="fas fa-angle-right fa-2x" @click="moveRightImage"></i></span>
+          </div>
+        </div>
+        <div class="modal-footer d-flex justify-content-center">
+          <button type="button" class="btn btn-link fs-6 text-decoration-none m-0" data-bs-dismiss="modal">확인</button>
+        </div>
+      </div>
     </div>
   </div>
 
+  <!-- 선택한 트레이너 정보 modal -->
+  <div class="modal fade" id="showSelectTrainerInfoModal" tabindex="-1"
+       aria-labelledby="showSelectTrainerInfoModalLabel"
+       aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 100%;">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-3" id="showSelectTrainerInfoModalLabel">트레이너 정보</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" v-if="isTrainerInfo">
+          <h5>트레이너 이름: {{ trainerDetail.name }}</h5>
+          <h5>트레이너 정보: {{ trainerDetail.info }}</h5>
+          <h5>트레이너 사진:
+            <img style="max-width: 100%; max-height: 100%;"
+                 :src="`https://bucket0503-1000011011001.s3.ap-northeast-2.amazonaws.com/health/${trainerDetail.centerId}/${trainerDetail.id}/${trainerDetail.fileName}`"/>
+          </h5>
+        </div>
+        <div class="modal-footer d-flex justify-content-center">
+          <button type="button" class="btn btn-link fs-6 text-decoration-none m-0" data-bs-dismiss="modal">확인</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
-  <div class="modal fade" id="showPaymentModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <!-- 카카오페이 결제하기 modal -->
+  <div class="modal fade" id="showPaymentModal" tabindex="-1" aria-labelledby="showPaymentModalLabel"
+       aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-3" id="exampleModalLabel">결제 정보</h1>
+          <h1 class="modal-title fs-3" id="showPaymentModalLabel">결제 정보</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
@@ -192,6 +250,99 @@ import {computed, onMounted, ref, watchEffect} from "vue";
 import axios from "axios";
 import Cookies from "vue-cookies";
 import {showCustomAlert} from "@/main";
+
+const isCenterInfoButtonDisabled = computed(() => {
+  return selectedCenter.value === '';
+});
+
+const isTrainerInfoButtonDisabled = computed(() => {
+  return selectedTrainer.value === '';
+});
+
+const centerDetail = ref({
+  id: '',
+  centerId: '',
+  name: '',
+  info: '',
+  fileName: '',
+});
+
+const trainerDetail = ref({
+  id: '',
+  name: '',
+  address: '',
+  info: '',
+  fileName: [],
+});
+
+//이미지 슬라이드 처리
+const slideIndex = ref(0);
+const getImage = (index) => {
+  const fileName = centerDetail.value.fileName[index];
+  return `https://bucket0503-1000011011001.s3.ap-northeast-2.amazonaws.com/health/${centerDetail.value.id}/${fileName}`
+}
+const moveLeftImage = () => {
+  if (slideIndex.value > 0) {
+    slideIndex.value = slideIndex.value - 1;
+  } else {
+    slideIndex.value = 0;
+  }
+}
+const moveRightImage = () => {
+  if (slideIndex.value < centerDetail.value.fileName.length - 1) {
+    slideIndex.value = slideIndex.value + 1;
+  } else {
+    slideIndex.value = +(centerDetail.value.fileName.length - 1);
+  }
+}
+
+const isCenterInfo = ref(false);
+const isTrainerInfo = ref(false);
+
+const getCenterInfo = () => {
+  isCenterInfo.value = true;
+
+  const centerId = selectedCenter.value.centerId;
+
+  axios
+      .get(`/api/center/${centerId}`, {
+        params: {
+          centerId: centerId
+        }
+      })
+      .then((response) => {
+        console.log(response.data);
+        centerDetail.value = response.data;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+};
+
+const getTrainerInfo = () => {
+  isTrainerInfo.value = true;
+
+  const trainerId = selectedTrainer.value.trainerId;
+
+  axios
+      .get('/api/center/getTrainerDetail', {
+        params: {
+          trainerId: trainerId
+        }
+      })
+      .then((response) => {
+        if (!response.data) {
+          showCustomAlert("CustomAlertCustomAlert!!");
+        }
+        console.log(response.data);
+        trainerDetail.value = response.data;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+};
+
+// == 위 코드는 선택한 센터, 트레이너 정보 불러오기 윤석이형 코드 참조 ==
 
 // 선택한 센터
 const selectedCenter = ref('');
@@ -338,52 +489,16 @@ const getTrainers = () => {
   axios
       .get(`/api/membership/centers/${selectedCenter.value.centerId}`, {})
       .then((response) => {
-        if (response.data.size == 0) {
-          selectedTrainer.value = '등록되어 있는 트레이너가 없습니다.';
+        console.log(response.data);
+        if (response.data.length === 0) {
+          showCustomAlert("등록되어 있는 트레이너가 없습니다.");
         }
         trainerList.value = response.data;
       })
       .catch((error) => {
-        console.log(error)
+        console.log(error);
       });
 };
-
-const showTrainerDetail = ref(false);
-const trainerDetail = ref({
-  name: '',
-  info: ''
-});
-
-
-const handleMouseOver = () => {
-  console.log(selectedTrainer.value.trainerId);
-  const trainerId = selectedTrainer.value.trainerId;
-
-  trainerDetail.value = {
-    name: 'John Doe',
-    info: 'Some information about the trainer'
-  };
-
-  showTrainerDetail.value = true;
-
-  axios
-      .get(`/api/center/getTrainerDetail`, {
-        params: {
-          trainerId: trainerId
-        }
-      })
-      .then((response) => {
-        if (!response.data) {
-          showCustomAlert("트레이너를 선택해주세요!!");
-        }
-        console.log(response.data);
-        trainerDetail.value = response.data;
-        // trainerList.value = response.data;
-      })
-      .catch((error) => {
-        console.log(error)
-      });
-}
 
 // 등록되어있는 센터 가져오기
 onMounted(() => {
@@ -393,7 +508,7 @@ onMounted(() => {
         centerList.value = response.data;
       })
       .catch((error) => {
-        console.log(error)
+        console.log(error);
       });
 });
 

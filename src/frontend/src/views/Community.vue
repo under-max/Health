@@ -319,7 +319,7 @@ onMounted(() => {
 <style scoped>
 
 .boardList {
-  width: 1600px;
+  width: 100%;
   margin-top: 50px;
   background-color: white;
   border: 5px solid #ccc;
