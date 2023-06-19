@@ -251,14 +251,6 @@ import axios from "axios";
 import Cookies from "vue-cookies";
 import {showCustomAlert} from "@/main";
 
-const isCenterInfoButtonDisabled = computed(() => {
-  return selectedCenter.value === '';
-});
-
-const isTrainerInfoButtonDisabled = computed(() => {
-  return selectedTrainer.value === '';
-});
-
 const centerDetail = ref({
   id: '',
   centerId: '',
@@ -273,6 +265,14 @@ const trainerDetail = ref({
   address: '',
   info: '',
   fileName: [],
+});
+
+const isCenterInfoButtonDisabled = computed(() => {
+  return selectedCenter.value === '';
+});
+
+const isTrainerInfoButtonDisabled = computed(() => {
+  return selectedTrainer.value === '';
 });
 
 //이미지 슬라이드 처리

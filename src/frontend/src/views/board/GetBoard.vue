@@ -322,8 +322,6 @@ const likeDownBtn = () => {
 
 // 목록으로 가기
 const goListBtn = () => {
-  console.log(currentUser.value);
-  console.log(boardWriter.value);
   router.push('/community');
 }
 

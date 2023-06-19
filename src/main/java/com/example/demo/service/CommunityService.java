@@ -65,6 +65,10 @@ public class CommunityService {
     public CommunityResponse getBoardList(Integer page, String type, String keyword, String sort) {
 
         try {
+            if (page <= 0) {
+                page = 1;
+            }
+
             CommunityResponse response = getSortList(page, type, keyword, sort);
             log.info("getBoardList() response={}", response);
             return response;

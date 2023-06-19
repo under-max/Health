@@ -50,11 +50,16 @@
                   </select>
 
                   <div class="d-flex" role="search">
-                    <input v-if="searchType === 'all'" class="form-control me-2" type="search" placeholder="제목+내용 검색" aria-label="Search" v-model="searchKeyword">
-                    <input v-if="searchType === 'title'" class="form-control me-2" type="search" placeholder="제목 검색" aria-label="Search" v-model="searchKeyword">
-                    <input v-if="searchType === 'content'" class="form-control me-2" type="search" placeholder="내용 검색" aria-label="Search" v-model="searchKeyword">
-                    <input v-if="searchType === 'writer'" class="form-control me-2" type="search" placeholder="작성자 검색" aria-label="Search" v-model="searchKeyword">
-                    <button class="btn btn-success" type="button" style="width: 100px;" @click="searchConditionBtn">검색</button>
+                    <input v-if="searchType === 'all'" class="form-control me-2" type="search" placeholder="제목+내용 검색"
+                           aria-label="Search" v-model="searchKeyword">
+                    <input v-if="searchType === 'title'" class="form-control me-2" type="search" placeholder="제목 검색"
+                           aria-label="Search" v-model="searchKeyword">
+                    <input v-if="searchType === 'content'" class="form-control me-2" type="search" placeholder="내용 검색"
+                           aria-label="Search" v-model="searchKeyword">
+                    <input v-if="searchType === 'writer'" class="form-control me-2" type="search" placeholder="작성자 검색"
+                           aria-label="Search" v-model="searchKeyword">
+                    <button class="btn btn-success" type="button" style="width: 100px;" @click="searchConditionBtn">검색
+                    </button>
                   </div>
                 </div>
               </nav>
@@ -63,8 +68,10 @@
             <div>
               <div>
                 {{ pageInfo.currentPageNumber }} / {{ pageInfo.lastPageNumber }} 페이지
-                <button class="btn btn-link" @click="prevPageBtn"><i class="fa-solid fa-arrow-left fa-xl"></i></button>
-                <button class="btn btn-link" @click="nextPageBtn"><i class="fa-solid fa-arrow-right fa-xl"></i></button>
+                <button class="btn btn-link" @click="prevPageBtn" :disabled="isPrevBtnDisabled"><i
+                    class="fa-solid fa-arrow-left fa-xl"></i></button>
+                <button class="btn btn-link" @click="nextPageBtn" :disabled="isNextBtnDisabled"><i
+                    class="fa-solid fa-arrow-right fa-xl"></i></button>
               </div>
             </div>
           </div>
@@ -254,16 +261,37 @@ watch([selectedSort, searchType, searchKeyword], () => {
   sessionStorage.setItem("searchKeyword", searchKeyword.value);
 });
 
+// 1번 페이지와 마지막 페이지일 때 disabled 기능
+const isPrevBtnDisabled = computed(() => {
+  return pageInfo.value.currentPageNumber === 1;
+});
+
+const isNextBtnDisabled = computed(() => {
+  return pageInfo.value.currentPageNumber === pageInfo.value.lastPageNumber;
+});
+
 // 이전 페이지
 const prevPageBtn = () => {
   const page = pageInfo.value.currentPageNumber - 1;
-  navigateToPage(page);
+  if (page === 0) {
+    alert("첫번째 페이지입니다.");
+    const page = 1;
+    navigateToPage(page);
+  } else {
+    navigateToPage(page);
+  }
 };
 
 // 다음 페이지
 const nextPageBtn = () => {
   const page = pageInfo.value.currentPageNumber + 1;
-  navigateToPage(page);
+  if (page === pageInfo.value.lastPageNumber + 1) {
+    alert("마지막 페이지입니다.");
+    const page = pageInfo.value.lastPageNumber;
+    navigateToPage(page);
+  } else {
+    navigateToPage(page);
+  }
 };
 
 // 페이지 버튼

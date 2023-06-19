@@ -178,25 +178,4 @@ public class CommunityController {
         }
     }
 
-//    @PostMapping
-//    public void createBoar1(@RequestBody CreateBoardRequest request, AuthUser authUser) {
-//        log.info("request={}", request);
-//
-//        communityService.createBoard1(authUser.getUserId());
-//    }
-
-//        public void createBoard1(Long userId) {
-//
-//        User user = findUser(userId);
-//
-//        for (int i = 0; i < 3000; i++) {
-//            Community community = Community.builder()
-//                    .title("제목" + i)
-//                    .content("내용" + i)
-//                    .writer(user.getNickName())
-//                    .build();
-//            communityMapper.createBoard(community);
-//        }
-//    }
-
 }
