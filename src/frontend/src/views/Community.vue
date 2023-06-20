@@ -290,11 +290,16 @@ const selectSort = (sortValue) => {
   });
 };
 
-// watch를 사용하여 선택한 값이 변경될 때마다 sessionStorage에 저장
+// 뒤로가기가 아닌 행동을 하면 localStorage에 값들을 clear
+window.addEventListener('beforeunload', () => {
+  localStorage.clear();
+});
+
+// watch를 사용하여 선택한 값이 변경될 때마다 localStorage에 저장
 watch([selectedSort, searchType, searchKeyword], () => {
-  sessionStorage.setItem("selectedSort", selectedSort.value);
-  sessionStorage.setItem("searchType", searchType.value);
-  sessionStorage.setItem("searchKeyword", searchKeyword.value);
+  localStorage.setItem("selectedSort", selectedSort.value);
+  localStorage.setItem("searchType", searchType.value);
+  localStorage.setItem("searchKeyword", searchKeyword.value);
 });
 
 // 1번 페이지와 마지막 페이지일 때 disabled 기능
@@ -371,13 +376,17 @@ onMounted(() => {
   // 뒤로가기 이벤트 감지
   window.onpopstate = function (event) {
     if (event.state == null) {
-      selectedSort.value = sessionStorage.getItem("selectedSort") || "최신순";
-      searchType.value = sessionStorage.getItem("searchType") || "all";
-      searchKeyword.value = sessionStorage.getItem("searchKeyword") || "";
+      selectedSort.value = localStorage.getItem("selectedSort") || "최신순";
+      searchType.value = localStorage.getItem("searchType") || "all";
+      searchKeyword.value = localStorage.getItem("searchKeyword") || "";
 
       getBoardList();
     }
   };
+
+  selectedSort.value = localStorage.getItem("selectedSort") || "최신순";
+  searchType.value = localStorage.getItem("searchType") || "all";
+  searchKeyword.value = localStorage.getItem("searchKeyword") || "";
 
   getBoardList();
 });

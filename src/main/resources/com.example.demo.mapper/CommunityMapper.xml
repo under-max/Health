@@ -54,22 +54,22 @@
             </if>
         </where>
 
-        order by grade desc
+        order by grade desc,
 
         <if test="sort eq 'id'">
-            , id desc
+            id desc
         </if>
 
         <if test="sort eq 'like'">
-            , likeCount desc, id desc
+            likeCount desc, id desc
         </if>
 
         <if test="sort eq 'comment'">
-            , commentCount desc, id desc
+            commentCount desc, id desc
         </if>
 
         <if test="sort eq 'view'">
-            , viewCount desc, id desc
+            viewCount desc, id desc
         </if>
 
         limit #{startIndex}, #{rowPage}

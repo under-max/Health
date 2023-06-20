@@ -36,7 +36,6 @@
           </div>
         </div>
 
-
       </div>
 
       <div class="mb-3">
@@ -57,26 +56,23 @@
           <button type="button" class="btn btn-danger" @click="likeDownBtn"><i class="fa-solid fa-chevron-down"></i>
           </button>
         </div>
-
       </div>
 
-      <div>
-        <div v-if="Cookies.get('accessToken')">
-          <div class="d-flex border-danger">
-            <textarea v-model="addCommentContent" class="comment-textarea" placeholder="댓글을 입력해주세요."></textarea>
-            <button @click="addCommentBtn" class="comment-button">댓글 쓰기</button>
-          </div>
+      <div v-if="Cookies.get('accessToken')">
+        <div class="d-flex border-danger">
+          <textarea v-model="addCommentContent" class="comment-textarea" placeholder="댓글을 입력해주세요."></textarea>
+          <button @click="addCommentBtn" class="comment-button">댓글 쓰기</button>
         </div>
+      </div>
 
-        <div v-else>
-          <div class="d-flex border-danger">
-            <div class="comment-div">
-              댓글을 쓰려면
-              <router-link to="/login">로그인</router-link>
-              이 필요합니다.
-            </div>
-            <button class="comment-button" disabled>댓글 쓰기</button>
+      <div v-else>
+        <div class="d-flex border-danger">
+          <div class="comment-div">
+            댓글을 쓰려면
+            <router-link to="/login">로그인</router-link>
+            이 필요합니다.
           </div>
+          <button class="comment-button" disabled>댓글 쓰기</button>
         </div>
       </div>
 

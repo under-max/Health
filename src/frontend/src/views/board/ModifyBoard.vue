@@ -98,8 +98,6 @@ onMounted(() => {
         }
       })
       .then((response) => {
-        console.log("접근성공!");
-        console.log(response.data);
         board.value = response.data;
       })
       .catch((error) => {
