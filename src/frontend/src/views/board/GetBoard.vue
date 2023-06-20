@@ -1,119 +1,131 @@
 <template>
 
-  <div class="container-lg">
+  <div v-if="isLoading">
+    <div class="loader">
+      <div class="spinner-border text-light" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+  </div>
 
-    <div class="d-flex justify-content-between">
+  <div v-else>
 
-      <div id="info">
-        <span>{{ board.writer }}</span>
-        <span> / </span>
-        <span><i class="fa-solid fa-binoculars"></i> {{ board.viewCount }}</span>
-        <span> / </span>
-        <span><i class="fa-solid fa-bolt"></i> {{ board.likeCount }}</span>
-        <span> / </span>
-        <span>{{ board.inserted }}</span>
+    <div class="container-lg">
+
+      <div class="d-flex justify-content-between">
+
+        <div id="info">
+          <span>{{ board.writer }}</span>
+          <span> / </span>
+          <span><i class="fa-solid fa-binoculars"></i> {{ board.viewCount }}</span>
+          <span> / </span>
+          <span><i class="fa-solid fa-bolt"></i> {{ board.likeCount }}</span>
+          <span> / </span>
+          <span>{{ board.inserted }}</span>
+        </div>
+
+        <div>
+          <div v-if="currentUser === boardWriter">
+            <button type="button" class="btn btn-secondary" @click="modifyBtn">수정</button>
+            <button type="button" class="btn btn-danger" @click="deleteBtn">삭제</button>
+            <button class="btn btn-warning" type="button" @click="goListBtn">목록</button>
+          </div>
+
+          <div v-else>
+            <button class="btn btn-warning" type="button" @click="goListBtn">목록</button>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div class="mb-3">
+        <label for="" class="form-label">제목</label>
+        <input type="text" class="form-control" :value="board.title" readonly/>
+      </div>
+
+      <div class="mb-3">
+        <label for="" class="form-label">내용</label>
+        <textarea class="form-control" rows="10" readonly>{{board.content}}</textarea>
+      </div>
+
+      <div class="d-flex justify-content-end">
+        <div class="mb-3">
+          <button type="button" class="btn btn-primary" @click="likeUpBtn"><i class="fa-solid fa-chevron-up"></i>
+          </button>
+          <button type="button" class="btn btn-light">{{ board.likeCount }}</button>
+          <button type="button" class="btn btn-danger" @click="likeDownBtn"><i class="fa-solid fa-chevron-down"></i>
+          </button>
+        </div>
+
       </div>
 
       <div>
-        <div v-if="currentUser === boardWriter">
-          <button type="button" class="btn btn-secondary" @click="modifyBtn">수정</button>
-          <button type="button" class="btn btn-danger" @click="deleteBtn">삭제</button>
-          <button class="btn btn-warning" type="button" @click="goListBtn">목록</button>
+        <div v-if="Cookies.get('accessToken')">
+          <div class="d-flex border-danger">
+            <textarea v-model="addCommentContent" class="comment-textarea" placeholder="댓글을 입력해주세요."></textarea>
+            <button @click="addCommentBtn" class="comment-button">댓글 쓰기</button>
+          </div>
         </div>
 
         <div v-else>
-          <button class="btn btn-warning" type="button" @click="goListBtn">목록</button>
-        </div>
-      </div>
-
-
-    </div>
-
-    <div class="mb-3">
-      <label for="" class="form-label">제목</label>
-      <input type="text" class="form-control" :value="board.title" readonly/>
-    </div>
-
-    <div class="mb-3">
-      <label for="" class="form-label">내용</label>
-      <textarea class="form-control" rows="10" readonly>{{board.content}}</textarea>
-    </div>
-
-    <div class="d-flex justify-content-end">
-      <div class="mb-3">
-        <button type="button" class="btn btn-primary" @click="likeUpBtn"><i class="fa-solid fa-chevron-up"></i>
-        </button>
-        <button type="button" class="btn btn-light">{{ board.likeCount }}</button>
-        <button type="button" class="btn btn-danger" @click="likeDownBtn"><i class="fa-solid fa-chevron-down"></i>
-        </button>
-      </div>
-
-    </div>
-
-    <div>
-      <div v-if="Cookies.get('accessToken')">
-        <div class="d-flex border-danger">
-            <textarea v-model="addCommentContent" class="comment-textarea" placeholder="댓글을 입력해주세요."></textarea>
-            <button @click="addCommentBtn" class="comment-button">댓글 쓰기</button>
-        </div>
-      </div>
-
-      <div v-else>
-        <div class="d-flex border-danger">
-          <div class="comment-div">
-            댓글을 쓰려면
-            <router-link to="/login">로그인</router-link>
-            이 필요합니다.
-          </div>
-          <button class="comment-button" disabled>댓글 쓰기</button>
-        </div>
-      </div>
-    </div>
-
-    <br>
-
-    <div class="card">
-      <div class="card-header">댓글 리스트</div>
-      <ul class="list-group" v-for="comment in commentList" :key="comment.id">
-        <li class="list-group-item d-flex justify-content-between">
-          <div>{{ comment.content }}</div>
-          <div class="d-flex">
-            <div>{{ comment.writer }} /&nbsp;</div>
-            <div>{{ comment.inserted }} &nbsp;</div>
-            <div v-if="currentUser === comment.writer">
-              <button type="button" @click="assignComment(comment.id, comment.content)"
-                      class="badge btn btn-secondary"
-                      data-bs-toggle="modal" data-bs-target="#myModal">수정
-              </button>
-              <button type="button" @click="deleteCommentBtn(comment.id)" class="badge btn btn-danger">삭제</button>
+          <div class="d-flex border-danger">
+            <div class="comment-div">
+              댓글을 쓰려면
+              <router-link to="/login">로그인</router-link>
+              이 필요합니다.
             </div>
+            <button class="comment-button" disabled>댓글 쓰기</button>
           </div>
-        </li>
-      </ul>
-    </div>
-
-    <!-- 수정 modal -->
-    <div class="modal fade" id="myModal">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-
-          <div class="modal-header">
-            <h4 class="modal-title">댓글 수정</h4>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-          </div>
-
-          <div class="modal-body">
-            <textarea v-model="modifyCommentContent" class="comment-textarea"></textarea>
-          </div>
-
-          <div class="modal-footer">
-            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">취소</button>
-            <button type="button" @click="modifyCommentBtn" class="btn btn-secondary" data-bs-dismiss="modal">수정
-            </button>
-          </div>
-
         </div>
       </div>
+
+      <br>
+
+      <div class="card">
+        <div class="card-header">댓글 리스트</div>
+        <ul class="list-group" v-for="comment in commentList" :key="comment.id">
+          <li class="list-group-item d-flex justify-content-between">
+            <div>{{ comment.content }}</div>
+            <div class="d-flex">
+              <div>{{ comment.writer }} /&nbsp;</div>
+              <div>{{ comment.inserted }} &nbsp;</div>
+              <div v-if="currentUser === comment.writer">
+                <button type="button" @click="assignComment(comment.id, comment.content)"
+                        class="badge btn btn-secondary"
+                        data-bs-toggle="modal" data-bs-target="#myModal">수정
+                </button>
+                <button type="button" @click="deleteCommentBtn(comment.id)" class="badge btn btn-danger">삭제</button>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- 수정 modal -->
+      <div class="modal fade" id="myModal">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+
+            <div class="modal-header">
+              <h4 class="modal-title">댓글 수정</h4>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+              <textarea v-model="modifyCommentContent" class="comment-textarea"></textarea>
+            </div>
+
+            <div class="modal-footer">
+              <button type="button" class="btn btn-danger" data-bs-dismiss="modal">취소</button>
+              <button type="button" @click="modifyCommentBtn" class="btn btn-secondary" data-bs-dismiss="modal">수정
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
     </div>
 
   </div>
@@ -144,6 +156,8 @@ const board = ref({
   likeCount: '',
   inserted: ''
 });
+
+const isLoading = ref(true);
 
 // 댓글 리스트
 const commentList = ref([]);
@@ -398,27 +412,30 @@ onMounted(() => {
   }
 });
 
-// 댓글 내용
+// 게시글 및 댓글 내용
 onMounted(() => {
+  setTimeout(() => {
+    isLoading.value = false;
+  }, 200);
+
+  // 게시글 내용
   axios
-      .get(`/api/community/board/${props.boardId}/comment`, {})
+      .get(`/api/community/board/${props.boardId}/get`, {})
       .then((response) => {
-        commentList.value = response.data;
+        board.value = response.data;
+        boardWriter.value = response.data.writer;
       })
       .catch((error) => {
         console.log(error);
         router.replace("/community");
         alert(error.response.data.message);
       });
-});
 
-// 게시글 내용
-onMounted(() => {
+  // 댓글 내용
   axios
-      .get(`/api/community/board/${props.boardId}/get`, {})
+      .get(`/api/community/board/${props.boardId}/comment`, {})
       .then((response) => {
-        board.value = response.data;
-        boardWriter.value = response.data.writer;
+        commentList.value = response.data;
       })
       .catch((error) => {
         console.log(error);
@@ -461,6 +478,14 @@ onMounted(() => {
   color: #fff;
   border: none;
   cursor: pointer;
+}
+
+.loader {
+  position: fixed;
+  z-index: 999;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 </style>

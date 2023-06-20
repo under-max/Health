@@ -160,16 +160,15 @@
   <!-- 선택한 센터 정보 modal -->
   <div class="modal fade" id="showSelectCenterInfoModal" tabindex="-1" aria-labelledby="showSelectCenterInfoModalLabel"
        aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" style="max-width: 100%;">
+    <div class="modal-dialog" style="max-width: 100%;">
       <div class="modal-content">
+
         <div class="modal-header">
           <h1 class="modal-title fs-3" id="showSelectCenterInfoModalLabel">센터 정보</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <div class="modal-body" v-if="selectedCenter">
-          <h5>센터를 선택해주세요!</h5>
-        </div>
-        <div class="modal-body" v-if="isCenterInfo && selectedCenter">
+
+        <div class="modal-body">
           <h5>센터 이름: {{ centerDetail.name }}</h5>
           <h5>센터 주소: {{ centerDetail.address }}</h5>
           <h5>센터 정보: {{ centerDetail.info }}</h5>
@@ -181,9 +180,11 @@
             <span class="btnCheck"><i class="fas fa-angle-right fa-2x" @click="moveRightImage"></i></span>
           </div>
         </div>
+
         <div class="modal-footer d-flex justify-content-center">
           <button type="button" class="btn btn-link fs-6 text-decoration-none m-0" data-bs-dismiss="modal">확인</button>
         </div>
+
       </div>
     </div>
   </div>
@@ -194,11 +195,13 @@
        aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" style="max-width: 100%;">
       <div class="modal-content">
+
         <div class="modal-header">
           <h1 class="modal-title fs-3" id="showSelectTrainerInfoModalLabel">트레이너 정보</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <div class="modal-body" v-if="isTrainerInfo">
+
+        <div class="modal-body">
           <h5>트레이너 이름: {{ trainerDetail.name }}</h5>
           <h5>트레이너 정보: {{ trainerDetail.info }}</h5>
           <h5>트레이너 사진:
@@ -206,9 +209,11 @@
                  :src="`https://bucket0503-1000011011001.s3.ap-northeast-2.amazonaws.com/health/${trainerDetail.centerId}/${trainerDetail.id}/${trainerDetail.fileName}`"/>
           </h5>
         </div>
+
         <div class="modal-footer d-flex justify-content-center">
           <button type="button" class="btn btn-link fs-6 text-decoration-none m-0" data-bs-dismiss="modal">확인</button>
         </div>
+
       </div>
     </div>
   </div>
@@ -218,19 +223,22 @@
        aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
+
         <div class="modal-header">
           <h1 class="modal-title fs-3" id="showPaymentModalLabel">결제 정보</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
+
         <div class="modal-body">
-          <p>지점 : {{ selectedCenter.centerName }}</p>
-          <p>담당 트레이너: {{ selectedTrainer.trainerName }}</p>
-          <p>이용 기간 : {{ selectedMonth }}개월</p>
-          <p>PT 횟수 : {{ selectedPT === '' ? 0 : selectedPT }} 회</p>
-          <p>결제 금액 : {{ formattedTotalPrice }}원 </p>
+          <h6>지점 : {{ selectedCenter.centerName }}</h6>
+          <h6>담당 트레이너: {{ selectedTrainer.trainerName }}</h6>
+          <h6>이용 기간 : {{ selectedMonth }}개월</h6>
+          <h6>PT 횟수 : {{ selectedPT === '' ? 0 : selectedPT }} 회</h6>
+          <h6>결제 금액 : {{ formattedTotalPrice }}원 </h6>
         </div>
+
         <div class="modal-footer d-flex justify-content-center">
-          <button type="button" class="btn btn-link fs-6 text-decoration-none m-0 border-end" @click="confirmPayment">
+          <button type="button" class="btn btn-link fs-6 text-decoration-none m-0 border-end" data-bs-dismiss="modal" @click="confirmPayment">
             <strong>구매</strong></button>
           <button type="button" class="btn btn-link fs-6 text-decoration-none m-0" data-bs-dismiss="modal">취소</button>
         </div>

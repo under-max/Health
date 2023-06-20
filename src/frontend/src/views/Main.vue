@@ -40,10 +40,13 @@
     <div class="position-fixed bottom-0 end-0">
       <br>
       <br>
-      <div class="toast show" style="width: 200px" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="toast show" id="main--toast" ref="mainToast" style="width: 200px" role="alert" aria-live="polite"
+           aria-atomic="true" data-bs-delay="5000">
         <div class="toast-header">
           <strong class="me-auto text-danger">알림</strong>
-          <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"><i class="fa-solid fa-x"></i></button>
+          <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close">
+            <i class="fa-solid fa-x"></i>
+          </button>
         </div>
         <div class="toast-body">
           PT {{ remainingPT }}회 남았습니다.
@@ -57,7 +60,7 @@
 <script setup lang="js">
 import Main_Image2 from '@/assets/M_Image.png';
 import Cookies from "vue-cookies";
-import {onMounted, ref} from "vue";
+import {onBeforeMount, onMounted, ref} from "vue";
 import axios from "axios";
 
 const showPopup = ref(true);
@@ -110,8 +113,8 @@ onMounted(() => {
 
 const remainingPT = ref();
 const isRemainingPT = () => {
-  return (Cookies.get('accessToken') && (0 <= remainingPT.value && remainingPT.value <= 5));
-}
+  return (Cookies.get('accessToken')) && (0 <= remainingPT.value && remainingPT.value <= 5);
+};
 
 onMounted(() => {
   const token = Cookies.get('accessToken');
