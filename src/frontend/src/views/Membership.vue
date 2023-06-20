@@ -160,11 +160,11 @@
   <!-- 선택한 센터 정보 modal -->
   <div class="modal fade" id="showSelectCenterInfoModal" tabindex="-1" aria-labelledby="showSelectCenterInfoModalLabel"
        aria-hidden="true">
-    <div class="modal-dialog" style="max-width: 100%;">
-      <div class="modal-content">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 100%;">
+      <div class="modal-content showInfoModal-content">
 
         <div class="modal-header">
-          <h1 class="modal-title fs-3" id="showSelectCenterInfoModalLabel">센터 정보</h1>
+          <h2 class="modal-title" id="showSelectCenterInfoModalLabel">센터 정보</h2>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
@@ -194,7 +194,7 @@
        aria-labelledby="showSelectTrainerInfoModalLabel"
        aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" style="max-width: 100%;">
-      <div class="modal-content">
+      <div class="modal-content showInfoModal-content">
 
         <div class="modal-header">
           <h1 class="modal-title fs-3" id="showSelectTrainerInfoModalLabel">트레이너 정보</h1>
@@ -221,8 +221,8 @@
   <!-- 카카오페이 결제하기 modal -->
   <div class="modal fade" id="showPaymentModal" tabindex="-1" aria-labelledby="showPaymentModalLabel"
        aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content paymentModal-content">
 
         <div class="modal-header">
           <h1 class="modal-title fs-3" id="showPaymentModalLabel">결제 정보</h1>
@@ -238,7 +238,8 @@
         </div>
 
         <div class="modal-footer d-flex justify-content-center">
-          <button type="button" class="btn btn-link fs-6 text-decoration-none m-0 border-end" data-bs-dismiss="modal" @click="confirmPayment">
+          <button type="button" class="btn btn-link fs-6 text-decoration-none m-0 border-end" data-bs-dismiss="modal"
+                  @click="confirmPayment">
             <strong>구매</strong></button>
           <button type="button" class="btn btn-link fs-6 text-decoration-none m-0" data-bs-dismiss="modal">취소</button>
         </div>
@@ -497,8 +498,6 @@ const confirmPayment = () => {
     const ok = confirm("로그인이 필요한 기능입니다. 로그인 페이지로 이동하시겠습니까?");
     if (ok) {
       router.push('/login');
-      // TODO 결제 modal화면에서 로그인화면으로 갈 시 화면 먹통 새로고침하면 작동
-      // window.location.reload();
     } else {
       // 현재 경로로 유지
       router.push(router.currentRoute.value.fullPath);
@@ -567,9 +566,18 @@ button.btn-primary {
 
 .modal {
   padding: 8rem;
+
 }
 
-.modal-content {
+.showInfoModal-content {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 500px;
+}
+
+.paymentModal-content {
   width: 400px;
 }
 

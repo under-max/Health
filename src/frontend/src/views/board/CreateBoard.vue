@@ -15,7 +15,6 @@
       <input type="text" class="form-control" :value="userName" readonly/>
     </div>
 
-    <!--  <input type="file" accept="image/*" multiple/>-->
     <div class="d-flex justify-content-end">
       <button class="btn btn-primary" type="button" @click="createBtn">등록</button>
       <button class="btn btn-warning" type="button" @click="goListBtn">목록</button>
@@ -92,6 +91,10 @@ onMounted(() => {
 <style scoped>
 .container-lg {
   margin-top: 100px;
+}
+
+.form-label {
+  color: yellow;
 }
 
 </style>

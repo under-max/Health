@@ -24,14 +24,13 @@
         광고1
       </div>
       <div class="btn_wrap">
-        <!-- Don't watch today --->
-        <button class="btn_today_close" @click="hidePopupToday">
+        <button class="btn_close" @click="hidePopup"></button>
+        <button type="button" class="btn_today_close">
           <span>
-            <input type="checkbox">오늘 하루 안보기
+<!--            <input type="checkbox" v-model="popupCheckBox" @click="hidePopupToday">오늘 하루 그만 보기-->
+            <input type="checkbox" v-model="popupCheckBox" @click="test1">오늘 하루 그만 보기
           </span>
         </button>
-        <!-- just close --->
-        <button class="btn_close" @click="hidePopup">close</button>
       </div>
     </div>
   </div>
@@ -40,8 +39,8 @@
     <div class="position-fixed bottom-0 end-0">
       <br>
       <br>
-      <div class="toast show" id="main--toast" ref="mainToast" style="width: 200px" role="alert" aria-live="polite"
-           aria-atomic="true" data-bs-delay="5000">
+      <div class="toast" ref="mainToast" style="width: 200px" role="alert" aria-live="polite"
+           aria-atomic="true" data-bs-delay="10000">
         <div class="toast-header">
           <strong class="me-auto text-danger">알림</strong>
           <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close">
@@ -60,34 +59,37 @@
 <script setup lang="js">
 import Main_Image2 from '@/assets/M_Image.png';
 import Cookies from "vue-cookies";
-import {onBeforeMount, onMounted, ref} from "vue";
+import {onMounted, ref} from "vue";
 import axios from "axios";
 
 const showPopup = ref(true);
+const popupCheckBox = ref(false);
+
+// toast 관련 변수
+const remainingPT = ref();
+const mainToast = ref(null);
+
+const test1 = () => {
+  console.log(popupCheckBox.value);
+};
 
 const handleStorage = {
-  // write data to storage (name, expiration date)
   setStorage: function (name, exp) {
-    // Get the expiration time (change exp to ms)
-    var date = new Date();
+    // 체크 한 시간으로부터 24시간 적용
+    // let date = new Date();
     // date = date.setTime(date.getTime() + exp * 24 * 60 * 60 * 1000);
-    date = date.setTime(date.getTime() + exp);
 
-    // save to local storage
-    // (store the expiration time without storing the value separately)
+    // 체크 한 시간 상관없이 오늘까지만 적용
+    let date = new Date().setHours(23, 59, 59, 999);
     localStorage.setItem(name, date);
   },
-  // read storage
   getStorage: function (name) {
-    var now = new Date();
-    // now = now.setTime(now.getTime());
-    // Compare the current time with the time stored in the storage
-    // returns true if time is left, false otherwise
+    let now = new Date();
+    now = now.setTime(now.getTime());
     return parseInt(localStorage.getItem(name)) > now;
   },
 };
 
-// Read cookie and show popup
 const toggleMainPopup = () => {
   if (handleStorage.getStorage('today')) {
     showPopup.value = false;
@@ -96,27 +98,23 @@ const toggleMainPopup = () => {
   }
 };
 
-// Hide popup for today
-const hidePopupToday = () => {
-  handleStorage.setStorage('today', 1);
-  showPopup.value = false;
-};
-
 // Hide popup
 const hidePopup = () => {
-  showPopup.value = false;
+  if (popupCheckBox.value) {
+    handleStorage.setStorage('today', 1);
+    showPopup.value = false;
+  } else {
+    showPopup.value = false;
+  }
 };
 
-onMounted(() => {
-  toggleMainPopup();
-});
-
-const remainingPT = ref();
 const isRemainingPT = () => {
   return (Cookies.get('accessToken')) && (0 <= remainingPT.value && remainingPT.value <= 5);
 };
 
 onMounted(() => {
+  toggleMainPopup();
+
   const token = Cookies.get('accessToken');
 
   if (token) {
@@ -128,6 +126,10 @@ onMounted(() => {
         })
         .then((response) => {
           remainingPT.value = response.data;
+        })
+        .then(() => {
+          const bootstrapToast = new bootstrap.Toast(mainToast.value);
+          bootstrapToast.show();
         })
         .catch((error) => {
           console.log(error)
@@ -211,8 +213,8 @@ button {
   z-index: 1005;
   -webkit-box-shadow: 0px 13px 40px -6px #061626;
   box-shadow: 0px 13px 40px -6px #061626;
-  top: 100px;
-  left: 50px;
+  top: 150px;
+  left: 800px;
   display: none;
 }
 
@@ -264,11 +266,11 @@ button {
 
 .main_popup .btn_today_close {
   width: 100%;
-  height: 45px;
+  height: 50px;
   background-color: #333;
   text-align: center;
   color: #fff;
-  font-size: 14px;
+  font-size: 16px;
   display: block;
 }
 
