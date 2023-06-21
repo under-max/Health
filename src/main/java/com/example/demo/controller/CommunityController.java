@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -33,34 +32,31 @@ public class CommunityController {
     private final CommunityService communityService;
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> methodArgExHandler(MethodArgumentNotValidException e) {
+    public ResponseEntity<Map<String, String>> methodArgExHandler(MethodArgumentNotValidException e) {
         log.info("methodArgExHandler 호출");
 
         BindingResult bindingResult = e.getBindingResult();
 
-        FieldError title = bindingResult.getFieldError("title");
-        FieldError content = bindingResult.getFieldError("content");
-
-        String titleDefaultMessage = title.getDefaultMessage();
-        String contentDefaultMessage = content.getDefaultMessage();
+        List<FieldError> fieldErrors = bindingResult.getFieldErrors();
 
         Map<String, String> messages = new HashMap<>();
 
-        if (StringUtils.hasText(titleDefaultMessage)) {
-            messages.put("title", titleDefaultMessage);
+        for (int i = 0; i < fieldErrors.size(); i++) {
+            FieldError fieldError = fieldErrors.get(i);
+            String field = fieldError.getField();
+
+            if (field.equals("title")) {
+                FieldError title = bindingResult.getFieldError("title");
+                messages.put(field, title.getDefaultMessage());
+            } else if (field.equals("content")) {
+                FieldError content = bindingResult.getFieldError("content");
+                messages.put(field, content.getDefaultMessage());
+            }
         }
 
-        if (StringUtils.hasText(contentDefaultMessage)) {
-            messages.put("content", contentDefaultMessage);
-        }
+        log.info("messages={}", messages);
 
-        ErrorResponse errorResponse = ErrorResponse.builder()
-                .validation(messages)
-                .build();
-
-        log.info("errorResponse={}", errorResponse);
-
-        return ResponseEntity.badRequest().body(errorResponse);
+        return ResponseEntity.badRequest().body(messages);
     }
 
     @ExceptionHandler(RuntimeException.class)
@@ -121,7 +117,7 @@ public class CommunityController {
 
     @PatchMapping("/{boardId}")
     public ResponseEntity<String> updateBoard(@PathVariable Integer boardId,
-                                              @RequestBody UpdateBoardRequest request,
+                                              @Valid @RequestBody UpdateBoardRequest request,
                                               AuthUser authUser) {
 
         log.info("update request={}", request);

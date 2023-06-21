@@ -452,6 +452,10 @@ onMounted(() => {
   color: white;
 }
 
+.form-label {
+  color: yellow;
+}
+
 .comment-div {
   width: 90%;
   height: 100px;
