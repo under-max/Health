@@ -15,7 +15,8 @@
         </div>
         <div class="trainerDetailTxt">
           <h3 class="trainerName">이름: {{ trainerDetail.name }}</h3>
-          <h3 class="trainerInfo">트레이너 정보: {{ trainerDetail.info }}</h3>
+          <h3 class="trainerInfo">정보: {{ trainerDetail.info }}</h3>
+          <h3 class="trainerInfoDetail">상세정보: {{trainerDetail.infoDetail}}</h3>
         </div>
       </div>
       
@@ -45,64 +46,72 @@ h1 {
   color: black;
 }
 
-.trainerDetailDiv {
-  margin: 3vh;
-  min-width: 680px;
-  background: white;
-  border-radius: 20px;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
+.trainerDetailContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 9999;
+  }
 
-.trainerDetailContentDiv {
-  flex: 1;
-  display: flex;
-  text-align: center;
-}
+  .trainerDetailDiv {
+    background-color: #fff;
+    min-width: 40vw;
+    min-height: 30vh;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  }
 
-.trainerDetailTxt {
-  flex: 1;
-  padding: 2vh;
-}
+  .x-mark-div {
+    display: flex;
+    justify-content: flex-end;
+  }
 
-.trainerDetailImageBox {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+  .x-mark {
+    cursor: pointer;
+    color: #888;
+  }
 
-.trainerDetailImageBox img {  
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
-}
+  .trainerDetailContentDiv {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+    max-width: 50vw;
+  }
 
-.x-mark {
-  color: red;
-  cursor: pointer;
-}
+  .trainerDetailImageBox {
+    width: 40%;
+    max-width: 300px;
+    height: auto;
+    margin-right: 20px;
+  }
 
-.x-mark-div {
-  align-self: flex-end;
-  margin-right: 2vh;
-  padding-top: 2vh;
-}
+  .trainerDetailImage {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 8px;
+  }
 
-.trainerDetailContainer{
-  margin: 0 3vh;
-  border-radius: 15px;
-}
+  .trainerDetailTxt {
+    flex: 1;
+  }
 
-.trainerName {
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 10px;
-}
+  .trainerName {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
 
-.trainerInfo {
-  font-size: 18px;
-  color: #333;
-}
+  .trainerInfo,
+  .trainerInfoDetail {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
 </style>

@@ -3,11 +3,15 @@
     <div class="centerDetailDiv">
 
       <div class="imgBox">        
-        <span><i class="fas fa-angle-left fa-2x" @click="moveLeftImage"></i></span>
+        <span :class="slideIndex === 0 ? 'leftBtnEnd' : 'leftBtn'">
+          <i class="fas fa-angle-left fa-2x" @click="moveLeftImage"></i>
+        </span>
         <div class="imageContainer">            
           <img :src="getImage(slideIndex)" alt="" />
         </div>        
-        <span class="btnCheck"><i class="fas fa-angle-right fa-2x" @click="moveRightImage"></i></span>
+        <span :class="slideIndex === centerDetail.fileName.length-1 ? 'rightBtnEnd' : 'rightBtn'">
+          <i class="fas fa-angle-right fa-2x" @click="moveRightImage"></i>
+        </span>
       </div>
 
       <div class="centerDetailTxt">        
@@ -39,8 +43,7 @@
     </div>
     
     <div class="CenterCommentContainer">
-
-      <input type="text" v-model="centerCommentInfo" :placeholder="isLogin ? '' : '로그인 후 작성할 수 있습니다'" :disabled="!isLogin">
+      <input type="text" v-model="centerCommentInfo" :placeholder="isLogin ? '' : '로그인 후 작성할 수 있습니다'" :disabled="!isLogin" @focus="messageCheck">
       
 
       <button @click="centerCommentSubmit" 
@@ -48,7 +51,7 @@
       :class="centerCommentCheck && centerCommentStarCheck && isLogin ? 'insertCenterCommentActive' : 'insertCenterCommentDisabled'"
       >등 록</button>
       <div class="centerStarBox" v-if="isLogin">
-        <p>{{centerCommentInfo ? "" : "1글자 이상 입력하셔야 합니다."}}</p>
+        <p>{{!focusCheck ? '' : centerCommentInfo ? "" : "1글자 이상 입력하셔야 합니다."}}</p>
         <span><h4 class="star_h">평점:</h4></span>
         <span v-for="(starClass, index) in starsCopy" :key="index" :class="starClass" @click="isLogin && changeStars(index)"></span>
         <p>{{currentStarValue === 0 ? "평점을 입력해야 합니다" : ""}}</p>
@@ -88,6 +91,12 @@ const url = "http://localhost:8090/";
 
 const route = useRoute();
 
+
+//check
+const focusCheck = ref(false);
+const messageCheck = () => {
+  focusCheck.value = true;
+}
 //reload centerComment
 const reloadCenterComment = ref(false);
 
@@ -112,6 +121,12 @@ const closeTrainerDetailModal = () => {
 
 //경로매개변수 확인
 const id = route.params.id;
+
+//로그인 페이지로
+const loginRedirect = () => {
+    route.push("/login");
+    console.log("hey");
+}
 
 //detail 저장 변수
 const centerDetail = ref(null);
@@ -178,7 +193,7 @@ const moveRightImage = () => {
         slideIndex.value = slideIndex.value + 1;        
     } else{        
         slideIndex.value = +(centerDetail.value.fileName.length -1);        
-    }    
+    }
 }
 
 const getTrainerInfo = async(trainerId) => {    
@@ -284,11 +299,9 @@ watch(centerCommentInfo, debounce((current, old)=>{
   }else{
     centerCommentCheck.value = false;
   }
-  console.log(centerCommentCheck.value && centerCommentStarCheck.value && isLogin.value);
 }, 200));
 
 watch(currentStarValue,debounce((current, old)=>{
-  console.log(current);
   if(current !== 0){
     centerCommentStarCheck.value = true;
   }else{
@@ -308,7 +321,6 @@ const centerCommentSubmit = async(e) => {
 
   try{
     await axios.post(url+"center/insertCenterComment",centerCommentSubmitData.value)
-    console.log(centerCommentSubmitData.value);
     centerCommentSubmitData.value = null;
     currentStarValue.value = 0;
     centerCommentInfo.value = '';
@@ -323,7 +335,7 @@ const centerCommentSubmit = async(e) => {
     centerCommentOffset.value = 0;
     getCenterComment();
   }catch(error){
-    console.log("실패", error);
+    console.log(error);
   }
 }
 
@@ -438,7 +450,8 @@ h1 {
   background-color: #2196f3;
 }
 .insertCenterCommentDisabled{
-  background-color: #90CAF9
+  background-color: #ccc;
+  cursor: not-allowed;
 }
 
 .star{
@@ -502,5 +515,23 @@ h1 {
 
 .centerStarBox p{
   color: red;
+}
+
+.leftBtn i{
+  cursor: pointer;
+}
+
+.leftBtnEnd i {
+  color: #E6E6FA;
+  cursor: pointer;
+}
+
+.rightBtn i{
+  cursor: pointer;
+}
+
+.rightBtnEnd i{
+  color: #E6E6FA;
+  cursor: pointer;
 }
 </style>
