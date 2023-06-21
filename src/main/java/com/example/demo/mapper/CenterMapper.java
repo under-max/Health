@@ -109,9 +109,9 @@ public interface CenterMapper {
 
     //트레이너 테이블 정보 입력
     @Insert("""
-            INSERT INTO TRAINER (memberId, centerId, info, name, nickName)
+            INSERT INTO TRAINER (memberId, centerId, info, name, nickName, infoDetail)
             VALUES
-                  (#{memberId}, #{centerId}, #{info}, #{name}, #{nickName})
+                  (#{memberId}, #{centerId}, #{info}, #{name}, #{nickName}, #{infoDetail})
             """)
     @Options(useGeneratedKeys = true, keyColumn = "id", keyProperty = "id")
     Long inputInfoTrainerTable(CenterTrainer centerTrainer);
@@ -151,6 +151,7 @@ public interface CenterMapper {
                    t.memberId AS "memberId",
                    t.info AS "info",
                    t.id AS id,
+                   t.infoDetail AS infoDetail,
                    tr.fileName AS "fileName"                        
             FROM CENTER c
             JOIN TRAINER t ON c.id = t.centerId
@@ -184,10 +185,10 @@ public interface CenterMapper {
 
     @Update("""
             UPDATE TRAINER
-            SET info = #{modifyInfo}
+            SET info = #{modifyInfo}, infoDetail = #{modifyInfoDetail}
             WHERE id = #{trainerId}
             """)
-    void modifyTrainerByTrainerId(@Param("modifyInfo") String modifyInfo,@Param("trainerId") Long trainerId);
+    void modifyTrainerByTrainerId(@Param("modifyInfo") String modifyInfo,@Param("trainerId") Long trainerId, @Param("modifyInfoDetail") String modifyInfoDetail);
 
 
     @Select("""
@@ -239,7 +240,7 @@ public interface CenterMapper {
 
     @Select("""
             <script>
-            SELECT t.info, t.name, t.nickname, f.centerId, f.fileName, t.id
+            SELECT t.infoDetail, t.info, t.name, t.nickname, f.centerId, f.fileName, t.id
             FROM TRAINER t
             LEFT JOIN TRAINERFILE f ON t.id = f.trainerId
             WHERE trainerId = #{trainerId};
@@ -348,4 +349,34 @@ public interface CenterMapper {
             </script>
             """)
     Long centerSearchByTypeCount(@Param("searchType") String searchType,@Param("searchValue") String searchValue);
+
+
+    @Select("""
+            SELECT *
+            FROM TRAINER
+            WHERE memberId = #{memberId} AND centerID = #{centerId};
+            """)
+    Long checkTrainer(@Param("memberId") Long memberId,@Param("centerId") Long centerId);
+
+
+    @Select("""
+            SELECT *
+            FROM TRAINERFILE
+            WHERE centerId = #{id}
+            """)
+    List<CenterTrainer> findTrainerFileByCneterId(Integer id);
+
+
+    @Delete("""
+            DELETE FROM TRAINERFILE
+            WHERE centerId = #{id}
+            """)
+    void deleteTrainerFileByCenterId(Integer id);
+
+
+    @Delete("""
+            DELETE FROM TRAINER
+            WHERE centerId = #{id}
+            """)
+    void deleteTrainerByCenterId(Integer id);
 }

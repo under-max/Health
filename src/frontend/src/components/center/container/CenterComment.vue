@@ -118,7 +118,6 @@ const centerCommentModifySend = ref(0); //send 대기상태
 //같은 값인지? 
 const isSameValue = ref(centerCommentComment.value === centerCommentData.value.comment && centerCommentStar.value === centerCommentData.value.star)
 const sameValueCheck = ()=>{
-    console.log(isSameValue.value);
     isSameValue.value = centerCommentComment.value === centerCommentData.value.comment && centerCommentStar.value === centerCommentData.value.star;
 }
 
@@ -126,8 +125,7 @@ const sameValueCheck = ()=>{
 const centerCommentModifyBtn = async(e) => {
     e.preventDefault();    
     centerModifyClass.value = !centerModifyClass.value;
-
-    console.log(centerCommentComment.value === centerCommentData.value.comment && centerCommentStar.value === centerCommentData.value.star);
+    
     if(centerCommentModifySend.value === 0){
         centerCommentModifySend.value = 1; //input 열린상태 2번 되면 axios 통신처리
         

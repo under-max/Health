@@ -82,7 +82,6 @@ public class CenterController {
                 .phoneNumber(phoneNumber)
                 .build();
 
-
         centerService.modifyCenter(centerRequest,removeImg,addFile);
     }
 
@@ -109,6 +108,7 @@ public class CenterController {
     public void inputInfoTrainer(@RequestParam("memberId") Long memberId,
                                  @RequestParam("centerId") Long centerId,
                                  @RequestParam("info") String info,
+                                 @RequestParam("infoDetail") String infoDetail,
                                  @RequestParam("name") String name,
                                  @RequestParam("nickName") String nickName,
                                  @RequestParam("authority") Long authority,
@@ -118,6 +118,7 @@ public class CenterController {
                 .memberId(memberId)
                 .centerId(centerId)
                 .info(info)
+                .infoDetail(infoDetail)
                 .name(name)
                 .nickName(nickName)
                 .build();
@@ -162,11 +163,12 @@ public class CenterController {
     public void centerTrainerModify(@RequestParam(value = "trainerImg", required = false) MultipartFile[] trainerImg,
                                     @RequestParam("trainerId") Long trainerId,
                                     @RequestParam("centerId") Long centerId,
+                                    @RequestParam("modifyInfoDetail") String modifyInfoDetail,
                                     @RequestParam(value = "removeImg", required = false) String removeImg,
                                     @RequestParam("modifyInfo") String modifyInfo) throws Exception{
 
 
-        centerService.modifyTrainer(trainerImg, trainerId, removeImg, modifyInfo, centerId);
+        centerService.modifyTrainer(trainerImg, trainerId, removeImg, modifyInfo, centerId, modifyInfoDetail);
 
     }
 
@@ -228,5 +230,12 @@ public class CenterController {
                                    @RequestParam("offset") Long offset){
         Map<String, Object> responses = centerService.centerSearchByType(searchType, searchValue, offset);
         return responses;
+    }
+
+
+    @GetMapping("/center/checkTrainer")
+    public Map<String, Object> checkTrainer(@RequestParam("memberId") Long memberId,
+                             @RequestParam("centerId") Long centerId){
+        return centerService.checkTrainer(memberId, centerId);
     }
 }
