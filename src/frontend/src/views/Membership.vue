@@ -1,6 +1,6 @@
 <template>
 
-  <div class="container">
+  <div class="container membershipContainer">
 
     <div class="d-flex justify-content-center">
       <div class="row top-padding">
@@ -23,7 +23,7 @@
 
               <div class="d-flex">
                 <input class="form-control me-2" type="search" placeholder="센터 / 지역 검색" aria-label="Search"
-                       v-model="searchKeyword"/>
+                       v-model="searchKeyword" @keyup.enter="searchConditionEnter"/>
 
                 <button class="btn btn-success" type="button" style="width: 100px;" @click="searchConditionBtn">
                   검색
@@ -37,25 +37,25 @@
         <br>
         <br>
 
-        <div class="d-flex justify-content-between">
+        <div class="d-flex justify-content-between row">
 
-          <div class="mt-3">
+          <div class="col mt-3">
 
-            <div class="d-flex justify-content-between">
+            <div class="d-flex">
 
-              <h4>
+              <h4 class="m-2">
                 <span class="text-light">이용권 선택</span>
               </h4>
 
               <div>
-                <button class="btn btn-primary" type="button" @click="getCenterInfo" data-bs-toggle="modal"
+                <button class="btn btn-primary m-1" type="button" @click="getCenterInfo" data-bs-toggle="modal"
                         data-bs-target="#showSelectCenterInfoModal" :disabled="isCenterInfoButtonDisabled">
                   선택한 센터 정보
                 </button>
               </div>
 
               <div>
-                <button @click="getTrainerInfo" class="btn btn-primary" type="button" data-bs-toggle="modal"
+                <button class="btn btn-primary m-1" type="button" @click="getTrainerInfo" data-bs-toggle="modal"
                         data-bs-target="#showSelectTrainerInfoModal" :disabled="isTrainerInfoButtonDisabled">
                   선택한 트레이너 정보
                 </button>
@@ -101,7 +101,7 @@
             </div>
           </div>
 
-          <div class="mt-3">
+          <div class="col mt-3">
 
             <h4>
               <span class="text-light">선택 사항</span>
@@ -143,7 +143,7 @@
             </div>
 
             <div>
-              <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#showPaymentModal"
+              <button class="btn paymentBtn" type="button" data-bs-toggle="modal" data-bs-target="#showPaymentModal"
                       :disabled="isButtonDisabled">카카오페이 결제하기
                 <i class="fa-solid fa-barcode"></i></button>
             </div>
@@ -204,10 +204,9 @@
         <div class="modal-body">
           <h5>트레이너 이름: {{ trainerDetail.name }}</h5>
           <h5>트레이너 정보: {{ trainerDetail.info }}</h5>
-          <h5>트레이너 사진:
-            <img style="max-width: 100%; max-height: 100%;"
-                 :src="`https://bucket0503-1000011011001.s3.ap-northeast-2.amazonaws.com/health/${trainerDetail.centerId}/${trainerDetail.id}/${trainerDetail.fileName}`"/>
-          </h5>
+          <div class="trainerImg">
+            <img :src="`https://bucket0503-1000011011001.s3.ap-northeast-2.amazonaws.com/health/${trainerDetail.centerId}/${trainerDetail.id}/${trainerDetail.fileName}`"/>
+          </div>
         </div>
 
         <div class="modal-footer d-flex justify-content-center">
@@ -471,7 +470,6 @@ const confirmPayment = () => {
   if (token) {
     axios
         .post("/api/kakaopay", {
-          // memberId: memberId.value,
           centerId: centerId,
           centerName: centerName,
           month: selectedMonth.value,
@@ -537,6 +535,16 @@ onMounted(() => {
 
 <style scoped>
 
+.membershipContainer {
+}
+
+@media (max-width: 745px) {
+  .membershipContainer {
+    display: flex;
+    flex-wrap: wrap;
+  }
+}
+
 .select-- {
   padding: 2vh;
   margin-bottom: 0.1vh;
@@ -591,6 +599,21 @@ button.btn-primary {
 
 .top-padding {
   padding-top: 15vh;
+}
+
+.trainerImg{
+
+}
+
+.trainerImg img {
+  max-height: 40vh;
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.paymentBtn {
+  background-color: yellow;
 }
 
 </style>

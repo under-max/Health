@@ -240,8 +240,7 @@ const dropDownBtn = () => {
   isExpanded.value = !isExpanded.value;
 };
 
-// 센터 검색 버튼
-const searchConditionBtn = () => {
+const getBoardListWithQuery = () => {
   // 게시글 순서선택
   const query = {
     type: searchType.value,
@@ -256,44 +255,33 @@ const searchConditionBtn = () => {
   });
 };
 
+// 센터 검색 버튼
+const searchConditionBtn = () => {
+  getBoardListWithQuery();
+};
+
 // 검색 후 엔터 기능
 const searchConditionEnter = () => {
-  // 게시글 순서선택
-  const query = {
-    type: searchType.value,
-    keyword: searchKeyword.value,
-    sort: selectedSortLabel.value
-  };
-
-  // 현재 URL에 쿼리 파라미터 추가 또는 변경
-  router.push({query}).then(() => {
-    // 목록 요청
-    getBoardList();
-  });
+  getBoardListWithQuery();
 };
 
 const selectSort = (sortValue) => {
   isExpanded.value = false;
   selectedSort.value = sortValue;
 
-  // 게시글 순서선택
-  const query = {
-    type: searchType.value,
-    keyword: searchKeyword.value,
-    sort: selectedSortLabel.value
-  };
-
-  // 현재 URL에 쿼리 파라미터 추가 또는 변경
-  router.push({query}).then(() => {
-    // 목록 요청
-    getBoardList();
-  });
+  getBoardListWithQuery();
 };
 
 // 뒤로가기가 아닌 행동을 하면 localStorage에 값들을 clear
 window.addEventListener('beforeunload', () => {
   localStorage.clear();
 });
+
+const localStorageGetItem = () => {
+  selectedSort.value = localStorage.getItem("selectedSort") || "최신순";
+  searchType.value = localStorage.getItem("searchType") || "all";
+  searchKeyword.value = localStorage.getItem("searchKeyword") || "";
+};
 
 // watch를 사용하여 선택한 값이 변경될 때마다 localStorage에 저장
 watch([selectedSort, searchType, searchKeyword], () => {
@@ -376,18 +364,12 @@ onMounted(() => {
   // 뒤로가기 이벤트 감지
   window.onpopstate = function (event) {
     if (event.state == null) {
-      selectedSort.value = localStorage.getItem("selectedSort") || "최신순";
-      searchType.value = localStorage.getItem("searchType") || "all";
-      searchKeyword.value = localStorage.getItem("searchKeyword") || "";
-
+      localStorageGetItem();
       getBoardList();
     }
   };
 
-  selectedSort.value = localStorage.getItem("selectedSort") || "최신순";
-  searchType.value = localStorage.getItem("searchType") || "all";
-  searchKeyword.value = localStorage.getItem("searchKeyword") || "";
-
+  localStorageGetItem();
   getBoardList();
 });
 

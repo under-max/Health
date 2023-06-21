@@ -3,12 +3,12 @@
 
     <div class="mb-3">
       <label for="" class="form-label">제목</label>
-      <input class="form-control" type="text" v-model="title">
+      <input class="form-control" type="text" placeholder="제목을 입력해주세요." v-model="title">
     </div>
 
     <div class="mb-3">
       <label for="" class="form-label">내용</label>
-      <textarea class="form-control" rows="10" v-model="content"></textarea>
+      <textarea class="form-control" rows="10" placeholder="내용을 입력해주세요." v-model="content"></textarea>
     </div>
     <div class="mb-3">
       <label for="" class="form-label">작성자</label>
@@ -29,6 +29,8 @@ import {onMounted, ref} from "vue";
 import axios from "axios";
 import Cookies from "vue-cookies";
 import router from "@/router";
+
+const errors = ref();
 
 const title = ref('');
 const content = ref('');
@@ -58,11 +60,13 @@ const createBtn = () => {
         }
       })
       .catch((error) => {
-        console.log(error.response.data);
-          console.log(error.response.data.errors[0].defaultMessage);
+        errors.value = error.response.data.validation;
+        console.log(errors.value)
         if (error.response.data) {
-          alert(error.response.data.errors[0].defaultMessage + error.response.data.errors[1].defaultMessage);
-          router.push('/community/new');
+          alert(error.response.data.errors[0].defaultMessage);
+          alert(error.response.data.errors[1].defaultMessage);
+          router.push(router.currentRoute.value.fullPath);
+          // router.push('/community/new');
         }
       });
 }
@@ -78,7 +82,6 @@ onMounted(() => {
         }
       })
       .then((response) => {
-        console.log(response.data);
         userName.value = response.data;
       })
       .catch((error) => {

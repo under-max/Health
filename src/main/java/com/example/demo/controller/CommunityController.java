@@ -14,12 +14,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -30,24 +33,43 @@ public class CommunityController {
     private final CommunityService communityService;
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseBody
-    public ResponseEntity<ErrorResponse> methodArgumentExHandler(MethodArgumentNotValidException e) {
-        log.info("methodArgumentExHandler 호출");
+    public ResponseEntity<ErrorResponse> methodArgExHandler(MethodArgumentNotValidException e) {
+        log.info("methodArgExHandler 호출");
 
         BindingResult bindingResult = e.getBindingResult();
-        log.info("result={}", bindingResult);
 
+        FieldError title = bindingResult.getFieldError("title");
         FieldError content = bindingResult.getFieldError("content");
-        log.info("content={}", content);
 
-        String defaultMessage = content.getDefaultMessage();
-        log.info("defaultMessage={}", defaultMessage);
+        String titleDefaultMessage = title.getDefaultMessage();
+        String contentDefaultMessage = content.getDefaultMessage();
 
-        log.info("===================");
+        Map<String, String> messages = new HashMap<>();
+
+        if (StringUtils.hasText(titleDefaultMessage)) {
+            messages.put("title", titleDefaultMessage);
+        }
+
+        if (StringUtils.hasText(contentDefaultMessage)) {
+            messages.put("content", contentDefaultMessage);
+        }
 
         ErrorResponse errorResponse = ErrorResponse.builder()
+                .validation(messages)
+                .build();
+
+        log.info("errorResponse={}", errorResponse);
+
+        return ResponseEntity.badRequest().body(errorResponse);
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ErrorResponse> runTimeExHandler(RuntimeException e) {
+
+        log.info("runTimeExHandler 호출");
+        ErrorResponse errorResponse = ErrorResponse.builder()
                 .code("BAD")
-                .message(defaultMessage)
+                .message(e.getMessage())
                 .build();
 
         log.info("errorResponse={}", errorResponse);
