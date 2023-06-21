@@ -256,7 +256,10 @@ form label {
   background-color: #ffffcc;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
-
+form button[type="submit"]:disabled:hover {
+  background-color: #ccc;
+  box-shadow: none;
+}
 .centerInfo {
   height: 12vh;
 }

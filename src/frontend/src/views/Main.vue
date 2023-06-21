@@ -149,7 +149,7 @@ onMounted(() => {
   background-color: #112470;
   background-image: linear-gradient(176deg, #112470 35%, #fff);
   flex-wrap: wrap;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: center;
   padding: 0 0 0 60px;
   display: flex;
@@ -199,7 +199,7 @@ onMounted(() => {
   margin-right: 0px;
 }
 
-.main_image > img {
+.main_image > img {  
   height: 100vh;
 }
 

@@ -624,6 +624,9 @@ button:hover {
   margin-bottom: 0px;
 }
 
+.centerModifySubmitBtn:disabled:hover{
+  background-color: #ccc;
+}
 .centerModifySubmitBtn:disabled {
   background-color: #ccc;
   cursor: not-allowed;
