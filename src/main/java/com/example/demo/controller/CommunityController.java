@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
@@ -31,44 +30,42 @@ public class CommunityController {
 
     private final CommunityService communityService;
 
+    /**
+     * 예외 처리
+     */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> methodArgExHandler(MethodArgumentNotValidException e) {
+
         log.info("methodArgExHandler 호출");
 
-        BindingResult bindingResult = e.getBindingResult();
+        List<FieldError> fieldErrors = e.getFieldErrors();
 
-        List<FieldError> fieldErrors = bindingResult.getFieldErrors();
-
-        Map<String, String> messages = new HashMap<>();
+        Map<String, String> errorMessages = new HashMap<>();
 
         for (int i = 0; i < fieldErrors.size(); i++) {
             FieldError fieldError = fieldErrors.get(i);
             String field = fieldError.getField();
 
             if (field.equals("title")) {
-                FieldError title = bindingResult.getFieldError("title");
-                messages.put(field, title.getDefaultMessage());
+                FieldError title = e.getFieldError("title");
+                errorMessages.put(field, title.getDefaultMessage());
             } else if (field.equals("content")) {
-                FieldError content = bindingResult.getFieldError("content");
-                messages.put(field, content.getDefaultMessage());
+                FieldError content = e.getFieldError("content");
+                errorMessages.put(field, content.getDefaultMessage());
             }
         }
 
-        log.info("messages={}", messages);
-
-        return ResponseEntity.badRequest().body(messages);
+        return ResponseEntity.badRequest().body(errorMessages);
     }
 
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<ErrorResponse> runTimeExHandler(RuntimeException e) {
+    public ResponseEntity<ErrorResponse> runtimeExHandler(RuntimeException e) {
 
         log.info("runTimeExHandler 호출");
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .code("BAD")
                 .message(e.getMessage())
                 .build();
-
-        log.info("errorResponse={}", errorResponse);
 
         return ResponseEntity.badRequest().body(errorResponse);
     }
@@ -78,7 +75,6 @@ public class CommunityController {
      */
     @PostMapping
     public ResponseEntity<String> createBoard(@Valid @RequestBody CreateBoardRequest request, AuthUser authUser) {
-        log.info("request={}", request);
 
         Boolean ok = communityService.createBoard(authUser.getUserId(), request);
 
@@ -94,8 +90,6 @@ public class CommunityController {
                                           @RequestParam(value = "type", defaultValue = "all") String type,
                                           @RequestParam(value = "keyword", defaultValue = "") String keyword,
                                           @RequestParam(value = "sort", defaultValue = "id") String sort) {
-
-        log.info("getCommunityList -> page={}, type={}, keyword={}, sort={}", page, type, keyword, sort);
 
         return communityService.getBoardList(page, type, keyword, sort);
     }
@@ -120,7 +114,6 @@ public class CommunityController {
                                               @Valid @RequestBody UpdateBoardRequest request,
                                               AuthUser authUser) {
 
-        log.info("update request={}", request);
         Boolean ok = communityService.updateBoard(authUser.getUserId(), boardId, request);
 
         if (ok) {
@@ -132,6 +125,7 @@ public class CommunityController {
 
     @DeleteMapping("/{boardId}")
     public ResponseEntity<String> deleteBoard(@PathVariable Integer boardId, AuthUser authUser) {
+
         Boolean ok = communityService.deleteBoard(authUser.getUserId(), boardId);
 
         if (ok) {
@@ -159,6 +153,7 @@ public class CommunityController {
      */
     @PostMapping("/{boardId}/comment")
     public ResponseEntity<String> addComment(@PathVariable Integer boardId, @Valid @RequestBody CommentRequest request, AuthUser authUser) {
+
         Boolean ok = communityService.addComment(authUser.getUserId(), boardId, request.getContent());
 
         if (ok) {
@@ -175,7 +170,7 @@ public class CommunityController {
 
     @PutMapping("/{boardId}/comment")
     public ResponseEntity<String> modifyComment(@PathVariable Integer boardId, @Valid @RequestBody CommentRequest request, AuthUser authUser) {
-        log.info("comment modify request={}", request);
+
         Boolean ok = communityService.modifyComment(authUser.getUserId(), boardId, request);
 
         if (ok) {
@@ -187,6 +182,7 @@ public class CommunityController {
 
     @DeleteMapping("/{boardId}/comment/{commentId}")
     public ResponseEntity<String> deleteComment(@PathVariable Integer boardId, @PathVariable Integer commentId, AuthUser authUser) {
+
         Boolean ok = communityService.deleteComment(authUser.getUserId(), boardId, commentId);
 
         if (ok) {

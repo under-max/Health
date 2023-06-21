@@ -93,14 +93,13 @@ onMounted(() => {
               }
             })
             .then((response) => {
-              console.log(response.data);
             })
             .catch((error) => {
-              console.log(error);
+              alert(error.response.data.message);
             });
       })
       .catch((error) => {
-        console.log(error)
+        alert(error.response.data.message);
       });
 
   showModal.value = true;

@@ -4,7 +4,6 @@ import com.example.demo.request.membership.PayReadyRequest;
 import com.example.demo.response.membership.PayApproveResponse;
 import com.example.demo.response.membership.PayReadyResponse;
 import com.example.demo.response.membership.PaySuccessResponse;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -18,7 +17,6 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,8 +40,6 @@ public class KaKaoPayService {
                 .build()
                 .toUri();
 
-        log.info("uri={}", uri);
-
         // 서버로 요청할 Header
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", adminKey);
@@ -55,20 +51,7 @@ public class KaKaoPayService {
             request.setPt(0);
         }
 
-//        if (request.getMonth() == 0) {
-//            if (request.getPt() == 10) {
-//                request.setMonth(1);
-//            } else if(request.getPt() == 20) {
-//                request.setMonth(2);
-//            } else if (request.getPt() == 30) {
-//                request.setMonth(3);
-//            } else if (request.getPt() == 60) {
-//                request.setMonth(6);
-//            }
-//        }
-
         String itemName = request.getCenterName() + ": 이용권(" + request.getMonth() + "개월, " + "PT " + request.getPt() + "회)";
-        log.info("itemName={}", itemName);
 
         // 서버로 요청할 Body
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
@@ -81,24 +64,19 @@ public class KaKaoPayService {
         params.add("tax_free_amount", "10");
         params.add("approval_url", "http://localhost:5173/payment/success"); // 결제 성공 url
         params.add("cancel_url", "http://localhost:5173/payment/cancel"); // 결제 취소 url
-        params.add("fail_url", "http://localhost:5173/payment/fail"); // 결제 실패 url
+        params.add("fail_url", "http://localhost:5173/payment/cancel"); // 결제 실패 url - 결제 취소와 같이 사용 (원래는 실패에 맞는 페이지 작성)
+//        params.add("fail_url", "http://localhost:5173/payment/fail"); // 결제 실패 url - 결제 취소와 같이 사용 (원래는 실패에 맞는 페이지 작성)
 
         RequestEntity<MultiValueMap<String, String>> requestEntity = RequestEntity
                 .post(uri)
                 .headers(headers)
                 .body(params);
 
-        log.info("kakaoPayReady() requestEntity={}", requestEntity);
-
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<PayReadyResponse> response = restTemplate.exchange(requestEntity, PayReadyResponse.class);
 
         // approve에서 사용할 정보
         store.put("tid", response.getBody().getTid());
-
-        log.info("Headers={}", response.getHeaders());
-        log.info("StatusCode={}", response.getStatusCode());
-        log.info("body={}", response.getBody());
 
         return response.getBody();
     }
@@ -111,8 +89,6 @@ public class KaKaoPayService {
                 .encode()
                 .build()
                 .toUri();
-
-        log.info("uri={}", uri);
 
         // 서버로 요청할 Header
         HttpHeaders headers = new HttpHeaders();
@@ -133,14 +109,8 @@ public class KaKaoPayService {
                 .headers(headers)
                 .body(params);
 
-        log.info("kakaoPayApprove() requestEntity={}", requestEntity);
-
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<PayApproveResponse> response = restTemplate.exchange(requestEntity, PayApproveResponse.class);
-
-        log.info("Headers={}", response.getHeaders());
-        log.info("StatusCode={}", response.getStatusCode());
-        log.info("body={}", response.getBody());
 
         //String itemName = request.getCenterName() + ": 이용권(" + request.getMonth() + "개월, " + "PT " + request.getPt() + "회";
         //강백호짐: 이용권(5개월, PT 10회)
@@ -159,8 +129,6 @@ public class KaKaoPayService {
                 .approvedDate(response.getBody().getApproved_at().toLocalDate().toString())
                 .approvedTime(response.getBody().getApproved_at().toLocalTime().toString())
                 .build();
-
-        log.info("successResponse={}", successResponse);
 
         return successResponse;
     }

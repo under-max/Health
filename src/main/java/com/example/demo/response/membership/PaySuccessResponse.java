@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 public class PaySuccessResponse {
+
     private Integer memberId;
     private String centerName;
     private Integer paymentMonths;

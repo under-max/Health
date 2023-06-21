@@ -16,25 +16,16 @@
     </div>
 
     <div class="mb-3">
-      <div class="error" v-if="errors.title">
-        <p>{{ errors.title }}</p>
-      </div>
+      <p class="errorMessage" v-if="errors.title">{{ errors.title }}</p>
       <label for="" class="form-label">제목</label>
       <input type="text" class="form-control" v-model="board.title"/>
     </div>
 
     <div class="mb-3">
-      <div class="error" v-if="errors.content">
-        <p>{{ errors.content }}</p>
-      </div>
-      <label for="" class="form-label">본문</label>
+      <p class="errorMessage" v-if="errors.content">{{ errors.content }}</p>
+      <label for="" class="form-label">내용</label>
       <textarea class="form-control" rows="10" v-model="board.content">{{board.content}}</textarea>
     </div>
-
-    <div class="d-flex justify-content-end">
-
-    </div>
-
 
   </div>
 
@@ -107,12 +98,7 @@ onMounted(() => {
         board.value = response.data;
       })
       .catch((error) => {
-        console.log(error);
-        if (error.response.data) {
-          alert(error.response.data.message);
-        } else {
-          alert(error.response.data);
-        }
+        alert(error.response.data.message);
         router.replace("/community")
       });
 });
@@ -133,8 +119,8 @@ onMounted(() => {
   color: yellow;
 }
 
-.error {
-  font-size: 20px;
+.errorMessage {
+  font-size: 18px;
   color: red;
 }
 

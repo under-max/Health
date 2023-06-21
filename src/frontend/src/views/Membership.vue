@@ -1,6 +1,6 @@
 <template>
 
-  <div class="container membershipContainer">
+  <div class="container">
 
     <div class="d-flex justify-content-center">
       <div class="row top-padding">
@@ -320,11 +320,10 @@ const getCenterInfo = () => {
         }
       })
       .then((response) => {
-        console.log(response.data);
         centerDetail.value = response.data;
       })
       .catch((error) => {
-        console.log(error);
+        alert(error.response.data.message);
       });
 };
 
@@ -340,14 +339,10 @@ const getTrainerInfo = () => {
         }
       })
       .then((response) => {
-        if (!response.data) {
-          showCustomAlert("CustomAlertCustomAlert!!");
-        }
-        console.log(response.data);
         trainerDetail.value = response.data;
       })
       .catch((error) => {
-        console.log(error);
+        alert(error.response.data.message);
       });
 };
 
@@ -429,21 +424,29 @@ const selectPTChange = () => {
   }
 }
 
-// 센터 검색 버튼
-const searchConditionBtn = () => {
+const getCenterList = () => {
   axios
       .get(`/api/membership/centers?type=${searchType.value}&keyword=${searchKeyword.value}`, {})
       .then((response) => {
-        console.log(response.data);
         if (response.data.length === 0) {
           showCustomAlert("검색 결과가 없습니다.");
         }
         centerList.value = response.data;
       })
       .catch((error) => {
-        console.log(error)
+        alert(error.response.data.message);
       });
 }
+
+// 센터 검색 버튼
+const searchConditionBtn = () => {
+  getCenterList();
+}
+
+// 검색 후 엔터 기능
+const searchConditionEnter = () => {
+  getCenterList();
+};
 
 // 선택 조건 확인하여 결제하기 버튼 활성화 기본값 true
 const isButtonDisabled = ref(true);
@@ -481,11 +484,9 @@ const confirmPayment = () => {
           }
         })
         .then((response) => {
-          console.log(response.data);
           window.location.href = response.data
         })
         .catch((error) => {
-          console.log(error);
           alert(error.response.data.message);
         });
     // SuccessPage.vue에서 사용할 데이터 저장
@@ -508,42 +509,31 @@ const getTrainers = () => {
   axios
       .get(`/api/membership/centers/${selectedCenter.value.centerId}`, {})
       .then((response) => {
-        console.log(response.data);
         if (response.data.length === 0) {
           showCustomAlert("등록되어 있는 트레이너가 없습니다.");
         }
         trainerList.value = response.data;
       })
       .catch((error) => {
-        console.log(error);
+        alert(error.response.data.message);
       });
 };
 
-// 등록되어있는 센터 가져오기
+// 등록되어있는 센터 가져오기 (url에서 값 제거 후 config에 params 사용 가능)
 onMounted(() => {
   axios
-      .get(`/api/membership/centers?keyword=${searchKeyword.value}&type=${searchType.value}`, {})
+      .get(`/api/membership/centers?type=${searchType.value}&keyword=${searchKeyword.value}`, {})
       .then((response) => {
         centerList.value = response.data;
       })
       .catch((error) => {
-        console.log(error);
+        alert(error.response.data.message);
       });
 });
 
 </script>
 
 <style scoped>
-
-.membershipContainer {
-}
-
-@media (max-width: 745px) {
-  .membershipContainer {
-    display: flex;
-    flex-wrap: wrap;
-  }
-}
 
 .select-- {
   padding: 2vh;

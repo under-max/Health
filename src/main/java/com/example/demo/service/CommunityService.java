@@ -68,9 +68,7 @@ public class CommunityService {
             if (page <= 0) {
                 page = 1;
             }
-
             CommunityResponse response = getSortList(page, type, keyword, sort);
-            log.info("getBoardList() response={}", response);
             return response;
         } catch (Exception e) {
             log.error("getBoardList() error", e);
@@ -93,8 +91,6 @@ public class CommunityService {
                     .inserted(getFormatted(findBoard))
                     .build();
 
-            log.info("getBoard() response={}", response);
-
             communityMapper.viewCount(boardId);
 
             return response;
@@ -103,7 +99,6 @@ public class CommunityService {
         }
 
     }
-
 
     public BoardResponse getBoard(Integer boardId) {
 
@@ -118,16 +113,13 @@ public class CommunityService {
                 .inserted(getFormatted(findBoard))
                 .build();
 
-        log.info("getBoard() response={}", response);
-
         communityMapper.viewCount(boardId);
 
         return response;
     }
 
     public String getWriter(Long userId) {
-        User user = findUser(userId);
-        return user.getNickName();
+        return findUser(userId).getNickName();
     }
 
     public Integer updateLikeUp(Integer boardId) {
@@ -143,6 +135,7 @@ public class CommunityService {
     }
 
     public Boolean updateBoard(Long userId, Integer boardId, UpdateBoardRequest request) {
+
         Integer cnt = 0;
         User findUser = findUser(userId);
         String writer = findUser.getNickName();
@@ -158,6 +151,7 @@ public class CommunityService {
     }
 
     public Boolean deleteBoard(Long userId, Integer boardId) {
+
         Integer cnt = 0;
         User findUser = findUser(userId);
         String writer = findUser.getNickName();
@@ -181,7 +175,6 @@ public class CommunityService {
 
         // 전체 records 개수
         Integer records = communityMapper.countAll(type, keyword);
-        log.info("list records=[{}]", records);
 
         // 마지막 페이지 번호
         Integer lastPageNumber = (records - 1) / rowPage + 1;
@@ -241,8 +234,6 @@ public class CommunityService {
                 .content(content)
                 .build();
 
-        log.info("boardId={}, writer={}, content={}", createCommentDto.getBoardId(), createCommentDto.getWriter(), createCommentDto.getContent());
-
         return (commentMapper.addComment(createCommentDto) == 1);
     }
 
@@ -258,7 +249,6 @@ public class CommunityService {
                         .inserted(comment.getInserted().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
                         .build()).collect(Collectors.toList());
 
-        log.info("commentResponseList={}", responseList);
         return responseList;
     }
 

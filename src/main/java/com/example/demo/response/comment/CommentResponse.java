@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class CommentResponse {
+
     private Integer id;
     private String writer;
     private String content;

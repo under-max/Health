@@ -2,17 +2,13 @@
   <div class="container-lg">
 
     <div class="mb-3">
-      <div class="error" v-if="errors.title">
-        <p>{{ errors.title }}</p>
-      </div>
+      <p class="errorMessage" v-if="errors.title">{{ errors.title }}</p>
       <label for="" class="form-label">제목</label>
       <input class="form-control" type="text" placeholder="제목을 입력해주세요." v-model="title">
     </div>
 
     <div class="mb-3">
-      <div class="error" v-if="errors.content">
-        <p>{{ errors.content }}</p>
-      </div>
+      <p class="errorMessage" v-if="errors.content">{{ errors.content }}</p>
       <label for="" class="form-label">내용</label>
       <textarea class="form-control" rows="10" placeholder="내용을 입력해주세요." v-model="content"></textarea>
     </div>
@@ -24,7 +20,7 @@
 
     <div class="d-flex justify-content-end">
       <button class="btn btn-primary" type="button" @click="createBtn">등록</button>
-      <button class="btn btn-warning" type="button" @click="goListBtn">목록</button>
+      <button class="btn btn-danger" type="button" @click="goListBtn">취소</button>
     </div>
 
   </div>
@@ -88,7 +84,7 @@ onMounted(() => {
         userName.value = response.data;
       })
       .catch((error) => {
-        console.log(error)
+        alert(error.response.data.message);
       });
 });
 
@@ -103,8 +99,8 @@ onMounted(() => {
   color: yellow;
 }
 
-.error {
-  font-size: 20px;
+.errorMessage {
+  font-size: 18px;
   color: red;
 }
 

@@ -1,4 +1,4 @@
-package com.example.demo.request.membership;
+package com.example.demo.response.membership;
 
 import lombok.Builder;
 import lombok.Data;
@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class SimpleCenter {
+
     private Integer centerId;
     private String centerName;
 

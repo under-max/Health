@@ -195,7 +195,7 @@ const addCommentBtn = () => {
           addCommentContent.value = "";
         })
         .catch((error) => {
-          alert(error.response.data.errors[0].defaultMessage);
+          alert(error.response.data.content);
         });
   } else {
     const ok = confirm("로그인이 필요한 기능입니다. 로그인 페이지로 이동하시겠습니까?");
@@ -227,7 +227,7 @@ const modifyCommentBtn = () => {
           reloadComment();
         })
         .catch((error) => {
-          alert(error.response.data.errors[0].defaultMessage);
+          alert(error.response.data.message);
         });
   } else {
     const ok = confirm("로그인이 필요한 기능입니다. 로그인 페이지로 이동하시겠습니까?");
@@ -258,7 +258,7 @@ const deleteCommentBtn = (commentId) => {
           reloadComment();
         })
         .catch((error) => {
-          alert(error.response.data);
+          alert(error.response.data.message);
           router.push(router.currentRoute.value.fullPath);
         });
   } else if (ok && !token) {
@@ -289,7 +289,7 @@ const likeUpBtn = () => {
           board.value.likeCount = response.data;
         })
         .catch((error) => {
-          console.log(error);
+          alert(error.response.data.message);
         });
   } else {
     const ok = confirm("로그인이 필요한 기능입니다. 로그인 페이지로 이동하시겠습니까?");
@@ -317,7 +317,7 @@ const likeDownBtn = () => {
           board.value.likeCount = response.data;
         })
         .catch((error) => {
-          console.log(error);
+          alert(error.response.data.message);
         });
   } else {
     const ok = confirm("로그인이 필요한 기능입니다. 로그인 페이지로 이동하시겠습니까?");
@@ -343,8 +343,6 @@ const modifyBtn = () => {
 
   if (ok && token && (currentUser.value === boardWriter.value)) {
     router.push(`/community/board/${props.boardId}/modify`);
-  } else {
-    alert("접근 권한이 없습니다.");
   }
 };
 
@@ -363,11 +361,11 @@ const deleteBtn = () => {
         })
         .then((response) => {
           alert(response.data);
-          router.push('/community');
+          router.replace('/community');
 
         })
         .catch((error) => {
-          alert(error.response.data);
+          alert(error.response.data.message);
           router.push(router.currentRoute.value.fullPath);
         });
   } else {
@@ -403,7 +401,7 @@ onMounted(() => {
           currentUser.value = response.data;
         })
         .catch((error) => {
-          console.log(error)
+          alert(error.response.data.message);
         });
   }
 });
@@ -422,9 +420,8 @@ onMounted(() => {
         boardWriter.value = response.data.writer;
       })
       .catch((error) => {
-        console.log(error);
-        router.replace("/community");
         alert(error.response.data.message);
+        router.replace("/community");
       });
 
   // 댓글 내용
@@ -434,9 +431,8 @@ onMounted(() => {
         commentList.value = response.data;
       })
       .catch((error) => {
-        console.log(error);
-        router.replace("/community");
         alert(error.response.data.message);
+        router.replace("/community");
       });
 });
 

@@ -9,6 +9,7 @@ import java.time.LocalDate;
 @Data
 @NoArgsConstructor
 public class MembershipResponse {
+
     private LocalDate startDate;
     private LocalDate endDate;
     private Integer remainingPT;

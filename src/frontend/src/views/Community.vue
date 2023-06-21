@@ -30,7 +30,7 @@
             <!-- 게시글 order by -->
             <div class="d-flex justify-content-between">
               <!-- dropdown -->
-              <div class="dropdown">
+              <div class="dropdown pt-3 pb-2">
                 <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
                         :aria-expanded="isExpanded" @click="dropDownBtn">{{ selectedSort }}
                 </button>
@@ -56,7 +56,7 @@
                   <div class="container-fluid">
 
                     <div class="d-flex">
-                      <select class="form-select flex-grow-0" style="width: 130px;" name="type" v-model="searchType">
+                      <select class="form-select me-1" style="width: 130px;" name="type" v-model="searchType">
                         <option value="all">제목+내용</option>
                         <option value="title">제목</option>
                         <option value="content">내용</option>
@@ -81,7 +81,7 @@
                 </nav>
               </div>
               <!-- page -->
-              <div>
+              <div class="pt-3 pb-2">
                 <div>
                   {{ pageInfo.currentPageNumber }} / {{ pageInfo.lastPageNumber }} 페이지
                   <button class="btn btn-link" @click="prevPageBtn" :disabled="isPrevBtnDisabled"><i
@@ -151,7 +151,6 @@
                   </ul>
                 </nav>
               </div>
-
             </div>
 
           </div>
@@ -346,12 +345,10 @@ const getBoardList = () => {
         params: route.query // 현재 URL의 쿼리 파라미터를 사용하여 요청
       })
       .then((response) => {
-        console.log(response.data);
         boardList.value = response.data.list;
         pageInfo.value = response.data.pageInfo;
       })
       .catch((error) => {
-        console.log(error);
         alert(error.response.data.message);
       });
 };

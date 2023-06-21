@@ -11,6 +11,7 @@ import lombok.Data;
  */
 @Data
 public class CommentRequest {
+
     private Integer commentId;
 
     @NotBlank(message = "댓글 내용을 입력해주세요.")

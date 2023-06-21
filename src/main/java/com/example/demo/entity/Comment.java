@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 @Getter
 @ToString
 public class Comment {
+
     private Integer id;
     private Integer boardId;
     private String writer;

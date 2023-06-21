@@ -19,7 +19,6 @@ public class Community {
     private Integer viewCount;
     private Integer likeCount;
     private LocalDateTime inserted;
-    private List<String> fileName;
 
     public Community() {
     }
