@@ -79,19 +79,14 @@ const logout = function () {
 
 <style scoped>
 .navBars{
-  /* height: auto;
-  width: 100%;
-  margin-bottom: 0px; */
-
   height: auto;
   width: 100%;
   margin-bottom: 0;
   display: flex;
-  justify-content: center;
-  
+  justify-content: center;  
 }
 .navBar {
-
+  min-width: 900px;
   width: 100%;
   max-width: auto;
   padding: 0 20px;
