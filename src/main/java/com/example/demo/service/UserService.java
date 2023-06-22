@@ -148,10 +148,13 @@ public class UserService {
             List<UserListResponse> user = new ArrayList<>();
             user.add(userMapper.findByAuthUserId(id));
             return user;
-        } else {
+        } else if(userMapper.findById(id).orElseThrow(UserNotFound::new).getAuthority()==2){
             Trainer trainer = userMapper.getTrainerId(id);
             return userMapper.findByAllAuthUserId(trainer.getId());
+        } else {
+
         }
+        return null;
     }
 
 
