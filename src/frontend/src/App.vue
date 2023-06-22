@@ -3,7 +3,9 @@ import { RouterLink, RouterView } from 'vue-router'
 import {ref, watchEffect} from 'vue';
 import logo from '@/assets/Logo.png';
 import Header from './components/Header.vue';
+import Cookies from "vue-cookies";
 const Login = ref(false);
+
 </script>
 
 <template>

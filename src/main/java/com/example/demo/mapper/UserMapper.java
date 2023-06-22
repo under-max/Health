@@ -169,7 +169,6 @@ public interface UserMapper {
             """)
     List<UserListResponse> findByAllAuthUserId(Integer trainerId);
 
-
     @Select("""
             SELECT authority FROM MEMBER
             WHERE id = #{id}

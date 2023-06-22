@@ -66,7 +66,6 @@ import {computed} from "vue";
 import store from "@/stores/store";
 import Cookies from "vue-cookies";
 import router from "@/router";
-
 const token = computed(() => store.getters.getToken);
 const isLoggedIn = computed(() => !!token.value);
 const logout = function () {
@@ -75,6 +74,7 @@ const logout = function () {
   Cookies.remove('refreshToken'); // 쿠키에서 refresh token 값 삭제
   router.replace("/")
 }
+
 </script>
 
 <style scoped>
