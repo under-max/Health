@@ -354,7 +354,7 @@ public interface CenterMapper {
     @Select("""
             SELECT *
             FROM TRAINER
-            WHERE memberId = #{memberId} AND centerID = #{centerId};
+            WHERE memberId = #{memberId}
             """)
     Long checkTrainer(@Param("memberId") Long memberId,@Param("centerId") Long centerId);
 

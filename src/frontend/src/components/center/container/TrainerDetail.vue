@@ -33,6 +33,7 @@ const props = defineProps({
   trainerClose: Boolean,
 });
 
+
 const emit = defineEmits(["closeTrainerDetailModal"]);
 
 const closeModal = () => {

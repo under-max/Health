@@ -437,7 +437,7 @@ public class CenterService {
             trainerChecker.put("checker", checker);
             return trainerChecker;
         }else {
-            message = "이미 해당 센터에 등록된 트레이너 입니다.";
+            message = "다른 센터 혹은 이미 해당 센터 등록된 트레이너 입니다.";
             checker = false;
             trainerChecker.put("message", message);
             trainerChecker.put("checker", checker);
