@@ -34,6 +34,15 @@
 
     </select>
 
+    <select id="findAllNotice" resultType="com.example.demo.response.board.CommunityResponseDto">
+        select
+            *
+             , (select count(*) from COMMENT where boardId = c.id) as commentCount
+        from COMMUNITY c
+        where grade = 'NOTICE'
+        order by id desc
+    </select>
+
     <select id="findAll" resultType="com.example.demo.response.board.CommunityResponseDto">
         select
                 *
@@ -41,6 +50,9 @@
         from COMMUNITY c
 
         <where>
+            <if test="(type eq 'all') or (type eq 'title') or (type eq 'content')">
+                (
+            </if>
             <if test="(type eq 'all') or (type eq 'title')">
                 title like concat ('%', #{keyword} ,'%')
             </if>
@@ -52,10 +64,14 @@
             <if test="(type eq 'writer')">
                 or writer like concat ('%', #{keyword} ,'%')
             </if>
+            <if test="(type eq 'all') or (type eq 'title') or (type eq 'content')">
+                )
+            </if>
+
         </where>
 
-        order by grade desc,
-
+        and grade = 'BOARD'
+        order by
         <if test="sort eq 'id'">
             id desc
         </if>

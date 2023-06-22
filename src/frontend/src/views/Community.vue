@@ -17,15 +17,13 @@
 
           <div>
 
-            <!-- 작성하기 버튼 -->
+            <!-- 작성하기 버튼, Link -->
             <div>
               <button class="btn btn-info" @click="createBtn">
                 <i class="fa-solid fa-pen"></i>
                 작성하기
               </button>
             </div>
-
-            <!--          <Link/>-->
 
             <!-- 게시글 order by -->
             <div class="d-flex justify-content-between">
@@ -101,6 +99,7 @@
                   <th>제목</th>
                   <th>작성자</th>
                   <th><i class="fa-solid fa-binoculars"></i></th>
+<!--                  <th>조회수</th>-->
                   <th><i class="fa-regular fa-comment-dots"></i></th>
                   <th><i class="fa-solid fa-bolt"></i></th>
                   <th>작성일시</th>
@@ -109,7 +108,7 @@
                 <tbody>
                 <tr v-for="board in boardList">
                   <td>{{ board.id }}</td>
-                  <td v-if="board.grade === 'NOTICE'">
+                  <td class="notice" v-if="board.grade === 'NOTICE'">
                     <router-link :to="{ name: 'getBoard', params: {boardId: board.id}}">[공지사항] {{
                         board.title
                       }}
@@ -345,6 +344,7 @@ const getBoardList = () => {
         params: route.query // 현재 URL의 쿼리 파라미터를 사용하여 요청
       })
       .then((response) => {
+        console.log(response.data)
         boardList.value = response.data.list;
         pageInfo.value = response.data.pageInfo;
       })
@@ -386,6 +386,12 @@ onMounted(() => {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+}
+
+.notice a {
+  font-style: oblique;
+  font-weight: bold;
+  color: black;
 }
 
 </style>
