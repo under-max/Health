@@ -1,210 +1,310 @@
 <template>
-  <div class="black-bg">
-    <div class="white-bg">
+  <div class="trainerRegister">
+    <div class="black-bg">
+      <h4>트레이너 등록</h4>
+      <div class="white-bg">
+        <div class="searchCenterTableTrainer">
+            <label for="center">센터검색: </label>
+            <input type="text"
+            id="center" 
+            v-model="centerName"
+            @keydown.enter="tr_centerSearch_btn" />
+            <button
+              @click="tr_centerSearch_btn"              
+            >
+            검색
+            </button>
+        </div>
+        <hr>
 
-      <div class="result_centerName_bg" v-if="resultModal">
-        <div class="result_centerName">
-          <h4 v-if="centerLength !== 0">{{centerLength}}개의 결과를 찾았습니다.</h4>
-          <h4 v-if="centerLength === 0">검색결과가 없습니다 다시 입력해 주세요</h4>
-          <h5 v-if="centerLength !== 0">찾으시는 값을 선택해 주세요</h5>
-          
-          
-            <div v-for="(data, index) in tr_Result" :key="index">              
-                <label :for="'center'+index">
-                  {{searchChecker === 1 ? data.name : ""}}
-                  {{searchChecker === 2 ? "이름: " + data.name +"  /////  "+ "e-mail: "+data.email : ""}}
-                </label>
-                <input :id="'center'+index" 
-                type="radio" 
-                :value="searchChecker === 1 ? data.id : searchChecker === 2 ? data.id : ''" 
-                v-model="idChecker" 
-                name="centerNameOption" 
-                >
-                <br>                            
+        <div class="searchMemberTableTrainer">
+            <label for="searchMemberForTrainer">회원검색: </label>
+            <input
+                type="text"
+                id="searchMemberForTrainer"
+                @keydown.enter="tr_memberSearch_btn"
+                v-model="memberName"
+            />
+            <button @click="tr_memberSearch_btn">검색</button>
+            <hr />
+        </div>
+
+        <form enctype="multipart/form-data">
+          <!-- 결과표시 -->
+          <div v-if="showData.center !== '' && showData.memberName !== ''" class="result-info">
+            <h3>센터명: {{ showData.center }}</h3>
+            <h3>이름 : {{ showData.memberName }}</h3>
+            <h3>별명 : {{ showData.nickName }}</h3>
+            <h3>이메일: {{ showData.email }}</h3>
+            <br />
+            <label for="trainer_input_info">트레이너 정보를 입력하세요</label
+            ><br />
+            <input
+              type="text"
+              id="trainer_input_info"
+              v-model="trainerInfo"
+            /><br />
+
+            <label for="trainer_input_info">트레이너 상세정보를 입력하세요</label
+            ><br />
+            <textarea              
+              id="trainer_input_info"
+              v-model="trainerInfoDetail"
+            /><br />
+
+
+            <div class="file-input-container">
+                <label for="trainer_pic" class="file-input-label">사진등록</label><br />
+                <input
+                  type="file"
+                  id="trainer_pic"
+                  accept="image/*"
+                  @change="trainer_img"
+                  class="file-input"
+                />
+                <p class="trainerImgInfo">
+                    {{trainerImgInfo.length === 0 ? 
+                    '' : 
+                    trainerImgInfo.length+"개의 파일이 등록되었습니다."}}</p>
             </div>
-          
 
-          <button @click="resultModal = false">닫기</button>
+            <br />
+            <hr />
+            <button type="submit" 
+                    @click="trainerInfoSubmitBtn" 
+                    :disabled="!(submitValueCheck.infoHaveData === true &&
+                                submitValueCheck.infoDetailHaveData === true &&
+                                trainerImgInfo.length === 1 && 
+                                trainerImgInfo.name.length < 100)">
+              등록하기
+            </button>
+          </div>
+        </form>
+
+        <hr />
+    
+        <div class="trainerModifyContainer">
+            <button @click="modifyModal" class="trainerModify">수정하기</button>
         </div>
-      </div>
       
-
-      <h3>트레이너 정보 등록</h3>
-      <!-- 들어갈게 등록하면 authority 값2 
-                trainerFile 에는 trainerId, centerId, fileName 
-                Trainer 에는 memberId, centerId, info
-                Member에서는 (name, e-mail)=> 트레이너 이름 동명이인 구분용, authority
-            -->
-      <hr />
-      <form enctype="multipart/form-data">
-        <!-- 해당하는 센터 검색 -->
-        <label for="center">센터검색: </label>
-        <input id="center" v-model="centerName" />
-        <button
-          @click="tr_centerSearch_btn"
-          @keydown.enter="tr_centerSearch_btn"
-        >
-          검색
-        </button>
-        <hr>
-        <!-- Member 테이블에서 get요청 이름으로 검색, 표시값 이름 이메일 -->
-        <label for="searchMemberForTrainer">회원검색: </label>
-        <input type="text" id="searchMemberForTrainer" @keydown.enter="tr_memberSearch_btn" v-model="memberName">
-        <button @click="tr_memberSearch_btn">검색</button>
-        <hr>
-        <!-- 결과표시 -->
-        <div v-if="showData.center !== '' && showData.memberName !== ''">
-          <h3>센터명: {{showData.center}}</h3>
-          <h3>이름  : {{showData.memberName}}</h3>
-          <h3>별명  : {{showData.nickName}}</h3>
-          <h3>이메일: {{showData.email}}</h3>
-          <br>   
-          <label for="trainer_input_info">트레이너 정보를 입력하세요</label><br>
-          <textarea id="trainer_input_info" v-model="trainerData.info"/><br>   
-          
-          <label for="trainer_pic">트레이너 사진</label><br>
-          <input type="file" 
-          id="trainer_pic"
-          accept="image/*"
-          @change="trainer_img"
-          >          
-          <br><hr>
-          <button type="submit" @click="trainerInfoSubmitBtn">등록하기</button>
-        </div>
-
-      </form>
-      <hr>
-      <button @click="closeModal">닫기</button>
+    </div>
+      
     </div>
   </div>
+
+      <!-- 검색 모달창 -->
+      <div v-if="modalOpen" class="modal">
+      <div class="modal-content">
+        <span class="close" @click="closeModalBtn">&times;</span>
+        <h3 class="modal-title">검색 결과</h3>
+        <ul class="search-results">
+          <li v-for="(data, index) in tr_Result" 
+            :key="index" 
+            class="search-result" 
+            @click="searchChecker === 1 
+            ? centerChooseBtn(data.id, data.name) 
+            : trainerChooseBtn(data.id, data.email, data.name, data.nickName, data.authority)">
+            {{data.name }}
+            {{data.email ? "    이메일:("+data.email+")" : ''}}
+        </li>
+        </ul>
+      </div>
+    </div>
+
+
+
+
 </template>
 
 <script setup>
 import { ref, defineProps, defineEmits, watch } from "vue";
+import { debounce } from "lodash";
 import axios from "axios";
+import {showCustomAlert} from "../ui/Toast"
+import { useRouter } from "vue-router";
 
+
+const router = useRouter();
+//리스트로 리다이랙트
+const centerRedirect = () => {
+    router.push("/center")
+}
+
+//등록불가 트레이너
+
+const trainerRegisterRedirect = () => {
+  router.push("/center/trainerRegister")
+}
+//모달 확인중
+const modalOpen = ref(false);
+
+const closeModalBtn = () => {
+    modalOpen.value = false;
+}
+
+const openModalBtn = () => {
+    if(centerGetData.value.length !== 0){
+        modalOpen.value = true;
+    }
+}
 
 //url
 const url = "http://localhost:8090/";
 
 //Modal props 설정
 const props = defineProps({
-  trainerRegisterModal: Boolean,
+  isRegister: Boolean,
 });
 
-const emit = defineEmits(["closeTrainerRegisterModal"]);
+const emit = defineEmits(["isModify"]);
 
-const closeModal = () => {
-  emit("closeTrainerRegisterModal");
+const modifyModal = () => {
+  emit("isModify");
 };
+
+const centerChooseBtn = (id,name) => {
+    showData.value.center = name;
+    trainerData.value.centerId = id;
+    centerName.value = name;
+    closeModalBtn();
+}
 // 전체 값 모아서 화면 보여줄 변수 선언
 const showData = ref({
-  center: '',
-  memberName: '',
-  nickName: '',
-  email: '',  
-})
+  center: "",
+  memberName: "",
+  nickName: "",
+  email: "",
+});
 
 // 찾아온 값 저장 추후 controller로 Data 보내는 변수 선언
 const trainerData = ref({
   memberId: 0,
   centerId: 0,
-  info: '',
-  name: '',
-  nickName: '',
-  authority: 2
-})
+  info: "",
+  infoDetail:"",
+  name: "",
+  nickName: "",
+  authority: 2,
+});
 
 //검색 구분자
 const searchChecker = ref(0);
-
-//등록시 id 구분용 checker 이후 값 넘겨줌 Member는 값 뽑아서 data변수에 저장
-const idChecker = ref(0);
-
-watch(idChecker,(curValue, oldValue)=>{  
-  if(searchChecker.value === 1){
-    trainerData.value.centerId = idChecker.value;    
-    tr_Result.value.map(data=>{
-      showData.value.center = data.name;
-    })
-    console.log(showData.value);
-  }else if(searchChecker.value === 2){
-    trainerData.value.memberId = idChecker.value;
-    tr_Result.value.map(data => {         
-      if(data.id === trainerData.value.memberId){
-        trainerData.value.nickName = data.nickName;
-        trainerData.value.name = data.name;
-        console.log(trainerData.value);
-        showData.value.memberName = data.name;
-        showData.value.email = data.email;
-        showData.value.nickName = data.nickName;
-      }
-    })
-    console.log(showData.value);
-  }
-});
 
 
 //CenterName Data 가져오기
 const centerName = ref("");
 const tr_Result = ref([]);
 const tr_centerSearch_btn = async (e) => {
-  e.preventDefault();
-  console.log(centerName.value);
-
+  e.preventDefault();  
   try {
     const response = await axios.get(url + "center/centerNameInfo", {
       params: {
         centerName: centerName.value,
       },
-    });    
+    });
     tr_Result.value = response.data;
     searchChecker.value = 1;
-    resultModal.value = true;
+    modalOpen.value = true;
   } catch (error) {
     console.log(error);
   }
 };
 
 
-//CenterName 가져온 후 Result Modal 창
-const resultModal = ref(false);
-const centerLength = ref(0);
+//등록한 멤버가 이미 해당 센터에 등록되어있는 트레이너 인가?
 
-watch(tr_Result,(currValue, oldValue)=>{  
-  centerLength.value = currValue.length
-});
+const checkTrainer = async(memberId, centerId) => {        
+    try{
+        const response = await axios.get(url+"center/checkTrainer",{
+            params:{
+                memberId,
+                centerId
+            }
+        })
+        if(response.data.checker === false){
+            showCustomAlert(response.data.message);
+            centerName.value = '';
+            memberName.value = '';   
+            showData.value.memberName = '';
+            showData.value.nickName = '';
+            showData.value.email = '';
+    
+            trainerData.value.memberId = '';
+            trainerData.value.name = '';
+            trainerData.value.nickName = '';   
+        }else{
+            showCustomAlert(response.data.message);
+            
+        }
+     
+    }catch(error){
+        console.log(error);
+    }
+}
 
+const trainerChooseBtn = (id,email,name,nickName, authority) => {
+    memberName.value = name;   
+    showData.value.memberName = name;
+    showData.value.nickName = nickName;
+    showData.value.email = email;
+    
+    trainerData.value.memberId = id;
+    trainerData.value.name = name;
+    trainerData.value.nickName = nickName;
+    checkTrainer(trainerData.value.memberId, trainerData.value.centerId);
 
-// 찾아온 CenterName 클릭 후 TrainerData CenterId에 변수 저장 처리 완료
-
-//Member검색해서 조회 후 선택 및 memberId 에 저장
-const memberName = ref('');
-const tr_memberSearch_btn = async(e) => {
+    closeModalBtn();
+}
+//Member검색용
+const memberName = ref("");
+//Member table에서 가져오기
+const tr_memberSearch_btn = async (e) => {
   e.preventDefault();
-
   //값 받아오기 위한 초기화
-  tr_Result.value = []; 
-  
-  try{
-    const response = await axios.get(url+"center/membersearch",{
-      params:{
-        memberName: memberName.value
-      }
+  tr_Result.value = [];
+
+  try {
+    const response = await axios.get(url + "center/membersearch", {
+      params: {
+        memberName: memberName.value,
+      },
     });
-    console.log("성공");
     tr_Result.value = response.data;
-    console.log(tr_Result.value);
-    searchChecker.value = 2;
-    resultModal.value = true;
-  }catch(error){
+    searchChecker.value = 0;
+    modalOpen.value = true;    
+  } catch (error) {
     console.log("실패");
   }
-}
+};
+
+//필요한 정보 다 입력했는지 확인
+const submitValueCheck = ref({
+    infoHaveData: false,
+    infoDetailHaveData: false,
+})
+
+const trainerInfo = ref('');
+const trainerInfoDetail = ref('');
+watch(trainerInfo, debounce((current, old)=>{
+    if(current !== '' && current.trim() !== ''){
+        submitValueCheck.value.infoHaveData = true;
+    }
+}, 200));
+
+watch(trainerInfoDetail, debounce((current, old)=>{
+    if(current !== '' && current.trim() !== ''){
+        submitValueCheck.value.infoDetailHaveData = true; 
+    }    
+},200))
+
 
 //트레이너 정보 create 로직
 
-//파일 체크 
+//파일 체크
+const trainerImgInfo = ref({
+    name: '',
+    length: 0
+});
 const trainer_pic = ref([]);
 
 const trainer_img = (e) => {
@@ -212,83 +312,266 @@ const trainer_img = (e) => {
   // trainer_pic.value.push(files);
   for (let i = 0; i < files.length; i++) {
     trainer_pic.value.push(files[i]);
-  }
+  }  
+  trainerImgInfo.value.name = files[0].name;
+  trainerImgInfo.value.length = files.length;    
 };
 
 // Controller 송신
-const trainerInfoSubmitBtn = async(e) => {
+const trainerInfoSubmitBtn = async (e) => {
   e.preventDefault();
-  
+
+  trainerData.value.info = trainerInfo.value;
+  trainerData.value.infoDetail = trainerInfoDetail.value;
 
   const trainerTotalData = new FormData();
   for (let i = 0; i < trainer_pic.value.length; i++) {
     trainerTotalData.append("trainerImg", trainer_pic.value[i]);
   }
-  
 
   trainerTotalData.append("memberId", trainerData.value.memberId);
   trainerTotalData.append("centerId", trainerData.value.centerId);
   trainerTotalData.append("info", trainerData.value.info);
+  trainerTotalData.append("infoDetail", trainerData.value.infoDetail);
   trainerTotalData.append("name", trainerData.value.name);
   trainerTotalData.append("nickName", trainerData.value.nickName);
   trainerTotalData.append("authority", trainerData.value.authority);
 
-
-  try{
-    await axios.post(url+"center/inputInfoTrainer",trainerTotalData, {
+  try {
+    await axios.post(url + "center/inputInfoTrainer", trainerTotalData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
-    }); 
-    console.log("성공");   
-  }catch(error){
+    });
+    centerRedirect();
+  } catch (error) {
     console.log(error);
   }
-}
-
+};
 </script>
 
 <style scoped>
-h1 {
+.trainerRegister h4 {
   color: black;
+  text-align: center;
+}
+
+h3, label {
+    color: black;
+}
+.black-bg {
+  background-color: #f5f5f5;
+  padding: 20px;
+  color: #fff;
+}
+
+.white-bg {
+  background-color: #fff;
+  padding: 20px;
+}
+
+
+.searchCenterTableTrainer, .searchMemberTableTrainer {
+  margin-bottom: 10px;
+}
+
+label {
+  margin-right: 5px;
+}
+
+input[type="text"],
+textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+  color: #333;
+  transition: border-color 0.3s ease;
+}
+
+textarea{
+    height: 120px;
+}
+
+input[type="text"]:focus,
+textarea:focus {
+  outline: none;
+  border-color: #3498db;
+}
+
+input[type="file"] {
+  display: none;
+}
+
+label {
+  display: inline-block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+button {
+    width: 100%;
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #2196f3;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #23527c;
+}
+
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+
+.file-input-container {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: middle;
+}
+
+.file-input-label {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #2196f3;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.file-input {
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.file-input-label:hover {
+  background-color: #23527c;
+}
+
+.file-input-label:active {
+  background-color: #2574a9;
+}
+
+
+.result-info {
+  margin-bottom: 0;
+}
+
+.result-info h3 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 3px;
+}
+
+
+.trainerModifyContainer {    
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.trainerModify {
+    min-width: 100%;
+    padding: 10px 20px;
+    background-color: yellow;
+    color: #333;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.trainerModify:hover {
+  background-color: #ffed99;
+}
+
+.trainerModify:active {
+  background-color: #ffd633;
+}
+
+.trainerImgInfo{
+    color: black;
+}
+
+
+.normalImg{
+    color: black;
+}
+.warringImg{
+    color: red;
 }
 
 
 
-.result_centerName_bg{
+
+
+
+.modal {
   position: fixed;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 998;
-  background-color: rgba(0, 0, 0, 0.4);
-}
-.result_centerName {
-  z-index: 999;  
-  position: absolute;
-  width: 50%;
-  height: 50%;
-  top: 50%; 
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: white;
-  padding: 20px;
-  border-radius: 30px;
-}
-
-
-.black-bg {
-  width: 90%;
+  z-index: 9999;
+  width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
-  position: fixed;
-  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-.white-bg {
-  width: 100%;
-  background: white;
-  border-radius: 30px;
+
+.modal-content {
+  background-color: #fff;
+  width: 400px;
   padding: 20px;
+  border-radius: 10px;
+  max-height: 80vh;
+  overflow-y: auto;
 }
+
+.close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 20px;
+  color: #999;
+  cursor: pointer;
+}
+
+.modal-title {
+  margin-bottom: 10px;
+}
+
+.search-results {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.search-result {
+  margin-bottom: 5px;
+}
+
+
 </style>

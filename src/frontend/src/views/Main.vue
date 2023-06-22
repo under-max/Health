@@ -6,16 +6,22 @@
       <p>특별한 당신을 위해서 전문적 지식을 갖춘 트레이너를 통해<br>
         당신만을 위한 차별화된 맞춤형 운동, 식단 그날그날의<br>
         운동정보를 실시간으로 확인하세요</p>
-      <button>문의하기</button>
+      <button @click="goToSearchCenter">지점찾기</button>
     </section>
     <section class="main_image">
       <img :src="Main_Image2" alt="메인이미지">
     </section>
-    <p>main 2번째 페이지랑 footer 부분은 반응형 정도는 나중에 기능 개발 하면
-      <br> 중점되는 부분 2번쨰 페이지 혹은 공지사항 그냥 2번쨰에 넣고
-      footer는 그냥 주저리 부분이라 시간날떄 채우도록 하겠음
-    </p>
   </main>
+  <footer class="footerContainer">
+    <div class="footerDiv">
+      <p>(주)건강한사람들 | 대표자: 허재엽 | 사업자번호: 111-11-11111<br/> 
+        통신판매업: 2018-성남분당B-0062 | 개인정보보호책임자: Adam | 이메일: aaaa@naver.com<br/> 
+        주소: 경기도 성남시 분당구 대왕판교로 660 유스페이스 1A동 405호<br/>
+        전화번호: 02-1111-111<br/> 
+        ©Healter. ALL RIGHTS RESERVED<br/> 
+      </p>
+    </div>
+  </footer>
 
 
   <div class="main_popup" v-bind:class="{ on: showPopup }">
@@ -59,6 +65,7 @@
 import Main_Image2 from '@/assets/M_Image.png';
 import Cookies from "vue-cookies";
 import {onMounted, ref} from "vue";
+import { useRouter } from 'vue-router';
 import axios from "axios";
 
 const showPopup = ref(true);
@@ -67,6 +74,12 @@ const popupCheckBox = ref(false);
 // toast 관련 변수
 const remainingPT = ref();
 const mainToast = ref(null);
+
+const router = useRouter();
+
+const goToSearchCenter = () => {
+  router.push('/center');
+}
 
 const handleStorage = {
   setStorage: function (name, exp) {
@@ -143,7 +156,7 @@ onMounted(() => {
   background-color: #112470;
   background-image: linear-gradient(176deg, #112470 35%, #fff);
   flex-wrap: wrap;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: center;
   padding: 0 0 0 60px;
   display: flex;
@@ -193,7 +206,7 @@ onMounted(() => {
   margin-right: 0px;
 }
 
-.main_image > img {
+.main_image > img {  
   height: 100vh;
 }
 
@@ -274,6 +287,20 @@ button {
   line-height: 40px;
   vertical-align: bottom;
   opacity: 0.8;
+}
+
+.footerContainer{
+  background: rgb(48, 55, 64);
+}
+
+.footerDiv{
+  padding-top: 3vh;
+  padding-bottom: 3vh;
+  margin-left: 200px;
+  margin-right: 200px;
+}
+.footerDiv p{
+  color: rgb(180, 180, 180);
 }
 
 </style>

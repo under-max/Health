@@ -66,7 +66,6 @@ import {computed} from "vue";
 import store from "@/stores/store";
 import Cookies from "vue-cookies";
 import router from "@/router";
-
 const token = computed(() => store.getters.getToken);
 const isLoggedIn = computed(() => !!token.value);
 const logout = function () {
@@ -75,23 +74,19 @@ const logout = function () {
   Cookies.remove('refreshToken'); // 쿠키에서 refresh token 값 삭제
   router.replace("/")
 }
+
 </script>
 
 <style scoped>
 .navBars{
-  /* height: auto;
-  width: 100%;
-  margin-bottom: 0px; */
-
   height: auto;
   width: 100%;
   margin-bottom: 0;
   display: flex;
-  justify-content: center;
-  
+  justify-content: center;  
 }
 .navBar {
-
+  min-width: 900px;
   width: 100%;
   max-width: auto;
   padding: 0 20px;

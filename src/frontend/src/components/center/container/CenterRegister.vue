@@ -5,16 +5,16 @@
       <div class="white-bg">
         <form action="" enctype="multipart/form-data">
           <label for="name">회사명</label>
-          <input type="text" id="name" v-model="companyData.name" /><br />
+          <input type="text" id="name" v-model="companyName" /><br />
 
           <label for="address">주소</label>
-          <input type="text" id="address" v-model="companyData.address" /><br />
+          <input type="text" id="address" v-model="companyAddress" /><br />
 
           <label for="info">매장 소개</label>
-          <input
+          <textarea
             type="text"
             id="info"
-            v-model="companyData.info"
+            v-model="companyInfo"
             class="centerInfo"
           /><br />
 
@@ -22,64 +22,115 @@
           <input
             type="text"
             id="phoneNumber"
-            v-model="companyData.phoneNumber"
+            v-model="companyPhoneNumber"
           />
           <br />
-
-          <label for="store">매장 사진</label>
-          <input
-            type="file"
-            multiple
-            name="storeFile"
-            id="store"
-            accept="image/*"
-            @change="centerFileChange"
-          /><br />
-
-          <button type="submit" @click="centerTotalSubmit">등록하기</button>
-        </form>
-
-        <button class="centerModifyBtn">수정하기</button>
-      </div>
+            <div class="centerFileContainer">
+              <label for="store">사진등록</label>
+              <input
+              type="file"
+              multiple
+              name="storeFile"
+              id="store"
+              accept="image/*"
+              @change="centerFileChange"
+              />
+            </div>
+            <p :class="centerImgLength === 0 || centerImgLength ===1 ? 
+            'centerImgLengthRed' : 'centerImgLengthBlack'">
+              {{centerImgLength === 0 || centerImgLength === 1? "사진은 2장이상 등록해주세요" : 
+              centerImgLength+"개의 사진이 등록되었습니다."}}</p>
+            <button type="submit" 
+            class="centerSubmitBtn"
+            @click="centerTotalSubmit"
+            :disabled="!(nameChecker && addressChecker && infoChecker && phoneNumber && ImgChecker)">
+            등록하기
+          </button>
+        </form>        
+        <button class="centerModifyBtn" @click="openModify">수정하기</button>
     </div>
+</div>
   </div>
 </template>
 
 <script setup>
-import {ref, defineProps, defineEmits} from 'vue';
+import {ref, defineEmits, watch} from 'vue';
+import { useRouter } from 'vue-router';
+import { debounce } from "lodash";
 import axios from 'axios';
+import {showCustomAlert} from "../ui/Toast";
 
+const emit = defineEmits(["isModify"]);
 
-//url
-const url = "http://localhost:8090/";
-
-//Modal props 설정
-const props = defineProps({
-  centerRegisterModal: Boolean,
-  modelValue: String,
-});
-
-const emit = defineEmits(["closeCenterRegisterModal", "modelValue"]);
-
-const closeModal = () => {
-    emit("closeCenterRegisterModal");
+const openModify = () => {
+    emit("isModify");
 }
 
 
-//centerData설정
-const companyData = ref({
-  name: "",
-  address: "",
-  phoneNumber: "",
-  info: "",
-});
+const router = useRouter();
+//리스트로 리다이랙트
+const centerRedirect = () => {
+    router.push("/center")
+}
+//url
+const url = "http://localhost:8090/";
+
+
+//저장용 변수 선언
+const companyName = ref('');
+const companyAddress = ref('');
+const companyPhoneNumber = ref('');
+const companyInfo = ref('');
+
+//검증용 변수 선언
+const nameChecker = ref(false);
+const addressChecker = ref(false);
+const infoChecker = ref(false);
+const phoneNumber = ref(false);
+const ImgChecker = ref(false)
+
+watch(companyName, debounce((current, old)=>{
+  if(current !== '' && current.trim() !== ''){
+    nameChecker.value = true;
+  }else{
+    nameChecker.value = false;
+  }
+},200));
+
+watch(companyAddress, debounce((current, old)=>{
+  if(current !== '' && current.trim() !== ''){
+    addressChecker.value = true;
+  }else{
+    addressChecker.value = false;
+  }
+},200));
+
+watch(companyInfo, debounce((current, old)=>{
+  if(current !== '' && current.trim() !== ''){
+    infoChecker.value = true;
+  }else{
+    infoChecker.value = false;
+  }
+},200));
+
+watch(companyPhoneNumber, debounce((current, old)=>{
+  if(current !== '' && current.trim() !== ''){
+    phoneNumber.value = true;
+  }else{
+    phoneNumber.value = false;
+  }
+},200));
 
 const centerImg = ref([]);
-
+const centerImgLength = ref(0);
 const centerFileChange = (e) => {
   const files = e.target.files;
   for (let i = 0; i < files.length; i++) {
     centerImg.value.push(files[i]);
+  }
+  centerImgLength.value = files.length;  
+  if(centerImgLength.value >= 2){
+    ImgChecker.value = true
   }
 };
 
@@ -92,10 +143,10 @@ const centerTotalSubmit = async (e) => {
     centerRigiData.append("centerImg", centerImg.value[i]);
   }
 
-  centerRigiData.append("name", companyData.value.name);
-  centerRigiData.append("address", companyData.value.address);
-  centerRigiData.append("phoneNumber", companyData.value.phoneNumber);
-  centerRigiData.append("info", companyData.value.info);
+  centerRigiData.append("name", companyName.value);
+  centerRigiData.append("address", companyAddress.value);
+  centerRigiData.append("phoneNumber", companyPhoneNumber.value);
+  centerRigiData.append("info", companyInfo.value);
 
   try {
     await axios.post(url + "center/infoInsert", centerRigiData, {
@@ -106,15 +157,18 @@ const centerTotalSubmit = async (e) => {
 
     //성공 이후 로직
     //초기화
-    companyData.value.name = "";
-    companyData.value.address = "";
-    companyData.value.phoneNumber = "";
-    companyData.value.info = "";
+    companyName.value = "";
+    companyAddress.value = "";
+    companyPhoneNumber.value = "";
+    companyInfo.value = "";
     //이미지 처리 초기화
-    centerImg.value = [];     
+    centerImg.value = [];
+    centerRedirect(); 
+    showCustomAlert("센터 등록이 완료되었습니다.")    
       
-  } catch (error) {    
-    console.log(error);   
+  } catch (error) {
+    centerRedirect();    
+    showCustomAlert("센터 등록에 실패했습니다, 다시 시도해주세요")
   }
 };
 </script>
@@ -154,7 +208,7 @@ form input[type="file"] {
 }
 
 form button[type="submit"] {
-  background-color: #3850d2;
+  background-color: #2196f3;
   color: #fff;
   padding: 10px 20px;
   border: none;
@@ -163,7 +217,7 @@ form button[type="submit"] {
 }
 
 form button[type="submit"]:hover {
-  background-color: #112470;
+  background-color: #23527c;
 }
 
 button {
@@ -172,6 +226,7 @@ button {
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 form label {
@@ -194,14 +249,57 @@ form label {
   border-radius: 5px;
   cursor: pointer;
   width: 100%;
+  transition: background-color 0.3s ease;
 }
 
 .centerModifyBtn:hover {
   background-color: #ffffcc;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
-
+form button[type="submit"]:disabled:hover {
+  background-color: #ccc;
+  box-shadow: none;
+}
 .centerInfo {
   height: 12vh;
 }
+
+.centerImgLengthRed{
+    color: red;
+}
+
+.centerImgLengthBlack{
+  color: black;
+}
+
+
+.centerSubmitBtn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+
+.addTrainerImg {
+  margin-bottom: 20px;
+}
+
+.centerFileContainer label {
+  display: inline-block;
+  padding: 8px 16px;
+  background-color: #2196f3;
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.centerFileContainer input[type="file"] {
+  display: none;
+}
+
+.centerFileContainer label:hover {
+  background-color: #23527c;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
 </style>

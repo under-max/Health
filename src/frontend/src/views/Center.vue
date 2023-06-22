@@ -1,51 +1,12 @@
 <template>
     <div class="div_container">
-    <!-- 매장 등록 -->
-
-    <!-- 매장 등록 컴포넌트 -->
-    <transition name="insertCenter">
-      <Register
-      v-if="centerRegisterModal"
-      :centerRegisterModal="centerRegisterModal"
-      @closeCenterRegisterModal="closeCenterRegisterModal"
-      ></Register>
-    </transition>
-    <!-- 매장 수정 컴포넌트 -->
-    <transition name="modifyCenter">
-      <Modify
-        v-if="centerModifyModal"
-        :centerModifyModal="centerModifyModal"
-        @closeCenterModifyModal="closeCenterModifyModal"
-
-      ></Modify>
-    </transition>
-
-    <!-- 트레이너 정보등록 컴포넌트 -->
-    <transition name="trainerRegister">
-      <TrainerRegister v-if="trainerRegisterModal"
-      :trainerRegisterModal="trainerRegisterModal"
-      @closeTrainerRegisterModal="closeTrainerRegisterModal"
-      />
-    </transition>
-    <!-- 트레이너 정보 수정 컴포넌트 -->
-    <transition name="trainerModify">
-      <TrainerModify v-if="trainerModifyModal"
-      :trainerModifyModal="trainerModifyModal"
-      @closeTrainerModifyModal="closeTrainerModifyModal"/>
-    </transition>
 
     <!-- admin만 가능 -->
     <div v-if="isAdmin">
-      <!-- 센터 버튼 -->
-      <div class="center_btn">      
-        <button @click="centerRegisterModal = true">매장등록컴포넌트</button>      <!-- 매장 정보 수정 컴포넌트 -->
-        <button @click="centerModifyModal = true">매장수정컴포넌트</button>
-      </div>
-      
-      <!-- 트레이너 버튼 -->
-      <div class="trainer_btn">
-        <button @click="trainerRegisterModal = true">트레이너 정보 등록</button>
-        <button @click="trainerModifyModal = true">트레이너 정보 수정</button>
+      <div class="adminRegister">
+        <button class="centerRegister" @click="goToCenterRegister">센터 등록</button>
+        <button class="trainerRegistera" @click="goToTrainerRegister">트레이너 등록</button>
+        
       </div>
     </div>
 
@@ -94,12 +55,6 @@ import { useRouter } from "vue-router";
 import Cookies from "vue-cookies";
 import {showCustomAlert} from "../components/center/ui/Toast";
 
-import Register from "../components/center/container/Register.vue";
-import Modify from "../components/center/container/Modify.vue";
-
-import TrainerRegister from "../components/center/container/TrainerRegister.vue";
-import TrainerModify from "../components/center/container/TrainerModify.vue";
-
 import CenterList from "../components/center/container/CenterList.vue";
 
 import axios from "axios";
@@ -109,6 +64,15 @@ const router = useRouter();
 //라우터 이동함수
 const goToDetail = (id) => {
   router.push({name:'centerDetail', params: {id: id}})
+}
+
+//관리자 트레이너등록 페이지 이동
+const goToTrainerRegister = () => {
+  router.push('/center/trainerRegister');
+}
+//관리자 센터등록 페이지 이동
+const goToCenterRegister = () => {
+  router.push('/center/centerRegister')
 }
 
 //user 확인
@@ -339,52 +303,6 @@ div {
   display: flex;
   justify-content: flex-end;
 }
-.insertCenter-enter-from {
-  opacity: 0;
-}
-
-.insertCenter-enter-active {
-  transition: all 1s;
-}
-
-.insertCenter-enter-to {
-  opacity: 1;
-}
-
-.modifyCenter-enter-from {
-  opacity: 0;
-}
-.modifyCenter-enter-active {
-  transition: all 1.0s;
-}
-
-.modifyCenter-enter-to {
-  opacity: 1;
-}
-
-.trainerRegister-enter-from{
-  opacity: 0;
-}
-
-.trainerRegister-enter-active{
-  transition: all 1.0s;
-}
-
-.trainerRegister-enter-to{
-  opacity: 1;
-}
-
-.trainerModify-enter-from{
-  opacity: 0;
-}
-
-.trainerModify-enter-active{
-  transition: all 1.0s;
-}
-
-.trainerModify-enter-to{
-  opacity: 1;
-}
 
 .centerContainers{    
     display: flex;
@@ -446,11 +364,51 @@ div {
   color: white;
   font-size: 16px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .centerListSearch button:hover {
-  background-color: #0e81d9;
+  background-color: #23527c;
 }
 
+
+
+.adminRegister{
+  display: flex
+}
+.adminRegister .centerRegister{
+  margin-left: 4vw;
+}
+.adminRegister button {
+  margin-left: 10px;
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.centerRegister{
+  background-color: #2196f3;
+  width: auto;
+  color: white;
+  transition: background-color 0.3s ease;
+}
+
+.centerRegister:hover {
+  background-color: #23527c;
+}
+
+.trainerRegistera{
+  background-color: yellow;
+  width: auto;
+  transition: background-color 0.3s ease;
+}
+
+.trainerRegistera:hover{
+  background-color: #ffffcc;
+  width: auto;
+}
 
 </style>

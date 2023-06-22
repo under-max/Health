@@ -2,10 +2,8 @@ package com.example.demo.mapper;
 
 import com.example.demo.request.ChatSaveMsgRequest;
 import com.example.demo.response.ChatMessageResponse;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Options;
-import org.apache.ibatis.annotations.Select;
+import com.example.demo.response.ChatSaveMsgDTO;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -20,7 +18,7 @@ public interface ChatMapper {
                 VALUES 
                     (#{messageFrom}, #{messageTo}, #{message})
             """)
-    void saveMessage(ChatSaveMsgRequest chatSaveMsgRequest);
+    void saveMessage(ChatSaveMsgDTO chatSaveMsgDTO);
 
     @Select("""
             SELECT
@@ -37,7 +35,20 @@ public interface ChatMapper {
             	`MEMBER` m ON c.messageFrom = m.id
             LEFT JOIN
             	TRAINER t ON t.id = m.trainerId
-            WHERE c.messageFrom = #{messageFrom};
+            WHERE (
+                        c.messageFrom = #{messageFrom} 
+                    OR 
+                        c.messageTo = #{messageFrom}
+                  )
+                    AND
+                  (
+                        c.messageFrom = #{messageTo} 
+                    OR 
+                        c.messageTo = #{messageTo}
+                  )
+            ORDER BY c.timestamp DESC;
             """)
-    List<ChatMessageResponse> getMessageList(Integer messageFrom);
+    List<ChatMessageResponse> getMessageList(@Param("messageFrom") Integer messageFrom, @Param("messageTo")Integer messageTo);
+
+
 }

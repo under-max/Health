@@ -1,4 +1,4 @@
-package com.example.demo.request;
+package com.example.demo.request.schedule;
 
 import lombok.Builder;
 import lombok.Data;

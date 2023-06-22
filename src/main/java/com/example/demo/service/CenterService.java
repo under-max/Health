@@ -93,6 +93,26 @@ public class CenterService {
     //아이디로 삭제 로직
     public void deleteById(Integer id) {
 
+
+        //trainer사진 aws에서 삭제
+        List<CenterTrainer> centerTrainers = centerMapper.findTrainerFileByCneterId(id); //리스트 들고옴
+        System.out.println("aaa");
+        for (CenterTrainer centerTrainer : centerTrainers){
+            String objectKey = "health/" + centerTrainer.getCenterId() + "/" + centerTrainer.getTrainerId() + "/" + centerTrainer.getFileName();
+            DeleteObjectRequest dor = DeleteObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(objectKey)
+                    .build();
+            s3.deleteObject(dor);
+        }
+
+        //db에서 trainerFile table에서 삭제
+
+        centerMapper.deleteTrainerFileByCenterId(id);
+        //db에서 trainer 정보 삭제
+
+        centerMapper.deleteTrainerByCenterId(id);
+
         //id로 fileName 가져오기
         List<String> fileNames = centerMapper.findFileNameById(id);
 
@@ -107,7 +127,7 @@ public class CenterService {
         }
 
 
-        //db에서 centerFile 지우기
+//       db에서 centerFile 지우기
         centerMapper.deleteCenterFileById(id);
 
 
@@ -246,6 +266,7 @@ public class CenterService {
     public List<CenterTrainer> searchJoinTrainerCenterName(String centerName) {
 
         List<CenterTrainer> list = centerMapper.searchJoinTrainerCenterName(centerName);
+        System.out.println(list);
 
         return list;
     }
@@ -274,7 +295,7 @@ public class CenterService {
         centerMapper.updateMemberCenterIdAndAuthority(centerId, authority, data.getMemberId());
     }
 
-    public void modifyTrainer(MultipartFile[] trainerImg, Long trainerId, String removeImg, String modifyInfo, Long centerId) throws Exception{
+    public void modifyTrainer(MultipartFile[] trainerImg, Long trainerId, String removeImg, String modifyInfo, Long centerId, String modifyInfoDetail) throws Exception{
 
         //트레이너 이미지는 하나만 등록해야함 remove가 있다는건 등록할 trainerImg 도 있다는 뜻
         // 삭제할 파일명 있을수도 없을수도 있음
@@ -313,7 +334,7 @@ public class CenterService {
        }
 
         //trainer info 업데이트 로직(trainerId로 검색, 바꿀 내용 modifyInfo)
-        centerMapper.modifyTrainerByTrainerId(modifyInfo, trainerId);
+        centerMapper.modifyTrainerByTrainerId(modifyInfo, trainerId, modifyInfoDetail);
     }
 
 
@@ -401,6 +422,27 @@ public class CenterService {
         responses.put("searchCount", searchCount);
 
         return responses;
+    }
+
+
+    public Map<String, Object> checkTrainer(Long memberId, Long centerId) {
+        Long check = centerMapper.checkTrainer(memberId, centerId);
+        Map<String, Object> trainerChecker = new HashMap<>();
+        String message;
+        Boolean checker;
+        if(check == null){
+            message = "등록 가능한 트레이너 입니다.";
+            checker = true;
+            trainerChecker.put("message", message);
+            trainerChecker.put("checker", checker);
+            return trainerChecker;
+        }else {
+            message = "다른 센터 혹은 이미 해당 센터 등록된 트레이너 입니다.";
+            checker = false;
+            trainerChecker.put("message", message);
+            trainerChecker.put("checker", checker);
+            return trainerChecker;
+        }
     }
 
 

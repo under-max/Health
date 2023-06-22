@@ -5,8 +5,17 @@
           <h5>정말 삭제하시겠습니까?</h5>
       </div>
       <div class="button-container">
-        <button class="confirm-button" @click="deleteCenterComment">확인</button>
-        <button class="close-button" @click="closeModal">닫기</button>
+        <button v-if="deleteTrainerModalChecker === 2" class="confirm-button" @click="deleteTrainerData">확인</button>
+        <button v-else-if="deleteCenterModalProps === false" @click="deleteCenterProps" class="confirm-button">확인</button>
+        <button v-else class="confirm-button" @click="deleteCenterComment">확인</button>
+        
+        
+        <button v-if="deleteTrainerModalChecker === 2" class="close-button" @click="closeTrainerDeleteModal">닫기</button>
+        <button v-else-if="deleteCenterModalProps === false"
+          class="close-button" @click="centerDeleteModalBtn">
+          닫기
+        </button>
+        <button v-else class="close-button" @click="closeModal">닫기</button>
       </div>
     </div>
   </div>
@@ -14,18 +23,41 @@
   
 <script setup>
 import { ref,defineEmits, defineProps } from 'vue';
-const props = defineProps({});
+const props = defineProps({
+  deleteTrainerModalChecker:Number,
+  deleteCenterModalProps:Boolean,
+});
 
-const emitEvent = defineEmits(["deleteCenterCommentModalBtn", "centerCommentDeleteProps"]);
+const emitEvent = defineEmits(["deleteCenterCommentModalBtn", 
+                                "centerCommentDeleteProps",
+                                "deleteTrainerModalBtn",
+                                "trainerDeleteProps",
+                                "centerDeleteModalBtn",
+                                "deleteCenterProps"]);
 
-// const deleteCenterCommentBtn = defineEmits(["centerCommentDeleteBtnProps"]);
 
 const closeModal = () => {
   emitEvent("deleteCenterCommentModalBtn");
 }
 
+const closeTrainerDeleteModal = () => {
+  emitEvent("deleteTrainerModalBtn");
+}
+
 const deleteCenterComment = () =>{
   emitEvent("centerCommentDeleteProps");
+}
+
+const deleteTrainerData = () => {
+  emitEvent("trainerDeleteProps");
+}
+
+const centerDeleteModalBtn = () => {
+  emitEvent("centerDeleteModalBtn");
+}
+
+const deleteCenterProps = () => {
+  emitEvent("deleteCenterProps")
 }
 </script>
   
@@ -47,7 +79,7 @@ h1{
 }
 .modal-content-text{
   text-align: center;
-  margin-top: 10%;
+  margin-top: 8%;
 }
 .modal-content {
   max-width: 40%;
