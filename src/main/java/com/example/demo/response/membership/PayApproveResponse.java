@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 
 @Data
 public class PayApproveResponse {
+
     private String aid;
     private String tid;
     private String cid;

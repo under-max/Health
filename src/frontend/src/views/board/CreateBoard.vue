@@ -2,23 +2,25 @@
   <div class="container-lg">
 
     <div class="mb-3">
+      <p class="errorMessage" v-if="errors.title">{{ errors.title }}</p>
       <label for="" class="form-label">제목</label>
-      <input class="form-control" type="text" v-model="title">
+      <input class="form-control" type="text" placeholder="제목을 입력해주세요." v-model="title">
     </div>
 
     <div class="mb-3">
-      <label for="" class="form-label">본문</label>
-      <textarea class="form-control" rows="10" v-model="content"></textarea>
+      <p class="errorMessage" v-if="errors.content">{{ errors.content }}</p>
+      <label for="" class="form-label">내용</label>
+      <textarea class="form-control" rows="10" placeholder="내용을 입력해주세요." v-model="content"></textarea>
     </div>
+
     <div class="mb-3">
       <label for="" class="form-label">작성자</label>
       <input type="text" class="form-control" :value="userName" readonly/>
     </div>
 
-    <!--  <input type="file" accept="image/*" multiple/>-->
     <div class="d-flex justify-content-end">
       <button class="btn btn-primary" type="button" @click="createBtn">등록</button>
-      <button class="btn btn-warning" type="button" @click="goListBtn">목록</button>
+      <button class="btn btn-danger" type="button" @click="goListBtn">취소</button>
     </div>
 
   </div>
@@ -30,6 +32,11 @@ import {onMounted, ref} from "vue";
 import axios from "axios";
 import Cookies from "vue-cookies";
 import router from "@/router";
+
+const errors = ref({
+  title: '',
+  content: ''
+});
 
 const title = ref('');
 const content = ref('');
@@ -59,12 +66,7 @@ const createBtn = () => {
         }
       })
       .catch((error) => {
-        console.log(error.response.data);
-          console.log(error.response.data.errors[0].defaultMessage);
-        if (error.response.data) {
-          alert(error.response.data.errors[0].defaultMessage + error.response.data.errors[1].defaultMessage);
-          router.push('/community/new');
-        }
+        errors.value = error.response.data;
       });
 }
 
@@ -79,11 +81,10 @@ onMounted(() => {
         }
       })
       .then((response) => {
-        console.log(response.data);
         userName.value = response.data;
       })
       .catch((error) => {
-        console.log(error)
+        alert(error.response.data.message);
       });
 });
 
@@ -92,6 +93,15 @@ onMounted(() => {
 <style scoped>
 .container-lg {
   margin-top: 100px;
+}
+
+.form-label {
+  color: yellow;
+}
+
+.errorMessage {
+  font-size: 18px;
+  color: red;
 }
 
 </style>

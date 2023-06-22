@@ -16,19 +16,16 @@
     </div>
 
     <div class="mb-3">
+      <p class="errorMessage" v-if="errors.title">{{ errors.title }}</p>
       <label for="" class="form-label">제목</label>
       <input type="text" class="form-control" v-model="board.title"/>
     </div>
 
     <div class="mb-3">
-      <label for="" class="form-label">본문</label>
+      <p class="errorMessage" v-if="errors.content">{{ errors.content }}</p>
+      <label for="" class="form-label">내용</label>
       <textarea class="form-control" rows="10" v-model="board.content">{{board.content}}</textarea>
     </div>
-
-    <div class="d-flex justify-content-end">
-
-    </div>
-
 
   </div>
 
@@ -56,6 +53,11 @@ const board = ref({
   inserted: ''
 });
 
+const errors = ref({
+  title: '',
+  content: ''
+});
+
 const modifyBtn = () => {
   const token = Cookies.get('accessToken');
 
@@ -75,12 +77,7 @@ const modifyBtn = () => {
         }
       })
       .catch((error) => {
-        if (error.response.status === 400) {
-          alert(error.response.data);
-        } else if (error.response.data.status === 500) {
-          alert(error.response.data.message);
-        }
-        router.push(router.currentRoute.value.fullPath);
+        errors.value = error.response.data;
       });
 };
 
@@ -98,17 +95,10 @@ onMounted(() => {
         }
       })
       .then((response) => {
-        console.log("접근성공!");
-        console.log(response.data);
         board.value = response.data;
       })
       .catch((error) => {
-        console.log(error);
-        if (error.response.data) {
-          alert(error.response.data.message);
-        } else {
-          alert(error.response.data);
-        }
+        alert(error.response.data.message);
         router.replace("/community")
       });
 });
@@ -123,6 +113,15 @@ onMounted(() => {
 
 #info {
   color: white;
+}
+
+.form-label {
+  color: yellow;
+}
+
+.errorMessage {
+  font-size: 18px;
+  color: red;
 }
 
 </style>

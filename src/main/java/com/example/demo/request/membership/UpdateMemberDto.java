@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class UpdateMemberDto {
+
     private Integer memberId;
     private Integer centerId;
     private Integer trainerId;

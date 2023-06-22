@@ -3,8 +3,8 @@ package com.example.demo.service;
 import com.example.demo.entity.Membership;
 import com.example.demo.mapper.MembershipMapper;
 import com.example.demo.request.membership.CreateMembershipRequest;
-import com.example.demo.request.membership.SimpleCenter;
-import com.example.demo.request.membership.SimpleTrainer;
+import com.example.demo.response.membership.SimpleCenter;
+import com.example.demo.response.membership.SimpleTrainer;
 import com.example.demo.request.membership.UpdateMemberDto;
 import com.example.demo.response.membership.MembershipResponse;
 import lombok.*;
@@ -80,6 +80,7 @@ public class MembershipService {
     }
 
     private MembershipResponse getMembershipByMembershipId(Integer membershipId) {
+
         Membership findMembership = membershipMapper.findByMembershipId(membershipId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하는 멤버쉽이 없습니다."));
 
@@ -118,7 +119,6 @@ public class MembershipService {
     }
 
     private void updateMember(CreateMembershipRequest request) {
-
         UpdateMemberDto dto = UpdateMemberDto.builder()
                 .memberId(request.getMemberId())
                 .centerId(request.getCenterId())
@@ -127,7 +127,6 @@ public class MembershipService {
 
         membershipMapper.updateMember(dto);
     }
-
 
     public Integer getRemainingPT(Long userId) {
         Membership membership = membershipMapper.findByMemberId(userId.intValue());

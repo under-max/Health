@@ -2,9 +2,9 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.AuthUser;
 import com.example.demo.request.membership.CreateMembershipRequest;
-import com.example.demo.request.membership.SimpleCenter;
-import com.example.demo.request.membership.SimpleTrainer;
 import com.example.demo.response.membership.MembershipResponse;
+import com.example.demo.response.membership.SimpleCenter;
+import com.example.demo.response.membership.SimpleTrainer;
 import com.example.demo.service.MembershipService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,12 +25,8 @@ public class MembershipController {
     @PostMapping
     public ResponseEntity<MembershipResponse> createMembership(@RequestBody CreateMembershipRequest request) {
 
-        log.info("createMembership() request={}", request);
-
         // 멤버쉽이 없으면 등록, 멤버쉽이 있으면 수정
         MembershipResponse response = membershipService.createAndUpdate(request);
-
-        log.info("createMembership() response={}", response);
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
@@ -40,12 +36,7 @@ public class MembershipController {
      */
     @GetMapping("/centers")
     public List<SimpleCenter> getCenters(@RequestParam String type, @RequestParam String keyword) {
-        log.info("검색 -> type={}, keyword={}", type, keyword);
-
-        List<SimpleCenter> centers = membershipService.getCenters(type, keyword);
-
-        log.info("centerSearch={}", centers);
-        return centers;
+        return membershipService.getCenters(type, keyword);
     }
 
     @GetMapping("/centers/{centerId}")
