@@ -146,7 +146,6 @@ public class UserService {
     public List<UserListResponse> getAuthedUser(Long id) {
         if (userMapper.findById(id).orElseThrow(UserNotFound::new).getAuthority()==1){
             List<UserListResponse> user = new ArrayList<>();
-            System.out.println("아이디" + id);
             user.add(userMapper.findByAuthUserId(id));
             return user;
         } else {

@@ -7,15 +7,11 @@
     </div>
   </div>
   <div v-else>
-
-    <hr>
-
     <div class="container-fluid">
-      <table class="card" v-if="users.length > 0">
-        <h1>고객리스트</h1>
-        <thead class="card-header">
-        <tr class="list-group-item d-flex justify-content-between">
-          <th>#</th>
+      <table class="card">
+        <h2>고객리스트</h2>
+        <thead class="table-header card-header">
+        <tr class="d-flex justify-content-between">
           <th>이름</th>
           <th>생년월일</th>
           <th>담당 트레이너</th>
@@ -23,9 +19,8 @@
           <th>남은 PT 횟수</th>
         </tr>
         </thead>
-        <tbody class="card-body contentAlign">
-        <tr class="list-group-item d-flex justify-content-between" v-for="user in users" :key="user.id">
-          <td>{{ user.id }}</td>
+        <tbody class="table-borderless">
+        <tr class="d-flex justify-content-between" v-for="user in users" :key="user.id">
           <td>
             <div>
               <router-link :to="{ name: 'userDetail', params: { userId: user.id } }">
@@ -34,49 +29,58 @@
             </div>
           </td>
           <td>{{ user.birthDate }}</td>
-          <td>{{ user.trainerName }}</td>
-          <td>{{ user.startDate }} ~ {{ user.endDate }}</td>
-          <td>{{ user.remainingPT }}</td>
+          <div v-if="user.trainerName != null">
+            <td>{{ user.trainerName }}</td>
+          </div>
+          <td v-else>트레이너가 없습니다.</td>
+          <div v-if="user.startDate != null">
+            <td>{{ user.startDate }} ~ {{ user.endDate }}</td>
+          </div>
+          <td v-else>이용권이 없습니다.</td>
+          <div v-if="user.remainingPT != null">
+            <td>{{ user.remainingPT }}</td>
+          </div>
+          <td v-else>PT횟수가 없습니다.</td>
         </tr>
         </tbody>
       </table>
     </div>
     <hr>
 
-    <h1>트레이너</h1>
-    <table class="table" v-if="trainers.length > 0">
-      <thead>
-      <tr>
-        <th>#</th>
-        <th>이름</th>
-        <th>센터 이름</th>
-        <th>센터 주소</th>
-        <th>정보</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr v-for="trainer in trainers" :key="trainer.id">
-        <td>{{ trainer.id }}</td>
-        <td>
-          <div v-if="authority === 2">
-            <router-link :to="{ name: 'trainerCalendar', params: { trainerId: trainer.id } }">
-              {{ trainer.name }}
-            </router-link>
-          </div>
-          <div v-if="authority === 1">
-            <router-link :to="{ name: 'trainerDetail', params: { trainerId: trainer.id } }">
-              {{ trainer.name }}
-            </router-link>
-          </div>
-          <div>
-          </div>
-        </td>
-        <td>{{ trainer.centerName }}</td>
-        <td>{{ trainer.centerAddress }}</td>
-        <td>{{ trainer.trainerInfo }}</td>
-      </tr>
-      </tbody>
-    </table>
+    <div class="container-fluid">
+      <table class="card">
+        <h2>트레이너</h2>
+        <thead class="table-header card-header">
+        <tr class="d-flex justify-content-between">
+          <th>이름</th>
+          <th>센터 이름</th>
+          <th>센터 주소</th>
+          <th>정보</th>
+        </tr>
+        </thead>
+        <tbody class="table-borderless">
+        <tr class="d-flex justify-content-between" v-for="trainer in trainers" :key="trainer.id">
+          <td>
+            <div v-if="authority === 2">
+              <router-link :to="{ name: 'trainerCalendar', params: { trainerId: trainer.id } }">
+                {{ trainer.name }}
+              </router-link>
+            </div>
+            <div v-if="authority === 1">
+              <router-link :to="{ name: 'trainerDetail', params: { trainerId: trainer.id } }">
+                {{ trainer.name }}
+              </router-link>
+            </div>
+            <div>
+            </div>
+          </td>
+          <td>{{ trainer.centerName }}</td>
+          <td>{{ trainer.centerAddress }}</td>
+          <td>{{ trainer.trainerInfo }}</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </template>
 
@@ -96,7 +100,6 @@ onMounted(async () => {
   }, 200);
   try {
     const token = Cookies.get('accessToken')
-
     const [authorityResponse, trainersResponse, usersResponse] = await Promise.all([
       axios.post('/api/user/getAuthority', {}, {
         headers: {
@@ -119,17 +122,12 @@ onMounted(async () => {
     trainers.value = trainersResponse.data
     users.value = usersResponse.data
   } catch (error) {
-    console.error(error)
     alert(error.response.data.message)
   }
 })
 </script>
 
 <style scoped>
-.table {
-  color: white;
-}
-
 .loader {
   position: fixed;
   z-index: 999;
@@ -143,6 +141,5 @@ td {
   padding: 10px;
   text-align: left;
 }
-
 
 </style>

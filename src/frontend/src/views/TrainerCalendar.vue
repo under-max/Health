@@ -7,15 +7,15 @@
     </div>
   </div>
   <div v-else>
-    <div class="container-fluid">
-      <div class="container-md" style="background-color: whitesmoke; align-content: center">
-      <h1 class="container">일정 등록</h1>
+    <div class="container card">
+      <div class="container-md" style="background-color: white; align-content: center">
+        <h1 class="container">일정 등록</h1>
         <div class="d-flex justify-content-center">
           <button class="btn btn-primary btn-sm" @click="previousMonth">이전</button>
           <h2>{{ currentYearMonth }}</h2>
           <button class="btn btn-primary btn-sm" @click="nextMonth">다음</button>
         </div>
-
+        <br>
         <table class="container">
           <thead>
           <tr>
@@ -26,13 +26,7 @@
           <tr v-for="week in calendar" :key="week">
             <td v-for="day in week" :key="day.date" :class="{ 'today': day.isToday, 'selected': isSelected(day) }">
               <div>{{ day.date }}</div>
-              <!--            <div class="event" v-if="day.events.length >= 0 ">-->
-              <!--              <div v-if="day.events.length > 0">-->
-
-              <!--              </div>-->
-              <!--            </div>-->
               <div class="event" v-if="day.date > 0">
-                <!-- <div v-for="date in day.date" :key="day.date">-->
                 <div v-for="(w, key) in schedule" :key="key">
                   <div v-if="day.date === key + 1">
                     <div v-for="(obj, idx) in w.pop()" :key="idx">
@@ -43,7 +37,8 @@
                         <div v-if="month == currentDate.getMonth()">
                           <div v-if="day.date >= currentDate.getDate()">
                             <a href="#"
-                               @click="updateModal(day); assignSchedule(obj.id, obj.memberId, obj.memberName, obj.pt)">
+                               @click="updateModal(day); assignSchedule(obj.id, obj.memberId, obj.memberName, obj.pt)"
+                               data-bs-toggle="modal" data-bs-target="#staticUpdateBackdrop">
                               {{ obj.memberName }}, {{ obj.pt }}
                             </a>
                           </div>
@@ -53,21 +48,22 @@
                         </div>
                         <div v-else-if="month > currentDate.getMonth()">
                           <a href="#"
-                             @click="updateModal(day); assignSchedule(obj.id, obj.memberId, obj.memberName, obj.pt)">
+                             @click="updateModal(day); assignSchedule(obj.id, obj.memberId, obj.memberName, obj.pt)"
+                             data-bs-toggle="modal" data-bs-target="#staticUpdateBackdrop">
                             {{ obj.memberName }}, {{ obj.pt }}
                           </a>
                         </div>
                       </div>
                       <div v-else>
                         <a href="#"
-                           @click="updateModal(day); assignSchedule(obj.id, obj.memberId, obj.memberName, obj.pt)">
+                           @click="updateModal(day); assignSchedule(obj.id, obj.memberId, obj.memberName, obj.pt)"
+                           data-bs-toggle="modal" data-bs-target="#staticUpdateBackdrop">
                           {{ obj.memberName }}, {{ obj.pt }}
                         </a>
                       </div>
                     </div>
                   </div>
                 </div>
-
                 <div v-if="year < currentDate.getFullYear()">
 
                 </div>
@@ -75,19 +71,21 @@
                   <div v-if="month == currentDate.getMonth()">
                     <div v-if="day.date >= currentDate.getDate()">
                       <button @click="openModal(day)" type="button" class="btn btn-primary btn-sm"
-                              data-bs-toggle="modal">
+                              data-bs-toggle="modal" data-bs-target="#staticBackdrop">
                         등록
                       </button>
                     </div>
                   </div>
                   <div v-else-if="month > currentDate.getMonth()">
-                    <button @click="openModal(day)" type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal">
+                    <button @click="openModal(day)" type="button" class="btn btn-primary btn-sm"
+                            data-bs-toggle="modal" data-bs-target="#staticBackdrop">
                       등록
                     </button>
                   </div>
                 </div>
                 <div v-else>
-                  <button @click="openModal(day)" type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal">
+                  <button @click="openModal(day)" type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                          data-bs-target="#staticBackdrop">
                     등록
                   </button>
                 </div>
@@ -99,34 +97,30 @@
       </div>
     </div>
 
-
-    <!-- 일정 등록 모달 창 -->
-    <div v-if="bookSchedule">
-      <div class="modal-overlay" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h1 class="modal-title fs-5" id="exampleModalLabel">일정 등록</h1>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
-                      @click="closeModal"></button>
-            </div>
-            <div class="modal-body">
-              <h3>고객리스트</h3>
-              이름: <select v-model="userSelect">
-              <option disabled selected>고객리스트</option>
-              <option v-for="user in list" :value="user">{{ user.name }}</option>
-            </select>
-              <br>
-              시간: <select v-model="timeSelect">
-              <option disabled selected>시간</option>
-              <option v-for="time in 24" :key="time">{{ time }}</option>
-            </select>
-              <p>남은 PT 횟수 : {{ userSelect.remainingPT }}</p>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="closeModal">닫기</button>
-              <button type="button" class="btn btn-primary" @click="saveModal">저장</button>
-            </div>
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+         aria-labelledby="staticBackdropLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="staticBackdropLabel">일정 등록</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <h5>고객리스트</h5>
+            이름 <select v-model="userSelect">
+            <option disabled selected>고객리스트</option>
+            <option v-for="user in list" :value="user">{{ user.name }}</option>
+          </select>
+            <br>
+            시간 <select v-model="timeSelect">
+            <option disabled selected>시간</option>
+            <option v-for="time in 24" :key="time">{{ time }}</option>
+          </select>
+            <p>남은 PT 횟수 : {{ userSelect.remainingPT }}</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" @click="saveModal">저장</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
           </div>
         </div>
       </div>
@@ -134,32 +128,28 @@
   </div>
 
   <!-- 일정 수정/삭제 모달 창 -->
-  <div v-if="showUpdateSchedule">
-    <div class="modal-overlay" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h1 class="modal-title fs-5" id="exampleModalLabel">일정 수정</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
-                    @click="closeModal"></button>
-          </div>
-          <div class="modal-body">
-            <!-- 모달 내용 -->
-            <h3>고객리스트</h3>
-            <h5>기존 예약 : {{ memberName }}님 {{ savePtTime }}시간 </h5>
-            이름: <input v-model="memberName"/>
-            <br>
-            시간: <select v-model="ptHour">
-            <option :value="savePtTime">{{ savePtTime }}</option>
-            <option v-for="time in 24" :key="time" :value="time">{{ time }}</option>
-          </select>
-          </div>
-          <div class="modal-footer">
-            <!-- 모달 닫기 버튼 -->
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="closeModal">닫기</button>
-            <button type="button" class="btn btn-warning" @click="updateSchedule">수정</button>
-            <button type="button" class="btn btn-danger" @click="deleteSchedule(id, memberId)">삭제</button>
-          </div>
+  <div class="modal fade" id="staticUpdateBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+       aria-labelledby="staticUpdateBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5">일정 수정</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <h5>고객리스트</h5>
+          <h5>기존 예약 : {{ memberName }}님 {{ savePtTime }}시간 </h5>
+          이름: <input v-model="memberName"/>
+          <br>
+          시간: <select v-model="ptHour">
+          <option :value="savePtTime">{{ savePtTime }}</option>
+          <option v-for="time in 24" :key="time" :value="time">{{ time }}</option>
+        </select>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-warning" @click="updateSchedule">수정</button>
+          <button type="button" class="btn btn-danger" @click="deleteSchedule(id, memberId)">삭제</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
         </div>
       </div>
     </div>
@@ -170,32 +160,39 @@
 import {ref, computed, onMounted, defineProps} from 'vue';
 import axios from "axios";
 import Cookies from "vue-cookies";
+import {showCustomAlert} from "../main";
 
 // 달력 데이터 초기화
 const currentDate = new Date();
-
 const year = ref(currentDate.getFullYear());
 const month = ref(currentDate.getMonth());
 const day = ref(currentDate.getDay())
 const daysOfWeek = ['일', '월', '화', '수', '목', '금', '토'];
-const bookSchedule = ref(false);
-const showUpdateSchedule = ref(false);
 const userSelect = ref({});
 const timeSelect = ref()
-
 const schedule = ref(new Map());
 const isLoading = ref(true)
-
-// 일정 데이터 초기화
 const events = ref([]);
 const selectedDate = ref(null);
-
 const memberId = ref('')
 const memberName = ref('')
 const ptHour = ref('')
 const id = ref('')
-
 const savePtTime = ref('');
+const remainingPT = ref('');
+// 해당 트레이너의 고객리스트 저장
+const list = ref({
+  id: '',
+  name: '',
+  remainingPT: ''
+});
+
+const props = defineProps({
+  trainerId: {
+    type: [Number, String],
+    required: true
+  },
+});
 
 const assignSchedule = (sid, mid, name, pt) => {
   id.value = sid;
@@ -205,20 +202,12 @@ const assignSchedule = (sid, mid, name, pt) => {
   savePtTime.value = pt;
 }
 
-// 해당 트레이너의 고객리스트 저장
-const list = ref({
-  id: '',
-  name: '',
-  remainingPT: ''
-});
-
 const changeMonth = () => {
   setTimeout(() => {
     isLoading.value = false;
   }, 600)
   const token = Cookies.get('accessToken')
-  console.log("month", month.value + 1);
-  console.log("year", year.value);
+
   axios.get("/api/schedule/getList", {
     headers: {
       Authorization: token
@@ -261,7 +250,6 @@ const nextMonth = () => {
   changeMonth()
 };
 
-
 // 일정 선택 여부 확인
 const isSelected = day => {
   const selectedDate = new Date(year.value, month.value, day.date);
@@ -269,16 +257,13 @@ const isSelected = day => {
 };
 
 // x 버튼 클릭시 스케줄 삭제
-// Delete 쿼리 작성 필요(*)
 const deleteSchedule = (id, memberId) => {
   axios.post("/api/schedule/deleteSchedule", {
     id: id,
     memberId: memberId
   })
       .then((response) => {
-        console.log(memberId)
-        console.log("스케줄이 삭제되었습니다.")
-        alert("스케줄이 삭제되었습니다.")
+        showCustomAlert("스케줄이 삭제되었습니다.")
         location.reload();
       })
       .catch((error) => {
@@ -300,13 +285,9 @@ const setTime = (time) => {
 // 수정 버튼 누르면 수정된 값 업데이트 처리(POST)
 // 스케줄 아이디를 넘겨서 해당 스케줄 아이디의 PT시간 변경
 const updateSchedule = () => {
-  console.log("id", id.value)
-  console.log("memberId", memberId.value)
-  console.log("ptHour", ptHour.value)
 
   let time = new Date(selectedDate.value)
   time.setHours(ptHour.value);
-  console.log(time)
 
   axios.post("/api/schedule/updateSchedule", {
     id: id.value, // 스케줄 아이디
@@ -314,8 +295,7 @@ const updateSchedule = () => {
     ptHour: time
   })
       .then((response) => {
-        alert("수정 되었습니다.")
-        closeModal();
+        showCustomAlert("수정 되었습니다.")
         location.reload();
       })
       .catch((error) => {
@@ -329,8 +309,6 @@ const updateSchedule = () => {
 const updateModal = (day) => {
   // 선택된 일정 수정
   selectedDate.value = new Date(year.value, month.value, day.date);
-  showUpdateSchedule.value = true;
-
 };
 
 // 일정등록 버튼 누르면 모달창 오픈
@@ -339,8 +317,6 @@ const openModal = (day) => {
   axios.post(`/api/responsibleUserList/${props.trainerId}`, {})
       .then((response) => {
         list.value = response.data;
-        console.log(list.value)
-
       })
       .catch((error) => {
         if (error.response) {
@@ -348,7 +324,6 @@ const openModal = (day) => {
         }
       })
   selectedDate.value = new Date(year.value, month.value, day.date);
-  bookSchedule.value = true;
 };
 
 // 일정 등록 모달창에서 고객, PT시간 선택하면 선택한 값들이 POST 방식으로 controller->service->mapper->DB 저장
@@ -356,36 +331,19 @@ const saveModal = () => {
   // 선택된 날짜에 일정 추가
   let time = new Date(selectedDate.value)
   time.setHours(timeSelect.value);
-  console.log(time)
-  console.log(userSelect.value.id)
 
   axios.post("/api/schedule/saveSchedule", {
     memberId: userSelect.value.id,
     ptTime: time
   })
       .then(() => {
-        alert("등록 되었습니다.")
-        closeModal();
+        showCustomAlert("등록 되었습니다.")
         location.reload();
       })
       .catch((error) => {
         alert(error.response.data.message);
       });
 };
-
-// 모달창 닫기
-const closeModal = () => {
-  bookSchedule.value = false;
-  showUpdateSchedule.value = false;
-}
-
-// vue에서 쿼리 파라미터 넘기는 방법
-const props = defineProps({
-  trainerId: {
-    type: [Number, String],
-    required: true
-  },
-});
 
 // 현재 월 계산
 const currentYearMonth = computed(() => {
@@ -420,12 +378,9 @@ const calendar = computed(() => {
   return days;
 });
 
-// 페이지가 onMounted되면 달력에 일자별 일정이 등록된 리스트가 출력되도록 하고 싶음...(실행 안됨)
-// 리스트는 잘 출력됨. 리스트를 한줄에 한개씩 출력하고 싶은데 어떻게 하는지 모르겠음
 onMounted(() => {
   changeMonth()
 });
-
 </script>
 
 <style scoped>
@@ -441,28 +396,9 @@ li {
   color: white;
 }
 
-.calendar {
-  width: auto;
-  margin: 0 auto;
-}
-
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 10px;
-}
-
 button {
   margin: 0 5px;
   cursor: pointer;
-}
-
-.button-group {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 15px;
 }
 
 table {
@@ -493,19 +429,6 @@ td {
 input[type='text'] {
   width: 100%;
   padding: 5px;
-}
-
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
 }
 
 .modal-content {

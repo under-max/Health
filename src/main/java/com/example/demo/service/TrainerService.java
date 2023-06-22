@@ -5,9 +5,9 @@ import com.example.demo.exception.DuplicateSchedule;
 import com.example.demo.exception.UserNotFound;
 import com.example.demo.mapper.TrainerMapper;
 import com.example.demo.mapper.UserMapper;
-import com.example.demo.request.DateRequest;
-import com.example.demo.request.ScheduleRequest;
-import com.example.demo.request.ScheduleUpdateRequest;
+import com.example.demo.request.schedule.DateRequest;
+import com.example.demo.request.schedule.ScheduleRequest;
+import com.example.demo.request.schedule.ScheduleUpdateRequest;
 import com.example.demo.response.ScheduleResponse;
 import com.example.demo.response.TrainerDetailResponse;
 import com.example.demo.response.UserListResponse;
@@ -33,12 +33,9 @@ public class TrainerService {
     @Autowired
     private UserMapper userMapper;
 
-
     public List<TrainerDetailResponse> getAuthTrainer(Long id) {
         if (userMapper.findById(id).orElseThrow(UserNotFound::new).getAuthority() == 1) {
-            // 손님일 경우 트레이너 정보 출력
             User user = trainerMapper.getTrainerById(id);
-            System.out.println("트레이너 : " + user.getTrainerId());
             return trainerMapper.findByAuthTrainerUId(user.getTrainerId());
         } else {
             return trainerMapper.findByAuthTrainerTId(id);
@@ -47,7 +44,6 @@ public class TrainerService {
 
     public List<UserListResponse> responsibleUserList(Integer id) {
         List<UserListResponse> list = trainerMapper.selectResponsibleUserList(id);
-        System.out.println("responsibleUserList" + list);
         return list;
     }
 
@@ -60,19 +56,12 @@ public class TrainerService {
         } catch (Exception e) {
             throw new DuplicateSchedule(e);
         }
-
     }
 
     public Map<Integer, List<ScheduleResponse>> scheduleGetList(Long id, DateRequest dateRequest) {
-
         int year = dateRequest.getYear();
         int month = dateRequest.getMonth();
-
-        System.out.println("month : " + month + ", year : " + year );
         int lastDay = calculateLastDayOfMonth(year, month);
-        System.out.println("Last day of the month: " + lastDay);
-
-        // List<Schedule>
         Map<Integer, List<ScheduleResponse>> getLists = new HashMap<>();
         for(int day = 1; day <= lastDay; day++) {
             getLists.put(day, trainerMapper.findByIdWithRes(day, year, month, id).stream()
@@ -92,10 +81,8 @@ public class TrainerService {
         return yearMonth.lengthOfMonth();
     }
 
-
     public void scheduleDelete(ScheduleRequest scheduleRequest) {
         trainerMapper.deleteById(scheduleRequest);
-        System.out.println("$$#$@!@#!@#" + scheduleRequest);
         trainerMapper.deleteMembershipPT(scheduleRequest);
     }
 
@@ -105,7 +92,7 @@ public class TrainerService {
 
     public void scheduleUpdate(ScheduleUpdateRequest scheduleUpdateRequest) {
         scheduleUpdateRequest.setPtHour(scheduleUpdateRequest.getPtHour().plusHours(9));
-        System.out.println("scheduleUpdateRequest = " + scheduleUpdateRequest);
         trainerMapper.scheduleUpdate(scheduleUpdateRequest);
     }
+
 }

@@ -1,4 +1,4 @@
-package com.example.demo.request;
+package com.example.demo.request.schedule;
 
 import lombok.Builder;
 import lombok.Data;
@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 public class ScheduleUpdateRequest {
     private Integer id;
     private Integer memberId;
+    private Integer trainerId;
     private LocalDateTime ptHour;
 
     @Builder

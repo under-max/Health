@@ -2,9 +2,8 @@ package com.example.demo.mapper;
 
 import com.example.demo.entity.Schedule;
 import com.example.demo.entity.User;
-import com.example.demo.request.DateRequest;
-import com.example.demo.request.ScheduleRequest;
-import com.example.demo.request.ScheduleUpdateRequest;
+import com.example.demo.request.schedule.ScheduleRequest;
+import com.example.demo.request.schedule.ScheduleUpdateRequest;
 import com.example.demo.response.ScheduleResponse;
 import com.example.demo.response.TrainerDetailResponse;
 import com.example.demo.response.UserListResponse;
@@ -78,13 +77,6 @@ public interface TrainerMapper {
     @Options(useGeneratedKeys = true, keyProperty = "id")
     Integer insertSchedule(ScheduleRequest scheduleRequest);
 
-//    Optional<ScheduleResponse> findByMemberId(Integer memberId);
-
-    @Select("""
-            SELECT * FROM SCHEDULE
-            WHERE memberId = #{memberId} && ptTime = #{pt}
-            """)
-    Optional<ScheduleResponse> findByMemberId(@Param("memberId") Integer memberId, @Param("pt") LocalDateTime pt);
 
     @Select("""
             SELECT 
@@ -114,13 +106,6 @@ public interface TrainerMapper {
                 s.ptTime ASC;
             """)
     List<Schedule> findByIdWithRes(@Param("day") int day, @Param("year") int year, @Param("month") int month, @Param("id") Long id);
-
-    @Select("""
-            SELECT ptTime
-            FROM SCHEDULE;
-            """)
-    ScheduleResponse getPtTime();
-
 
     @Delete("""
             DELETE FROM SCHEDULE
