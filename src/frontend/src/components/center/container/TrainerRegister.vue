@@ -130,7 +130,11 @@ const centerRedirect = () => {
     router.push("/center")
 }
 
+//등록불가 트레이너
 
+const trainerRegisterRedirect = () => {
+  router.push("/center/trainerRegister")
+}
 //모달 확인중
 const modalOpen = ref(false);
 
@@ -218,9 +222,19 @@ const checkTrainer = async(memberId, centerId) => {
             }
         })
         if(response.data.checker === false){
-            showCustomAlert(response.data.message)
+            showCustomAlert(response.data.message);
+            centerName.value = '';
+            memberName.value = '';   
+            showData.value.memberName = '';
+            showData.value.nickName = '';
+            showData.value.email = '';
+    
+            trainerData.value.memberId = '';
+            trainerData.value.name = '';
+            trainerData.value.nickName = '';   
         }else{
-            showCustomAlert(response.data.message)
+            showCustomAlert(response.data.message);
+            
         }
      
     }catch(error){
