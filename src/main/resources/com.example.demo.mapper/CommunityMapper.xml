@@ -90,7 +90,7 @@
         where id = #{boardId}
     </update>
 
-    <update id="viewCount">
+    <update id="viewCountPlus">
         update COMMUNITY
         set
             viewCount = viewCount + 1

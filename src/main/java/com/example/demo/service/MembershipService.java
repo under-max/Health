@@ -128,7 +128,6 @@ public class MembershipService {
         membershipMapper.updateMember(dto);
     }
 
-
     public Integer getRemainingPT(Long userId) {
         Membership membership = membershipMapper.findByMemberId(userId.intValue());
 

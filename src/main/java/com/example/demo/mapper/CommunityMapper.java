@@ -23,7 +23,7 @@ public interface CommunityMapper {
 
     void updateLikeDown(Integer boardId);
 
-    void viewCount(Integer boardId);
+    void viewCountPlus(Integer boardId);
 
     Integer updateBoard(@Param("boardId") Integer boardId, @Param("writer") String writer, @Param("title") String title, @Param("content") String content);
 

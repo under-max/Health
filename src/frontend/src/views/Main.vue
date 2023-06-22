@@ -21,14 +21,13 @@
   <div class="main_popup" v-bind:class="{ on: showPopup }">
     <div class="layer_cont">
       <div class="img_wrap">
-        광고1
+        안내사항 & 광고1
       </div>
       <div class="btn_wrap">
         <button class="btn_close" @click="hidePopup"></button>
         <button type="button" class="btn_today_close">
           <span>
-<!--            <input type="checkbox" v-model="popupCheckBox" @click="hidePopupToday">오늘 하루 그만 보기-->
-            <input type="checkbox" v-model="popupCheckBox" @click="test1">오늘 하루 그만 보기
+            <input type="checkbox" v-model="popupCheckBox">오늘 하루 그만 보기
           </span>
         </button>
       </div>
@@ -68,10 +67,6 @@ const popupCheckBox = ref(false);
 // toast 관련 변수
 const remainingPT = ref();
 const mainToast = ref(null);
-
-const test1 = () => {
-  console.log(popupCheckBox.value);
-};
 
 const handleStorage = {
   setStorage: function (name, exp) {
@@ -214,7 +209,7 @@ button {
   -webkit-box-shadow: 0px 13px 40px -6px #061626;
   box-shadow: 0px 13px 40px -6px #061626;
   top: 150px;
-  left: 800px;
+  left: 770px;
   display: none;
 }
 

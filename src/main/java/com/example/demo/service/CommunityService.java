@@ -91,7 +91,7 @@ public class CommunityService {
                     .inserted(getFormatted(findBoard))
                     .build();
 
-            communityMapper.viewCount(boardId);
+            communityMapper.viewCountPlus(boardId);
 
             return response;
         } else {
@@ -113,7 +113,7 @@ public class CommunityService {
                 .inserted(getFormatted(findBoard))
                 .build();
 
-        communityMapper.viewCount(boardId);
+        communityMapper.viewCountPlus(boardId);
 
         return response;
     }
