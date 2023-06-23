@@ -193,11 +193,11 @@ public class CommunityService {
                 .records(records)
                 .build();
 
-        List<CommunityResponseDto> list = communityMapper.findAll(type, keyword, sort, startIndex, rowPage);
+        List<CommunityResponseDto> communityList = communityMapper.findAll(type, keyword, sort, startIndex, rowPage);
 
         return CommunityResponse.builder()
                 .pageInfo(pageInfo)
-                .list(list)
+                .list(communityList)
                 .build();
     }
 
