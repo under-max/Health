@@ -24,7 +24,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -194,27 +193,12 @@ public class CommunityService {
                 .records(records)
                 .build();
 
-        if (page == 1) {
-            List<CommunityResponseDto> communityList = communityMapper.findAllNotice();
-            List<CommunityResponseDto> boardList = communityMapper.findAll(type, keyword, sort, startIndex, rowPage);
+        List<CommunityResponseDto> communityList = communityMapper.findAll(type, keyword, sort, startIndex, rowPage);
 
-            communityList.addAll(boardList);
-
-            return CommunityResponse.builder()
-                    .pageInfo(pageInfo)
-                    .list(communityList)
-                    .build();
-        } else {
-            List<CommunityResponseDto> list = communityMapper.findAll(type, keyword, sort, startIndex, rowPage);
-
-            return CommunityResponse.builder()
-                    .pageInfo(pageInfo)
-                    .list(list)
-                    .build();
-        }
-
-
-
+        return CommunityResponse.builder()
+                .pageInfo(pageInfo)
+                .list(communityList)
+                .build();
     }
 
     private User findUser(Long userId) {

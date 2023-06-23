@@ -17,8 +17,6 @@ public interface CommunityMapper {
 
     Integer countAll(@Param("type") String type, @Param("keyword") String keyword);
 
-    List<CommunityResponseDto> findAllNotice();
-
     List<CommunityResponseDto> findAll(@Param("type") String type, @Param("keyword") String keyword, @Param("sort") String sort, @Param("startIndex") Integer startIndex, @Param("rowPage") Integer rowPage);
 
     void updateLikeUp(Integer boardId);
