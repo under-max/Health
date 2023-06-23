@@ -61,4 +61,10 @@ public class TrainerController {
         trainerService.scheduleUpdate(scheduleUpdateRequest);
     }
 
+    @GetMapping("/schedule/searchMemberSchedule")
+    public Map<Integer, List<ScheduleResponse>> searchMemberSchedule(AuthUser authUser, @ModelAttribute DateRequest dateRequest) {
+        Map<Integer, List<ScheduleResponse>> lists = trainerService.searchMemberSchedule(authUser.getUserId(), dateRequest);
+        return lists;
+    }
+
 }

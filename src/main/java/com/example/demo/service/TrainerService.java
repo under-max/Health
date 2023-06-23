@@ -47,7 +47,7 @@ public class TrainerService {
         return list;
     }
 
-    public void schedulePostList(ScheduleRequest scheduleRequest)  {
+    public void schedulePostList(ScheduleRequest scheduleRequest) {
         scheduleRequest.setPtTime(scheduleRequest.getPtTime().plusHours(9));
 
         try {
@@ -63,7 +63,7 @@ public class TrainerService {
         int month = dateRequest.getMonth();
         int lastDay = calculateLastDayOfMonth(year, month);
         Map<Integer, List<ScheduleResponse>> getLists = new HashMap<>();
-        for(int day = 1; day <= lastDay; day++) {
+        for (int day = 1; day <= lastDay; day++) {
             getLists.put(day, trainerMapper.findByIdWithRes(day, year, month, id).stream()
                     .map(s -> ScheduleResponse.builder()
                             .id(s.getId())
@@ -95,4 +95,21 @@ public class TrainerService {
         trainerMapper.scheduleUpdate(scheduleUpdateRequest);
     }
 
+    public Map<Integer, List<ScheduleResponse>> searchMemberSchedule(Long id, DateRequest dateRequest) {
+        int year = dateRequest.getYear();
+        int month = dateRequest.getMonth();
+        int lastDay = calculateLastDayOfMonth(year, month);
+        Map<Integer, List<ScheduleResponse>> getLists = new HashMap<>();
+        for (int day = 1; day <= lastDay; day++) {
+            getLists.put(day, trainerMapper.searchMemberSchedule(day, year, month, id, dateRequest.getMemberId()).stream()
+                    .map(s -> ScheduleResponse.builder()
+                            .id(s.getId())
+                            .memberName(s.getMemberName())
+                            .memberId(s.getMemberId())
+                            .remainingPT(s.getRemainingPT())
+                            .pt(s.getPtTime().toLocalTime().toString())
+                            .build()).collect(Collectors.toList()));
+        }
+        return getLists;
+    }
 }

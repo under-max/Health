@@ -16,6 +16,7 @@ public class TrainerDetailResponse {
     private String infoDetail;
     private String fileName;
     private Integer trainerId;
+    private String trainerNickName;
     private Integer trainerFileId;
     private Integer authority;
 }
