@@ -51,17 +51,19 @@
                 <input type="text" class="form-control" value="PT 횟수가 없습니다." readonly>
               </div>
             </div>
-            <div class="mb-3 align-content-end profile">
-              <label @click="toggleChat">
-                쪽지 기능 활성화하기
-                <i :class="toggleChatIconClass" class="fa-solid fa-2xl"></i>
-              </label>
-            </div>
-            <div class="mb-3 align-content-end profile">
-              <label @click="toggleMemo">
-                기록 기능 활성화하기
-                <i :class="toggleMemoIconClass" class="fa-solid fa-2xl"></i>
-              </label>
+            <div v-if="user.centerName !== null">
+              <div class="mb-3 align-content-end profile">
+                <label @click="toggleChat">
+                  쪽지 기능 활성화하기
+                  <i :class="toggleChatIconClass" class="fa-solid fa-2xl"></i>
+                </label>
+              </div>
+              <div class="mb-3 align-content-end profile">
+                <label @click="toggleMemo">
+                  기록 기능 활성화하기
+                  <i :class="toggleMemoIconClass" class="fa-solid fa-2xl"></i>
+                </label>
+              </div>
             </div>
           </div>
         </div>
@@ -121,6 +123,7 @@
               <table class="table">
                 <thead>
                 <tr>
+                  <th>#</th>
                   <th>구분</th>
                   <th>날짜</th>
                   <th>제목</th>
@@ -128,12 +131,14 @@
                 </thead>
                 <tbody>
                 <tr v-for="(memo, index) in visibleMemoList" :key="memo.memoId">
+                  <td>{{ memo.memoId }}</td>
                   <td v-if="memo.division == 1">식단 관리</td>
                   <td v-else-if="memo.division == 2">운동 관리</td>
                   <td v-else>기타</td>
                   <td>{{ memo.inserted }}</td>
                   <td>
-                    <a href="#" @click="getMemo(memo.memoId);" data-bs-toggle="modal" data-bs-target="#staticUpdateBackdrop">
+                    <a href="#" @click="getMemo(memo.memoId);" data-bs-toggle="modal"
+                       data-bs-target="#staticUpdateBackdrop">
                       {{ memo.title }}
                     </a>
                   </td>
@@ -141,7 +146,8 @@
                 </tbody>
               </table>
               <div class="text-center">
-                <button v-if="visibleMemoCount < totalMemoCount" class="btn btn-primary" @click="increaseVisibleMemoCount">
+                <button v-if="visibleMemoCount < totalMemoCount" class="btn btn-primary"
+                        @click="increaseVisibleMemoCount">
                   더보기
                 </button>
                 <button v-if="visibleMemoCount > 10" class="btn btn-primary" @click="decreaseVisibleMemoCount">
@@ -490,7 +496,6 @@ onMounted(() => {
   margin-right: 30px;
 }
 
-
 .centered {
   justify-content: center;
   align-items: center;
@@ -528,6 +533,7 @@ td {
 .memo {
   overflow-y: auto;
   max-height: 500px;
+  margin-left: 50px;
 }
 
 .row {
