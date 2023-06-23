@@ -344,7 +344,6 @@ const getBoardList = () => {
         params: route.query // 현재 URL의 쿼리 파라미터를 사용하여 요청
       })
       .then((response) => {
-        console.log(response.data)
         boardList.value = response.data.list;
         pageInfo.value = response.data.pageInfo;
       })
