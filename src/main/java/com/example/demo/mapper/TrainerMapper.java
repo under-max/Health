@@ -26,6 +26,7 @@ public interface TrainerMapper {
                 , c.info as centerInfo
                 , c.name as centerName
                 , c.address as centerAddress
+                , t.nickName as trainerNickName
                 , m.authority
             FROM `MEMBER` m
             LEFT JOIN TRAINER t ON m.id = t.memberId
@@ -42,6 +43,7 @@ public interface TrainerMapper {
                 , c.info as centerInfo
                 , c.name as centerName
                 , c.address as centerAddress
+                , t.nickName as trainerNickName
                 , m.authority
             FROM `MEMBER` m
             LEFT JOIN TRAINER t ON m.id = t.memberId
@@ -162,5 +164,41 @@ public interface TrainerMapper {
             """)
     Integer scheduleUpdate(ScheduleUpdateRequest scheduleUpdateRequest);
 
+
+    @Select("""
+            SELECT
+                s.id
+                , s.ptTime
+                , ms.remainingPT
+                , t.memberId            AS trainerId
+                , m.id                  AS memberId
+                , m.name                AS memberName
+            FROM
+                SCHEDULE s
+            LEFT JOIN
+                MEMBER m ON m.id = s.memberId
+            LEFT JOIN
+                TRAINER t ON t.id = m.trainerId
+            LEFT JOIN
+                MEMBERSHIP ms ON m.id = ms.memberId
+            WHERE
+                DAY(s.ptTime) = #{day}
+            AND
+                MONTH(s.ptTime) = #{month}
+            AND
+                YEAR(s.ptTIme) = #{year}
+            AND
+                t.memberId = #{id}
+            AND
+                m.id = #{memberId}
+            ORDER BY
+                s.ptTime ASC;
+
+            """)
+    List<Schedule> searchMemberSchedule(@Param("day") int day
+                                        , @Param("year") int year
+                                        , @Param("month") int month
+                                        , @Param("id") Long id
+                                        , @Param("memberId") Integer memberId);
 }
 

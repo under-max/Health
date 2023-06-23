@@ -6,10 +6,7 @@ import com.example.demo.entity.User;
 import com.example.demo.request.UserDelete;
 import com.example.demo.request.UserCreate;
 import com.example.demo.request.UserEdit;
-import com.example.demo.response.TrainerDetailResponse;
-import com.example.demo.response.UserDetailResponse;
-import com.example.demo.response.UserListResponse;
-import com.example.demo.response.UserResponse;
+import com.example.demo.response.*;
 import com.example.demo.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -88,9 +85,13 @@ public class UserController {
         return userService.getAuthority(authUser.getUserId());
     }
 
-
-
-
+// 여기 아래 수정
+    @GetMapping("/user/getCenter")
+    public CenterDetailResponse getCenter(AuthUser authUser) {
+        CenterDetailResponse center = userService.getCenter(authUser.getUserId());
+        System.out.println("center = " + center);
+        return center;
+    }
 
 
 }

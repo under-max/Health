@@ -7,8 +7,8 @@
     </div>
   </div>
   <div v-else>
-    <div class="container-lg">
-      <div class="card" style="background-color:white;" >
+    <div class="container">
+      <div class="card" >
 
         <h1>트레이너 상세 페이지</h1>
         <div class="mb-3 justify-content-center trainerImg">
@@ -63,7 +63,7 @@ const props = defineProps({
 onMounted(() => {
   setTimeout(() => {
     isLoading.value = false;
-  }, 400)
+  }, 600)
   axios.get(`/api/trainer/get/${props.trainerId}`, {})
       .then((response) => {
         trainer.value = response.data;

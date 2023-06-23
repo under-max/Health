@@ -5,6 +5,8 @@ import com.example.demo.entity.Trainer;
 import com.example.demo.entity.User;
 import com.example.demo.request.Login;
 import com.example.demo.request.UserEdit;
+import com.example.demo.response.CenterDetailResponse;
+import com.example.demo.response.CenterResponse;
 import com.example.demo.response.UserDetailResponse;
 import com.example.demo.response.UserListResponse;
 import org.apache.ibatis.annotations.Mapper;
@@ -108,7 +110,7 @@ public interface UserMapper {
             	TRAINER t ON m.trainerId = t.id
             LEFT JOIN
             	MEMBERSHIP ms ON m.id = ms.memberId
-            WHERE m.id = #{id};
+            WHERE m.id = #{id}  ;
             """)
     UserDetailResponse getUserDetail(Long id);
 
@@ -174,4 +176,16 @@ public interface UserMapper {
             WHERE id = #{id}
             """)
     Integer getAuthority(Long id);
+
+
+//    여기 아래 수정
+    @Select("""
+            SELECT c.id, c.name, c.address, c.info, ROUND(AVG(cc.star),2) star, c.phoneNumber  FROM CENTER c
+            JOIN CENTERCOMMENT cc ON c.id = cc.centerId
+            JOIN MEMBER m ON c.id  = m.centerId
+            WHERE m.id = #{id};
+            """)
+    CenterDetailResponse getCenter(Long id);
+
+
 }

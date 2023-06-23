@@ -9,10 +9,7 @@ import com.example.demo.mapper.UserMapper;
 import com.example.demo.request.UserDelete;
 import com.example.demo.request.UserCreate;
 import com.example.demo.request.UserEdit;
-import com.example.demo.response.AuthUserResponse;
-import com.example.demo.response.UserDetailResponse;
-import com.example.demo.response.UserListResponse;
-import com.example.demo.response.UserResponse;
+import com.example.demo.response.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -155,6 +153,10 @@ public class UserService {
 
         }
         return null;
+    }
+
+    public CenterDetailResponse getCenter(Long id) {
+        return userMapper.getCenter(id);
     }
 
 
