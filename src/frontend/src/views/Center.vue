@@ -166,6 +166,7 @@ const allGetCenterList = async() => {
 }
 onMounted(async()=>{
   allGetCenterList();
+  console.log("hi");
 });
 
 //센터 검색 처리

@@ -14,11 +14,23 @@
         </span>
       </div>
 
-      <div class="centerDetailTxt">        
+      <div class="centerDetailTxt">
+        <!-- <div class="chatWithTrainer">
+          <button @click="centerChat = true">문의하기</button>
+            <div v-if="centerChat">
+              <CenterChat :centerChat="centerChat" @centerChatBtn="centerChatBtn"></CenterChat> 
+              <CenterCahtCheck :centerChat="centerChat" @centerChatBtn="centerChatBtn" :user="user" :id="id"></CenterCahtCheck>
+            </div>
+        </div> -->
+
+
+
+
         <h2>센터명: {{ centerDetail.name }}</h2>
         <h2>주소 : {{ centerDetail.address }}</h2>
         <h2>정보 : {{ centerDetail.info }}</h2>
         <h2>전화번호: {{ centerDetail.phoneNumber }}</h2>
+        
         <hr>
 
         <div v-if="centerDetail.trainerName.length !== 0">
@@ -39,9 +51,19 @@
             <h4>저장된 트레이너 정보가 없습니다.</h4>
         </template>
       </div>
-
+      
     </div>
-    
+
+    <div class="buttonWrapper">
+      <button class="checkMapBtn" @click="checkMapBtn">지도 보기</button>
+    </div>
+    <div v-if="centerDetail" class="mapContainer">
+      <div v-if="checkMap">
+          <KakaoMap :centerDetail="centerDetail"/>
+      </div>
+    </div>
+
+
     <div class="CenterCommentContainer">
       <input type="text" v-model="centerCommentInfo" :placeholder="isLogin ? '' : '로그인 후 작성할 수 있습니다'" :disabled="!isLogin" @focus="messageCheck">
       
@@ -79,18 +101,26 @@
 <script setup>
 import axios from "axios";
 import Cookies from "vue-cookies";
-import { onMounted, ref, watch } from "vue";
+import { onMounted, ref, watch, defineProps, defineEmits} from "vue";
 import { useRoute } from "vue-router";
 import TrainerDetail from "./TrainerDetail.vue";
 import CenterComment from "./CenterComment.vue";
 import { debounce } from "lodash";
 
 import {showCustomAlert} from "../ui/Toast";
+
+import KakaoMap from "./KakaoMap.vue";
+import CenterCahtCheck from "./CenterCahtCheck.vue";
 // url
 const url = "http://localhost:8090/";
 
 const route = useRoute();
 
+//centerChat
+const centerChat = ref(false)
+const centerChatBtn = () => {
+  centerChat.value = false;
+}
 
 //check
 const focusCheck = ref(false);
@@ -340,6 +370,14 @@ const centerCommentSubmit = async(e) => {
 }
 
 
+//맵 버튼 처리
+
+const checkMap = ref(false);
+
+const checkMapBtn = () => {
+  checkMap.value = !checkMap.value;
+}
+
 </script>
 
 <style scoped>
@@ -348,7 +386,7 @@ const centerCommentSubmit = async(e) => {
   height: auto;
   background: white;
   min-height: 90vh;
-  min-width: 100vw;
+  min-width: 90vw;
 }
 
 h1 {
@@ -533,5 +571,48 @@ h1 {
 .rightBtnEnd i{
   color: #E6E6FA;
   cursor: pointer;
+}
+
+.imageContainer img{
+  border-radius: 20px;
+  border: 1px solid gray;
+}
+
+.checkMapBtn{
+  background-color: #2196f3;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;  
+}
+
+.checkMapBtn:hover{
+  background-color: #1976d2;
+}
+
+.buttonWrapper{
+  text-align: right;
+  margin-right: 3vw;
+}
+
+.chatWithTrainer{
+  text-align: right;
+  margin-bottom: 10vh;
+}
+
+.chatWithTrainer button{
+  background-color: #2196f3;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;  
+}
+
+.chatWithTrainer button:hover{
+  background-color: #1976d2;
 }
 </style>

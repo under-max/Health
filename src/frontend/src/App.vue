@@ -21,7 +21,7 @@ body{
   background-repeat: no-repeat;
   min-height: 100vh;
   height: auto;
-  font-family: 'Black And White Picture', sans-serif;
+
 }
 .custom-alert {
     position: fixed;
