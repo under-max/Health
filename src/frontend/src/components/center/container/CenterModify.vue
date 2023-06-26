@@ -21,9 +21,15 @@
 
               <label for="centerName">매장명</label>
               <input id="centerName" v-model="centerModifyName" />
+              
+              <div class="daumAddressContainer">
+                <input type="button" @click="execDaumPostcode" value="주소 찾기" class=btn btn-primary style="background-color: #2196f3; color:white; margin-bottom: 1vh;"/><br />
+                <input type="text" v-model="postcode" placeholder="우편번호" style="width:100%;" readonly/><br/>
+                <input type="text" v-model="address" placeholder="주소" style="width:100%;" readonly/><br />
+              </div>
 
               <label for="centerAddress">주소</label>
-              <input id="centerAddress" v-model="centerModifyAddress" />
+              <input id="centerAddress" v-model="centerModifyAddress" readonly style="border: none;"/>
 
               <label for="centerInfo">정보</label>
               <input id="centerInfo" v-model="centerModifyInfo" />
@@ -99,6 +105,58 @@ import {showCustomAlert} from "../ui/Toast";
 import axios from 'axios';
 
 import DeleteModal from '../ui/DeleteModal.vue';
+
+//주소 다음 api
+const postcode = ref('');
+const address = ref('');
+const detailAddress = ref('');
+const extraAddress = ref('');
+
+
+
+const execDaumPostcode = () => {
+  new window.daum.Postcode({
+    oncomplete: (data) => {
+      if (extraAddress.value !== '') {
+        extraAddress.value = '';
+      }
+      if (data.userSelectedType === 'R') {
+        // 사용자가 도로명 주소를 선택했을 경우
+        address.value = data.roadAddress;
+      } else {
+        // 사용자가 지번 주소를 선택했을 경우(J)
+        address.value = data.jibunAddress;
+      }
+
+      // 사용자가 선택한 주소가 도로명 타입일 때 참고항목을 조합한다.
+      if (data.userSelectedType === 'R') {
+        // 법정동명이 있을 경우 추가한다. (법정리는 제외)
+        // 법정동의 경우 마지막 문자가 "동/로/가"로 끝난다.
+        if (data.bname !== '' && /[동|로|가]$/g.test(data.bname)) {
+          extraAddress.value += data.bname;
+        }
+        // 건물명이 있고, 공동주택일 경우 추가한다.
+        if (data.buildingName !== '' && data.apartment === 'Y') {
+          extraAddress.value +=
+            extraAddress.value !== ''
+              ? `, ${data.buildingName}`
+              : data.buildingName;
+        }
+        // 표시할 참고항목이 있을 경우, 괄호까지 추가한 최종 문자열을 만든다.
+        if (extraAddress.value !== '') {
+          extraAddress.value = `(${extraAddress.value})`;
+        }
+      } else {
+        extraAddress.value = '';
+      }
+      // 우편번호를 입력한다.
+      postcode.value = data.zonecode;
+    },
+  }).open();
+};
+
+
+
 const props = defineProps({
     isRegister: Boolean,
 })
@@ -212,6 +270,10 @@ watch(centerModifyName, debounce((current, prev)=>{
   totalCenterModifyResult.value = isOk.value.centerModifyName && isOk.value.centerModifyAddress && isOk.value.centerModifyPhoneNumber && isOk.value.centerModifyInfo;
 },200));
 
+watch(address, debounce((current, prev)=>{
+  centerModifyAddress.value = current;
+  
+}, 200))
 
 watch(centerModifyAddress, debounce((current, prev)=>{
   const check = current.trim();
@@ -221,7 +283,7 @@ watch(centerModifyAddress, debounce((current, prev)=>{
     isOk.value.centerModifyAddress = false;
   }
   totalCenterModifyResult.value = isOk.value.centerModifyName && isOk.value.centerModifyAddress && isOk.value.centerModifyPhoneNumber && isOk.value.centerModifyInfo;
-
+  
 },200));
 
 watch(centerModifyPhoneNumber, debounce((current, prev)=>{

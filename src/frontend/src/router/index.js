@@ -23,6 +23,8 @@ import ModifyBoard from "@/views/board/ModifyBoard.vue";
 import CenterRegister from "@/views/AdminCenterRegister.vue"
 import TrainerRegister from "@/views/AdminTrainerRegister.vue"
 
+import ErrorPage from '../components/center/container/NotFoundPage.vue'
+
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes: [
@@ -135,6 +137,15 @@ const router = createRouter({
             name: 'modifyBoard',
             component: ModifyBoard,
             props: true
+        },
+        {
+            path: '/notFound',
+            name: "notFound",
+            component: ErrorPage
+        },
+        {
+            path: "/:pathMatch(.*)*",
+            redirect: "/notFound"
         }
     ]
 })

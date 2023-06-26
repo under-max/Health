@@ -8,10 +8,11 @@ import com.example.demo.service.CenterService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDate;
+
 import java.util.List;
 import java.util.Map;
 
@@ -175,7 +176,7 @@ public class CenterController {
 
     @GetMapping("/center/allCenterList")
     public Map<String, Object> allCenterList(@RequestParam("limit") Long limit, @RequestParam("offset") Long offset){
-
+        System.out.println("aa");
         Map<String, Object> responses = centerService.getAllCenterList(limit,offset);
 
         return responses;
@@ -238,4 +239,9 @@ public class CenterController {
                              @RequestParam("centerId") Long centerId){
         return centerService.checkTrainer(memberId, centerId);
     }
+
+
+
+
+
 }

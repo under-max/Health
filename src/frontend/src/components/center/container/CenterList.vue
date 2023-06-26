@@ -15,6 +15,8 @@
           <i class="fas fa-star fa-2x star">{{centerList.star.toFixed(2)}}</i>        
       </div>
     </div>
+
+
 </template>
 
 <script setup>

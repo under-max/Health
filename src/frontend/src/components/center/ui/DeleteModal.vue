@@ -2,20 +2,20 @@
   <div class="modal">
     <div class="modal-content">
       <div class="modal-content-text">
-          <h5>정말 삭제하시겠습니까?</h5>
+          <h5>정말 삭제하시겠습니까?</h5>          
       </div>
       <div class="button-container">
         <button v-if="deleteTrainerModalChecker === 2" class="confirm-button" @click="deleteTrainerData">확인</button>
+        <button v-else-if="commentType === 3" class="confirm-button" @click="deleteCenterComment">확인</button>
         <button v-else-if="deleteCenterModalProps === false" @click="deleteCenterProps" class="confirm-button">확인</button>
-        <button v-else class="confirm-button" @click="deleteCenterComment">확인</button>
         
         
         <button v-if="deleteTrainerModalChecker === 2" class="close-button" @click="closeTrainerDeleteModal">닫기</button>
+        <button v-else-if="commentType === 3" class="close-button" @click="deleteCenterCommentModalBtn">닫기</button>
         <button v-else-if="deleteCenterModalProps === false"
           class="close-button" @click="centerDeleteModalBtn">
           닫기
         </button>
-        <button v-else class="close-button" @click="closeModal">닫기</button>
       </div>
     </div>
   </div>
@@ -26,6 +26,7 @@ import { ref,defineEmits, defineProps } from 'vue';
 const props = defineProps({
   deleteTrainerModalChecker:Number,
   deleteCenterModalProps:Boolean,
+  commentType:Number,
 });
 
 const emitEvent = defineEmits(["deleteCenterCommentModalBtn", 
@@ -36,7 +37,8 @@ const emitEvent = defineEmits(["deleteCenterCommentModalBtn",
                                 "deleteCenterProps"]);
 
 
-const closeModal = () => {
+const deleteCenterCommentModalBtn = () => {
+  console.log("cc");
   emitEvent("deleteCenterCommentModalBtn");
 }
 

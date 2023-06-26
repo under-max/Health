@@ -1,6 +1,9 @@
 <template>
 
-  <DeleteModal v-if="deleteCenterCommentModal" @deleteCenterCommentModalBtn="deleteCenterCommentModalBtn" @centerCommentDeleteProps="centerCommentDeleteProps"></DeleteModal>
+  <DeleteModal v-if="deleteCenterCommentModal" 
+  @deleteCenterCommentModalBtn="deleteCenterCommentModalBtn" 
+  @centerCommentDeleteProps="centerCommentDeleteProps" 
+  :commentType="commentType"></DeleteModal>
   
   <div class="centerCommentContainer">
     <div class="centerCommentDiv">
@@ -38,7 +41,7 @@
                 @mouseover="sameValueCheck"></i>
                 <i class="fa-solid fa-trash-can centerCommentDelete" 
                 v-if="user.id === centerComment.memberId" 
-                @click="centerCommentDeleteBtn"></i>
+                @click="deleteCenterCommentModal = true;"></i>
             </div>
         </div>
     </div>
@@ -53,6 +56,7 @@ import {showCustomAlert} from "../ui/Toast";
 import DeleteModal from "../ui/DeleteModal.vue";
 
 //delete Modal
+const commentType = ref(3);
 const deleteCenterCommentModal = ref(false);
 const deleteCenterCommentModalBtn = () =>{
     deleteCenterCommentModal.value = false;
@@ -100,7 +104,7 @@ const centerCommentDeleteProps = () => {
 }
 
 const centerCommentDeleteBtn = () => {
-    deleteCenterCommentModal.value = true;
+    deleteCenterCommentModal.value = false;
 }
 //수정을 위한 axios 통신 변수 값
 const centerCommentId = ref(centerCommentData.value.id);
